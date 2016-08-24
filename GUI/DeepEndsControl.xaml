@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="DeepEnds.GUI.DeepEndsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             Background="{DynamicResource VsBrush.Window}"
+             Foreground="{DynamicResource VsBrush.WindowText}"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             Name="MyToolWindow">
+    <Grid Margin="0,0,0,154">
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="50"/>
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="50" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Left">Input</TextBlock>
+        <TextBox Grid.Row="0" Grid.Column="1" MinWidth="120" Name="inputFiles" AcceptsReturn="True" TextWrapping="Wrap" TextChanged="inputFiles_TextChanged"></TextBox>
+        <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Click="input_Click" Name="inputButton"/>
+        <Button Grid.Row="0" Grid.Column="3" Content="Read" Click="read_Click" Name="readButton"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="10" HorizontalAlignment="Left" Width="50">Output</TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="120" Name="outputFile" TextChanged="outputFile_TextChanged"></TextBox>
+        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Click="output_Click" Name="outputButton"/>
+        <Button Grid.Row="1" Grid.Column="3" Content="Write" Click="write_Click" Name="writeButton"/>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
