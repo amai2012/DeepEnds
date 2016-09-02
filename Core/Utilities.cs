@@ -59,11 +59,11 @@ namespace DeepEnds.Core
                 var file = System.IO.Path.Combine(direc, trimmed);
                 if (!System.IO.File.Exists(file))
                 {
-                    messages.AppendFormat("! {0} - not found\n", file);
+                    messages.AppendFormat("! Cannot find {0}\n", file);
                     continue;
                 }
 
-                messages.AppendFormat("  {0} - appended\n", file);
+                messages.AppendFormat("  Appended {0}\n", file);
                 files[file] = project;
             }
         }

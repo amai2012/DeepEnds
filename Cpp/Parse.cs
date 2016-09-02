@@ -38,7 +38,7 @@ namespace DeepEnds.Cpp
         {
             if (!System.IO.File.Exists(filePath))
             {
-                messages.AppendFormat("! {0} not found\n", filePath);
+                messages.AppendFormat("! Cannot find {0}\n", filePath);
                 return;
             }
 

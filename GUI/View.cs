@@ -53,7 +53,7 @@ namespace DeepEnds.GUI
             var ext = System.IO.Path.GetExtension(fileName);
             if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll")
             {
-                messages.AppendFormat("  {0} - appending for reading\n", fileName);
+                messages.AppendFormat("  Appended for reading {0}\n", fileName);
                 if (!extensions.Contains(ext))
                 {
                     extensions.Add(ext);
@@ -63,7 +63,7 @@ namespace DeepEnds.GUI
             }
             else if (ext == ".sln")
             {
-                messages.AppendFormat(" {0} - reading for projects\n", fileName);
+                messages.AppendFormat(" Reading projects from {0}\n", fileName);
                 direc = System.IO.Path.GetDirectoryName(fileName);
                 foreach (var name in DeepEnds.Core.Utilities.ReadVisualStudioSolution(fileName))
                 {
@@ -74,7 +74,7 @@ namespace DeepEnds.GUI
 
         internal bool Read(string lines)
         {
-            this.Messages = new System.Text.StringBuilder("Reading");
+            this.Messages = new System.Text.StringBuilder("Reading\n");
             var fileNames = new List<KeyValuePair<string, string>>();
             var extensions = new List<string>();
             foreach (var fileName in lines.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))

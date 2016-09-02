@@ -123,7 +123,16 @@ namespace DeepEnds.GUI
                 this.read = true;
             }
 
-            JR.Utils.GUI.Forms.FlexibleMessageBox.Show(this.view.Messages.ToString(), "DeepEnds", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+            var path = System.IO.Path.GetTempPath();
+            var filePath = System.IO.Path.Combine(path, "deepends.txt");
+            var file = new System.IO.StreamWriter(filePath);
+            file.Write(this.view.Messages.ToString());
+            file.Close();
+
+            var p = new System.Diagnostics.Process();
+            var startInfo = new System.Diagnostics.ProcessStartInfo("devenv.exe", "/edit " + filePath);
+            p.StartInfo = startInfo;
+            p.Start();
         }
 
         /// <summary>

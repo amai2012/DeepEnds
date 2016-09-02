@@ -158,7 +158,7 @@ namespace DeepEnds.Decompile
             }
             catch
             {
-                messages.AppendFormat("! {0} not read. Is it actually a .NET assembly?\n", filename);
+                messages.AppendFormat("! Cannot read file, is it actually a .NET assembly? {0}\n", filename);
             }
         }
     }

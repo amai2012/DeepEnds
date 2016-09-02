@@ -41,11 +41,11 @@ namespace DeepEnds.Cpp
         {
             if (!File.Exists(project + ".filters"))
             {
-                messages.AppendFormat("! {0} - cannot find associated filter file\n", project);
+                messages.AppendFormat("! Cannot find associated filter file of {0}\n", project);
                 return;
             }
 
-            messages.AppendFormat(" {0} - parsing\n", project);
+            messages.AppendFormat(" Parsing {0}\n", project);
             this.projects[project] = new List<DeepEnds.Core.Dependent.Dependency>();
             var direc = System.IO.Path.GetDirectoryName(project);
             foreach (var type in new string[] { "ClInclude", "ClCompile" })
@@ -62,7 +62,7 @@ namespace DeepEnds.Cpp
                             filter = reader.ReadElementContentAsString();
                         }
 
-                        messages.AppendFormat("  {0} - appended\n", DeepEnds.Core.Utilities.Combine(direc, filename));
+                        messages.AppendFormat("  Appended {0}\n", DeepEnds.Core.Utilities.Combine(direc, filename));
                         this.AddFile(project, DeepEnds.Core.Utilities.Combine(direc, filename), filter, this.projects[project], messages);
                     }
                 }
