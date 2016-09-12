@@ -30,9 +30,12 @@ namespace DeepEnds.Core.Linked
     {
         private Dictionary<Dependency, Links> links;
 
-        public Assemble(Dictionary<Dependency, Links> links)
+        private Dictionary<Dependency, Externals> externals;
+
+        public Assemble(Dictionary<Dependency, Links> links, Dictionary<Dependency, Externals> externals)
         {
             this.links = links;
+            this.externals = externals;
         }
 
         public override void Visit(Dependency dependency)
@@ -42,6 +45,18 @@ namespace DeepEnds.Core.Linked
             if (this.links[dependency].Dependencies.Count != 0)
             {
                 return;
+            }
+
+            foreach (var dep in dependency.Dependencies)
+            {
+                this.externals[dependency].Add(dep);
+            }
+
+            this.externals[dependency].SetMax();
+
+            foreach (var child in dependency.Children)
+            {
+                this.externals[dependency].Add(this.externals[child]);
             }
 
             foreach (var child in dependency.Children)

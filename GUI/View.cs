@@ -144,7 +144,7 @@ namespace DeepEnds.GUI
             var ext = System.IO.Path.GetExtension(fileName);
             if (ext == ".html")
             {
-                DeepEnds.Core.Complex.Complexities.Report(fileName, this.sep, this.dependencies.Root, this.dependencies.Links);
+                DeepEnds.Core.Complex.Complexities.Report(fileName, this.sep, this.dependencies);
                 return;
             }
 

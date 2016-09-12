@@ -54,6 +54,7 @@
     <Compile Include="Dependency.cs" />
     <Compile Include="DependencyUpWalker.cs" />
     <Compile Include="DependencyWalker.cs" />
+    <Compile Include="Externals.cs" />
     <Compile Include="FindLinks.cs" />
     <Compile Include="Links.cs" />
     <Compile Include="Parser.cs" />

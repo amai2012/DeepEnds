@@ -32,11 +32,14 @@ namespace DeepEnds.Core.Linked
     {
         public Dictionary<Dependency, Links> Links { get; }
 
+        public Dictionary<Dependency, Externals> ExternalDependencies { get; }
+
         public Dependency Root { get; }
 
         public Dependencies()
         {
             this.Links = new Dictionary<Dependency, Links>();
+            this.ExternalDependencies = new Dictionary<Dependency, Externals>();
             this.Root = this.Create(string.Empty, null);
         }
 
@@ -44,6 +47,7 @@ namespace DeepEnds.Core.Linked
         {
             var dep = new Dependency(name, parent);
             this.Links[dep] = new Links(dep);
+            this.ExternalDependencies[dep] = new Externals(dep);
             return dep;
         }
 
@@ -92,7 +96,7 @@ namespace DeepEnds.Core.Linked
 
         public void Assemble()
         {
-            var assemble = new Assemble(this.Links);
+            var assemble = new Assemble(this.Links, this.ExternalDependencies);
             assemble.Visit(this.Root);
         }
 

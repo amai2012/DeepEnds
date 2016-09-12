@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="Links.cs" company="Zebedee Mason">
+// <copyright file="Externals.cs" company="Zebedee Mason">
 //     Copyright (c) 2016 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
@@ -26,26 +26,51 @@ namespace DeepEnds.Core
     using Dependent;
     using System.Collections.Generic;
 
-    public class Links
+    public class Externals
     {
         private Dependency dependency;
 
-        public List<Dependency> Dependencies { get; }
+        public List<Dependency> Merged { get; }
 
-        public List<Dependency> Interlinks { get; }
+        public int MaxInTree { get; set; }
 
-        public Links(Dependency dependency)
+        public Externals(Dependency dependency)
         {
             this.dependency = dependency;
-            this.Dependencies = new List<Dependency>();
-            this.Interlinks = new List<Dependency>();
+            this.Merged = new List<Dependency>();
         }
 
-        public void Add(Dependency dependency)
+        public void SetMax()
         {
-            if (!this.Dependencies.Contains(dependency))
+            this.MaxInTree = this.Merged.Count;
+        }
+
+        public void Add(Dependency dep)
+        {
+            if (this.Merged.Contains(dep))
             {
-                this.Dependencies.Add(dependency);
+                return;
+            }
+
+            if (dep.FindChild(this.dependency) != null)
+            {
+                return;
+            }
+
+            this.Merged.Add(dep);
+        }
+
+        public void Add(Externals externals)
+        {
+            foreach (var dep in externals.Merged)
+            {
+                this.Add(dep);
+            }
+
+            var num = externals.MaxInTree;
+            if (this.MaxInTree < num)
+            {
+                this.MaxInTree = num;
             }
         }
     }

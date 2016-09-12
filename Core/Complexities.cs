@@ -127,7 +127,7 @@ namespace DeepEnds.Core.Complex
             return new Complexity(n, epn, branch);
         }
 
-        public static void Report(string filePath, string sep, Dependency root, Dictionary<Dependency, Links> links)
+        public static void Report(string filePath, string sep, DeepEnds.Core.Linked.Dependencies dependencies)
         {
             var fileName = System.IO.Path.GetFileName(filePath);
             var file = new System.IO.StreamWriter(filePath);
@@ -157,12 +157,18 @@ th {
 </ul>
 <p>The value of (E + P - N) / N varies between 0 and N. A strictly layered architecture will have a value of 0.</p>
 <p>The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.</p>
+<p>Externals refers to the number of dependencies which aren't childen.
+The following Max refers to the maximum of that value and the value at any child nodes.</p>
 <table id=""main"">
-<tr><th id=""main"">(E + P - N) / N</th><th id=""main"">Sum</th><th id=""main"">E + P - N</th><th id=""main"">Sum</th><th id=""main"">N</th><th id=""main"">Sum</th><th id=""main"">Section</th></tr>
+<tr><th id=""main"">(E + P - N) / N</th><th id=""main"">Sum</th>
+<th id=""main"">E + P - N</th><th id=""main"">Sum</th>
+<th id=""main"">N</th><th id=""main"">Sum</th>
+<th id=""main"">Externals</th><th id=""main"">Max</th>
+<th id=""main"">Section</th></tr>
 ");
             var mapping = new Dictionary<string, int>();
 
-            var rows = Complexities.Factory(root, links);
+            var rows = Complexities.Factory(dependencies.Root, dependencies.Links);
             for (int i = 0; i < rows.Count; ++i)
             {
                 var labels = rows[i].StatusStrings(sep);
@@ -178,6 +184,8 @@ th {
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[4]));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[1]));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[2]));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.ExternalDependencies[rows[i].Complexity.Branch].Merged.Count));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.ExternalDependencies[rows[i].Complexity.Branch].MaxInTree));
                 file.Write(string.Format("<td id=\"main\"><a href=\"{0}#section{1}\">{2}</a></td>", fileName, i, labels[0]));
                 file.Write("</tr>\n");
                 mapping[labels[0]] = i;
@@ -197,10 +205,23 @@ th {
                 }
 
                 file.Write(string.Format("<h2><a id=\"section{0}\"></a>{1}</h2>\n", i, name));
+
+                if (dependencies.ExternalDependencies[branch].Merged.Count > 0)
+                {
+                    file.Write("<table>\n");
+                    file.Write(string.Format("<tr id=\"main\"><th>External dependencies</th></tr>\n"));
+                    foreach (var dep in dependencies.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(sep)))
+                    {
+                        file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(sep)));
+                    }
+
+                    file.Write("</table>\n<p/>\n");
+                }
+
                 file.Write("<table>\n");
                 foreach (var child in branch.Children)
                 {
-                    foreach (var dep in links[child].Interlinks)
+                    foreach (var dep in dependencies.Links[child].Interlinks)
                     {
                         var first = child.Path(sep);
                         if (mapping.Keys.Contains(first))
