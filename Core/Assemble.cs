@@ -32,10 +32,13 @@ namespace DeepEnds.Core.Linked
 
         public Dictionary<Dependency, Externals> ExternalDependencies { get; }
 
+        public Dictionary<Dependency, SLOC> SLOCs { get; }
+
         public Assemble()
         {
             this.Linkings = new Dictionary<Dependency, Links>();
             this.ExternalDependencies = new Dictionary<Dependency, Externals>();
+            this.SLOCs = new Dictionary<Dependency, SLOC>();
         }
 
         public override void Visit(Dependency dependency)
@@ -45,6 +48,8 @@ namespace DeepEnds.Core.Linked
             Externals.Assemble(dependency, this.ExternalDependencies);
 
             Links.Assemble(dependency, this.Linkings);
+
+            SLOC.Assemble(dependency, this.SLOCs);
         }
     }
 }

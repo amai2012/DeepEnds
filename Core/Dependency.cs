@@ -35,6 +35,8 @@ namespace DeepEnds.Core.Dependent
 
         public System.Collections.Generic.List<Dependency> Dependencies { get; }
 
+        public int LOC { get; set; }
+
         private List<string> missing;
 
         public Dependency(string name, Dependency parent)
@@ -43,6 +45,7 @@ namespace DeepEnds.Core.Dependent
             this.Parent = parent;
             this.Children = new System.Collections.Generic.List<Dependency>();
             this.Dependencies = new List<Dependency>();
+            this.LOC = 0;
             this.missing = new List<string>();
         }
 

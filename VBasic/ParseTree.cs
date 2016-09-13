@@ -198,10 +198,38 @@ namespace DeepEnds.VBasic
                 this.filename = filename;
             }
 
+            static private bool IsCode(string line)
+            {
+                var i = line.IndexOf("'");
+                if (i != -1)
+                {
+                    line = line.Substring(0, i);
+                }
+
+                line = line.TrimStart();
+
+                return line != string.Empty;
+            }
+
+            private static int Count(string lines)
+            {
+                int loc = 0;
+                foreach (var line in lines.Split('\n'))
+                {
+                    if (IsCode(line))
+                    {
+                        ++loc;
+                    }
+                }
+
+                return loc;
+            }
+
             public override bool VisitBaseType(TypeBlockSyntax basetype, string path)
             {
                 var branch = this.parser.Dependencies.GetPath(path, ".");
                 var leaf = this.parser.Create(basetype.BlockStatement.Identifier.ValueText, path + "." + basetype.BlockStatement.Identifier.ValueText, branch);
+                leaf.LOC = Count(basetype.ToString());
                 this.sources.Create(leaf, new SourceProvider(leaf, this.project, this.filename));
                 return true;
             }

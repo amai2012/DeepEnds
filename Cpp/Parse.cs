@@ -69,14 +69,35 @@ namespace DeepEnds.Cpp
             return string.Empty;
         }
 
+        static private bool IsCode(string line)
+        {
+            var i = line.IndexOf("//");
+            if (i != -1)
+            {
+                line = line.Substring(0, i);
+            }
+
+            line = line.Replace('{', ' ');
+            line = line.Replace('}', ' ');
+            line = line.TrimStart();
+
+            return line != string.Empty;
+        }
+
         protected void ReadFile(DeepEnds.Core.Dependent.Dependency node, List<string> includes)
         {
             var filePath = this.parser.Sources.AssociatedFilePath(node);
             var direc = System.IO.Path.GetDirectoryName(filePath);
+            int loc = 0;
             foreach (var line in DeepEnds.Core.Utilities.ReadFile(filePath).Split('\n'))
             {
                 try
                 {
+                    if (IsCode(line))
+                    {
+                        ++loc;
+                    }
+
                     if (line.Length < 8 || line.Substring(0, 8) != "#include")
                     {
                         continue;
@@ -117,6 +138,8 @@ namespace DeepEnds.Cpp
                     continue;
                 }
             }
+
+            node.LOC = loc;
         }
     }
 }

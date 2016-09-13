@@ -160,11 +160,18 @@ th {
 <p>Externals refers to the number of dependencies which aren't childen.
 The following Max refers to the maximum of that value and the value at any child nodes.</p>
 <table id=""main"">
-<tr><th id=""main"">(E + P - N) / N</th><th id=""main"">Sum</th>
-<th id=""main"">E + P - N</th><th id=""main"">Sum</th>
-<th id=""main"">N</th><th id=""main"">Sum</th>
-<th id=""main"">Externals</th><th id=""main"">Max</th>
+<tr><th id=""main"">(E + P - N) / N</th><th id=""main""></th>
+<th id=""main"">E + P - N</th><th id=""main""></th>
+<th id=""main"">N</th><th id=""main""></th>
+<th id=""main"">Externals</th><th id=""main""></th>
+<th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">Section</th></tr>
+<tr><th id=""main"">Value</th><th id=""main"">Sum</th>
+<th id=""main"">Value</th><th id=""main"">Sum</th>
+<th id=""main"">Value</th><th id=""main"">Sum</th>
+<th id=""main"">Count</th><th id=""main"">Max</th>
+<th id=""main"">Sum</th><th id=""main"">Max</th><th id=""main"">Average</th>
+<th id=""main""></th></tr>
 ");
             var mapping = new Dictionary<string, int>();
 
@@ -186,6 +193,9 @@ The following Max refers to the maximum of that value and the value at any child
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[2]));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[rows[i].Complexity.Branch].Merged.Count));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[rows[i].Complexity.Branch].MaxInTree));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].SumOverTree));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].MaxInTree));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].Average()));
                 file.Write(string.Format("<td id=\"main\"><a href=\"{0}#section{1}\">{2}</a></td>", fileName, i, labels[0]));
                 file.Write("</tr>\n");
                 mapping[labels[0]] = i;
@@ -205,6 +215,29 @@ The following Max refers to the maximum of that value and the value at any child
                 }
 
                 file.Write(string.Format("<h2><a id=\"section{0}\"></a>{1}</h2>\n", i, name));
+
+                Dictionary<string, int> locs = new Dictionary<string, int>();
+                foreach (var child in branch.Children)
+                {
+                    if (child.LOC == 0)
+                    {
+                        continue;
+                    }
+
+                    locs[child.Path(sep)] = child.LOC;
+                }
+
+                if (locs.Count > 0)
+                {
+                    file.Write("<table>\n");
+                    file.Write(string.Format("<tr id=\"main\"><th>Dependency</th><th>SLOC</th></tr>\n"));
+                    foreach (var pair in locs.OrderByDescending(o => o.Value))
+                    {
+                        file.Write(string.Format("<tr><td>{0}</td><td align=\"right\">{1}</td></tr>\n", pair.Key, pair.Value));
+                    }
+
+                    file.Write("</table>\n<p/>\n");
+                }
 
                 if (dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
                 {
