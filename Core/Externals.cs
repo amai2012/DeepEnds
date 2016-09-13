@@ -40,12 +40,12 @@ namespace DeepEnds.Core
             this.Merged = new List<Dependency>();
         }
 
-        public void SetMax()
+        private void SetMax()
         {
             this.MaxInTree = this.Merged.Count;
         }
 
-        public void Add(Dependency dep)
+        private void Add(Dependency dep)
         {
             if (this.Merged.Contains(dep))
             {
@@ -60,7 +60,7 @@ namespace DeepEnds.Core
             this.Merged.Add(dep);
         }
 
-        public void Add(Externals externals)
+        private void Add(Externals externals)
         {
             foreach (var dep in externals.Merged)
             {
@@ -76,16 +76,19 @@ namespace DeepEnds.Core
 
         public static void Assemble(Dependency dependency, Dictionary<Dependency, Externals> externals)
         {
+            var ext = new Externals(dependency);
+            externals[dependency] = ext;
+
             foreach (var dep in dependency.Dependencies)
             {
-                externals[dependency].Add(dep);
+                ext.Add(dep);
             }
 
-            externals[dependency].SetMax();
+            ext.SetMax();
 
             foreach (var child in dependency.Children)
             {
-                externals[dependency].Add(externals[child]);
+                ext.Add(externals[child]);
             }
         }
     }

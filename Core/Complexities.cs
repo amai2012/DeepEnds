@@ -184,8 +184,8 @@ The following Max refers to the maximum of that value and the value at any child
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[4]));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[1]));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", labels[2]));
-                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.ExternalDependencies[rows[i].Complexity.Branch].Merged.Count));
-                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.ExternalDependencies[rows[i].Complexity.Branch].MaxInTree));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[rows[i].Complexity.Branch].Merged.Count));
+                file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[rows[i].Complexity.Branch].MaxInTree));
                 file.Write(string.Format("<td id=\"main\"><a href=\"{0}#section{1}\">{2}</a></td>", fileName, i, labels[0]));
                 file.Write("</tr>\n");
                 mapping[labels[0]] = i;
@@ -206,11 +206,11 @@ The following Max refers to the maximum of that value and the value at any child
 
                 file.Write(string.Format("<h2><a id=\"section{0}\"></a>{1}</h2>\n", i, name));
 
-                if (dependencies.ExternalDependencies[branch].Merged.Count > 0)
+                if (dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
                 {
                     file.Write("<table>\n");
                     file.Write(string.Format("<tr id=\"main\"><th>External dependencies</th></tr>\n"));
-                    foreach (var dep in dependencies.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(sep)))
+                    foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(sep)))
                     {
                         file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(sep)));
                     }
