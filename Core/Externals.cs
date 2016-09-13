@@ -73,5 +73,20 @@ namespace DeepEnds.Core
                 this.MaxInTree = num;
             }
         }
+
+        public static void Assemble(Dependency dependency, Dictionary<Dependency, Externals> externals)
+        {
+            foreach (var dep in dependency.Dependencies)
+            {
+                externals[dependency].Add(dep);
+            }
+
+            externals[dependency].SetMax();
+
+            foreach (var child in dependency.Children)
+            {
+                externals[dependency].Add(externals[child]);
+            }
+        }
     }
 }

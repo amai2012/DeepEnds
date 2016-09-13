@@ -47,17 +47,7 @@ namespace DeepEnds.Core.Linked
                 return;
             }
 
-            foreach (var dep in dependency.Dependencies)
-            {
-                this.externals[dependency].Add(dep);
-            }
-
-            this.externals[dependency].SetMax();
-
-            foreach (var child in dependency.Children)
-            {
-                this.externals[dependency].Add(this.externals[child]);
-            }
+            Externals.Assemble(dependency, this.externals);
 
             foreach (var child in dependency.Children)
             {
