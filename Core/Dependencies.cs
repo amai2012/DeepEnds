@@ -30,22 +30,18 @@ namespace DeepEnds.Core.Linked
 
     public class Dependencies
     {
-        public Dictionary<Dependency, Links> Links { get; }
-
         public Assemble Assembled { get; set; }
 
         public Dependency Root { get; }
 
         public Dependencies()
         {
-            this.Links = new Dictionary<Dependency, Links>();
             this.Root = this.Create(string.Empty, null);
         }
 
         public Dependency Create(string name, Dependency parent)
         {
             var dep = new Dependency(name, parent);
-            this.Links[dep] = new Links(dep);
             return dep;
         }
 
@@ -94,13 +90,13 @@ namespace DeepEnds.Core.Linked
 
         public void Assemble()
         {
-            this.Assembled = new Assemble(this.Links);
+            this.Assembled = new Assemble();
             this.Assembled.Visit(this.Root);
         }
 
         public void Poach(Dependency branch, Dependency[] branches)
         {
-            var clear = new ClearDependencies(this.Links);
+            var clear = new ClearDependencies(this.Assembled.Linkings);
             clear.Visit(branch);
             foreach (var child in branches)
             {

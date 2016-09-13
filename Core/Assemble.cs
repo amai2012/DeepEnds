@@ -28,13 +28,13 @@ namespace DeepEnds.Core.Linked
 
     public class Assemble : DependencyWalker
     {
-        private Dictionary<Dependency, Links> links;
+        public Dictionary<Dependency, Links> Linkings { get; }
 
         public Dictionary<Dependency, Externals> ExternalDependencies { get; }
 
-        public Assemble(Dictionary<Dependency, Links> links)
+        public Assemble()
         {
-            this.links = links;
+            this.Linkings = new Dictionary<Dependency, Links>();
             this.ExternalDependencies = new Dictionary<Dependency, Externals>();
         }
 
@@ -42,45 +42,9 @@ namespace DeepEnds.Core.Linked
         {
             base.Visit(dependency);
 
-            if (this.links[dependency].Dependencies.Count != 0)
-            {
-                return;
-            }
-
             Externals.Assemble(dependency, this.ExternalDependencies);
 
-            foreach (var child in dependency.Children)
-            {
-                foreach (var dep in child.Dependencies)
-                {
-                    this.links[child].Add(dep);
-                }
-
-                foreach (var dep in this.links[child].Dependencies)
-                {
-                    this.links[dependency].Add(dep);
-                }
-            }
-
-            foreach (var child in dependency.Children)
-            {
-                foreach (var link in this.links[child].Dependencies)
-                {
-                    var dep = link.FindChild(dependency);
-                    if (dep == null || dep == child)
-                    {
-                        continue;
-                    }
-
-                    var links = this.links[child];
-                    if (links.Interlinks.Contains(dep))
-                    {
-                        continue;
-                    }
-
-                    links.Interlinks.Add(dep);
-                }
-            }
+            Links.Assemble(dependency, this.Linkings);
         }
     }
 }

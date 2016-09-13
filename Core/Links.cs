@@ -48,5 +48,43 @@ namespace DeepEnds.Core
                 this.Dependencies.Add(dependency);
             }
         }
+
+        public static void Assemble(Dependency dependency, Dictionary<Dependency, Links> links)
+        {
+            links[dependency] = new Links(dependency);
+
+            foreach (var child in dependency.Children)
+            {
+                foreach (var dep in child.Dependencies)
+                {
+                    links[child].Add(dep);
+                }
+
+                foreach (var dep in links[child].Dependencies)
+                {
+                    links[dependency].Add(dep);
+                }
+            }
+
+            foreach (var child in dependency.Children)
+            {
+                var aChild = links[child];
+                foreach (var link in aChild.Dependencies)
+                {
+                    var dep = link.FindChild(dependency);
+                    if (dep == null || dep == child)
+                    {
+                        continue;
+                    }
+
+                    if (aChild.Interlinks.Contains(dep))
+                    {
+                        continue;
+                    }
+
+                    aChild.Interlinks.Add(dep);
+                }
+            }
+        }
     }
 }

@@ -168,7 +168,7 @@ The following Max refers to the maximum of that value and the value at any child
 ");
             var mapping = new Dictionary<string, int>();
 
-            var rows = Complexities.Factory(dependencies.Root, dependencies.Links);
+            var rows = Complexities.Factory(dependencies.Root, dependencies.Assembled.Linkings);
             for (int i = 0; i < rows.Count; ++i)
             {
                 var labels = rows[i].StatusStrings(sep);
@@ -221,7 +221,7 @@ The following Max refers to the maximum of that value and the value at any child
                 file.Write("<table>\n");
                 foreach (var child in branch.Children)
                 {
-                    foreach (var dep in dependencies.Links[child].Interlinks)
+                    foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
                     {
                         var first = child.Path(sep);
                         if (mapping.Keys.Contains(first))

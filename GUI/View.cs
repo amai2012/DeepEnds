@@ -148,7 +148,7 @@ namespace DeepEnds.GUI
                 return;
             }
 
-            var assemble = DeepEnds.DGML.Assemble.Factory(this.dependencies.Root, this.dependencies.Links, this.sources, true);
+            var assemble = DeepEnds.DGML.Assemble.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
             assemble.Save(fileName);
         }
     }
