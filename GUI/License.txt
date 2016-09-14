@@ -1,29 +1,21 @@
-DeepEnds version 1.0
+DeepEnds version 1.4
 ====================
 
 Copyright (c) 2016 Zebedee Mason
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+ The author's copyright is expressed through the following notice, thus
+ giving effective rights to copy and use this software to anyone, as shown
+ in the license text.
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+NOTICE:
+ This software is released under the terms of the GNU Lesser General Public
+ license; a copy of the text has been released with this package (see file
+ LICENSE, where the license text also appears), and can be found on the
+ GNU web site, at the following address:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+      http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
-Furthermore this software depends on the following third party libraries which are independently licenced
-
-* Microsoft .NET framework
-* The .NET Compiler Platform ("Roslyn") - licenced under the Apache License version 2.0 - https://github.com/dotnet/roslyn/blob/master/License.txt
-* Mono.Cecil - licenced as https://github.com/jbevain/cecil/blob/master/LICENSE.txt
+ Please refer to the license text for any license information. This notice
+ has to be considered part of the license, and should be kept on every copy
+ integral or modified, of the source files. The removal of the reference to
+ the license will be considered an infringement of the license itself.
