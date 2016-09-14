@@ -63,6 +63,7 @@
     <Compile Include="SLOC.cs" />
     <Compile Include="SourceProvider.cs" />
     <Compile Include="Sources.cs" />
+    <Compile Include="Structure.cs" />
     <Compile Include="Summed.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

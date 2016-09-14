@@ -165,12 +165,14 @@ The following Max refers to the maximum of that value and the value at any child
 <th id=""main"">N</th><th id=""main""></th>
 <th id=""main"">Externals</th><th id=""main""></th>
 <th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th>
+<th id=""main"">Cycle</th>
 <th id=""main"">Section</th></tr>
 <tr><th id=""main"">Value</th><th id=""main"">Sum</th>
 <th id=""main"">Value</th><th id=""main"">Sum</th>
 <th id=""main"">Value</th><th id=""main"">Sum</th>
 <th id=""main"">Count</th><th id=""main"">Max</th>
 <th id=""main"">Sum</th><th id=""main"">Max</th><th id=""main"">Average</th>
+<th id=""main""></th>
 <th id=""main""></th></tr>
 ");
             var mapping = new Dictionary<string, int>();
@@ -196,6 +198,15 @@ The following Max refers to the maximum of that value and the value at any child
                 file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].SumOverTree));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].MaxInTree));
                 file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[rows[i].Complexity.Branch].Average()));
+                if (dependencies.Assembled.Structures[rows[i].Complexity.Branch].HasCycle)
+                {
+                    file.Write("<td id=\"main\">Cycle</td>");
+                }
+                else
+                {
+                    file.Write("<td id=\"main\"></td>");
+                }
+
                 file.Write(string.Format("<td id=\"main\"><a href=\"{0}#section{1}\">{2}</a></td>", fileName, i, labels[0]));
                 file.Write("</tr>\n");
                 mapping[labels[0]] = i;
@@ -283,6 +294,8 @@ The following Max refers to the maximum of that value and the value at any child
                 }
 
                 file.Write("</table>\n");
+
+                dependencies.Assembled.Structures[rows[i].Complexity.Branch].Write(file);
             }
 
             file.Write(@"</body>
