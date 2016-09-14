@@ -32,7 +32,7 @@ namespace DeepEnds.GUI
     /// </summary>
     public partial class DeepEndsControl : UserControl
     {
-        private View view;
+        private DeepEnds.Console.View view;
         private bool read;
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace DeepEnds.GUI
         {
             this.InitializeComponent();
 
-            this.view = new View();
+            this.view = new DeepEnds.Console.View();
             this.writeButton.IsEnabled = false;
             this.read = false;
         }
@@ -116,7 +116,7 @@ namespace DeepEnds.GUI
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
         private void read_Click(object sender, RoutedEventArgs e)
         {
-            var read = this.view.Read(this.inputFiles.Text);
+            var read = this.view.Read(this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
             if (read)
             {
                 this.writeButton.IsEnabled = this.outputFile.Text != string.Empty;

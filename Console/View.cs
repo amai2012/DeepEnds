@@ -21,14 +21,14 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.GUI
+namespace DeepEnds.Console
 {
     using System;
     using System.Collections.Generic;
     using DeepEnds.Core;
     using DeepEnds.Core.Linked;
 
-    internal class View
+    public class View
     {
         private Dependencies dependencies;
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> sets;
@@ -72,12 +72,12 @@ namespace DeepEnds.GUI
             }
         }
 
-        internal bool Read(string lines)
+        public bool Read(string[] lines)
         {
             this.Messages = new System.Text.StringBuilder("Reading\n");
             var fileNames = new List<KeyValuePair<string, string>>();
             var extensions = new List<string>();
-            foreach (var fileName in lines.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var fileName in lines)
             {
                 this.Files(fileName, string.Empty, fileNames, extensions, this.Messages);
             }
@@ -139,7 +139,7 @@ namespace DeepEnds.GUI
             return true;
         }
 
-        internal void Write(string fileName)
+        public void Write(string fileName)
         {
             var ext = System.IO.Path.GetExtension(fileName);
             if (ext == ".html")
