@@ -1,3 +1,7 @@
+DeepEnds version 1.4.1
+========================
+* Allow use of .. in include directories for C++
+
 DeepEnds version 1.4.0
 ====================
 * Reporting of the structure matrix, whether it has cycles, SLOC and the number of external dependencies

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="DeepEnds.Zebedee Mason.2cdf4910-bf53-4266-baa4-95d2960e902a" Version="1.4" Language="en-US" Publisher="Zebedee Mason" />
+    <Identity Id="DeepEnds.Zebedee Mason.2cdf4910-bf53-4266-baa4-95d2960e902a" Version="1.4.1" Language="en-US" Publisher="Zebedee Mason" />
     <DisplayName>DeepEnds</DisplayName>
     <Description xml:space="preserve">Dive into architecture with the Visual Studio extension to perform dependency analysis of Visual C++ and C# projects.</Description>
     <MoreInfo>http://www.cyclerouter.co.uk/sweng.html</MoreInfo>

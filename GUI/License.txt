@@ -1,5 +1,5 @@
-DeepEnds version 1.4
-====================
+DeepEnds version 1.4.1
+========================
 
 Copyright (c) 2016 Zebedee Mason
 

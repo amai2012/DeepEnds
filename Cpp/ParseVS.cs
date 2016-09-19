@@ -79,7 +79,8 @@ namespace DeepEnds.Cpp
                 {
                     while (reader.ReadToFollowing("AdditionalIncludeDirectories"))
                     {
-                        foreach (var inc in reader.ReadElementContentAsString().Split(';'))
+                        var line = reader.ReadElementContentAsString();
+                        foreach (var inc in line.Split(';'))
                         {
                             if (inc == "%(AdditionalIncludeDirectories)")
                             {
@@ -89,6 +90,12 @@ namespace DeepEnds.Cpp
                             var include = inc;
                             include = include.Replace("$(ProjectDir)", direc + "\\");
                             include = include.Replace("$(SolutionDir)", slndir + "\\");
+                            if (include.Length > 1 && include.Substring(0, 2) == "..")
+                            {
+                                include = System.IO.Path.Combine(direc, include);
+                            }
+
+                            include = System.IO.Path.GetFullPath(include);
                             if (!includes.Contains(include))
                             {
                                 includes.Add(include);
