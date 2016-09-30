@@ -4,7 +4,7 @@
 
 DeepEnds seeks to bridge the code-model gap as described by [George Fairbanks](http://georgefairbanks.com/book/), and thus may be considered an Architecture Development Environment. The software accompanies a series of articles on CodeProject:
 * [As-Is Software Architecture](http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture)
-* [Dive into Architecture with DeepEnds](Doc/userguide.html) - now withdrawn
+* [Dive into Architecture with DeepEnds](http://htmlpreview.github.com/?https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html) - now withdrawn
 * [Why Favour the Cyclomatic Number?](http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number)
 
 The basis of the software is the manipulation of dependencies between units of code. The directly supported units are
