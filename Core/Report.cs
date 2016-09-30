@@ -76,6 +76,7 @@ th {
 <p>The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.</p>
 <p>Externals refers to the number of dependencies which aren't childen.
 The following Max refers to the maximum of that value and the value at any child nodes.</p>
+</div>
 ");
         }
 
@@ -134,8 +135,7 @@ The following Max refers to the maximum of that value and the value at any child
 
         private void TableBottom()
         {
-            this.file.Write(@" </table>
-</div>
+            this.file.Write(@" </table><p/>
 ");
         }
 
@@ -286,6 +286,22 @@ The following Max refers to the maximum of that value and the value at any child
                 var branch = rows[i].Complexity.Branch;
 
                 this.Section(branch, i);
+
+                this.TableTop();
+                this.TableRow(rows[i], i, dependencies);
+                foreach (var child in branch.Children.OrderBy(o => o.Name))
+                {
+                    var key = child.Path(this.sep);
+                    if (!mapping.ContainsKey(key))
+                    {
+                        continue;
+                    }
+
+                    var index = mapping[key];
+                    this.TableRow(rows[index], index, dependencies);
+                }
+
+                this.TableBottom();
 
                 this.DependencyTable(branch);
 
