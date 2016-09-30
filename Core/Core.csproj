@@ -60,6 +60,7 @@
     <Compile Include="Links.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report.cs" />
     <Compile Include="SLOC.cs" />
     <Compile Include="SourceProvider.cs" />
     <Compile Include="Sources.cs" />
