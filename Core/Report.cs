@@ -78,6 +78,7 @@ th {
 The following Max refers to the maximum of that value and the value at any child nodes.</p>
 </div>
 ");
+            this.file.Write(string.Format("Skip to <a href=\"{0}#section0\">Top level</a><p/>\n", this.fileName));
         }
 
         private void TableTop()
@@ -161,6 +162,11 @@ The following Max refers to the maximum of that value and the value at any child
 
             index = mapping[branch.Parent];
             name = branch.Parent.Path(this.sep);
+            if (name == string.Empty)
+            {
+                name = "Top level";
+            }
+
             this.file.Write(string.Format("Up to <a href=\"{0}#section{1}\">{2}</a><p/>", this.fileName, index, name));
         }
 
