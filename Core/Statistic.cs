@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="Summed.cs" company="Zebedee Mason">
+// <copyright file="Statistic.cs" company="Zebedee Mason">
 //     Copyright (c) 2016 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
@@ -21,40 +21,31 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Complex
+namespace DeepEnds.Core
 {
-    public class Summed
+    public class Statistic
     {
-        public int SumN { get; set; }
+        public int MaxInTree { get; set; }
 
-        public int SumEPN { get; set; }
+        public int SumOverTree { get; set; }
 
-        public double SumEPNN { get; set; }
+        public int Value { get; set; }
 
-        public Complexity Complexity { get; }
-
-        public Summed(Complexity complexity)
+        public Statistic(int value)
         {
-            if (complexity != null)
-            {
-                this.SumN = complexity.N;
-                this.SumEPN = complexity.EPN;
-                this.SumEPNN = complexity.EPNN;
-            }
-            else
-            {
-                this.SumN = 0;
-                this.SumEPN = 0;
-                this.SumEPNN = 0.0;
-            }
-
-            this.Complexity = complexity;
+            this.Value = value;
+            this.SumOverTree = value;
+            this.MaxInTree = value;
         }
 
-        public string[] StatusStrings(string sep)
+        public void AddChild(Statistic child)
         {
-            var strings = this.Complexity.StatusStrings(sep);
-            return new string[] { strings[0], strings[1], this.SumN.ToString(), strings[2], this.SumEPN.ToString(), strings[3], string.Format("{0:0.00}", this.SumEPNN) };
+            this.SumOverTree += child.SumOverTree;
+
+            if (child.MaxInTree > this.MaxInTree)
+            {
+                this.MaxInTree = child.MaxInTree;
+            }
         }
     }
 }

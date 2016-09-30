@@ -29,17 +29,17 @@ namespace DeepEnds.Core.Complex
 
     public class Complexities : DependencyWalker
     {
-        public List<Summed> List { get; }
+        public List<Complexity> List { get; }
 
         private Dictionary<Dependency, Links> links;
 
-        private Dictionary<Dependency, Summed> summed;
+        private Dictionary<Dependency, Complexity> summed;
 
         public Complexities(Dictionary<Dependency, Links> links)
         {
-            this.List = new List<Summed>();
+            this.List = new List<Complexity>();
             this.links = links;
-            this.summed = new Dictionary<Dependency, Summed>();
+            this.summed = new Dictionary<Dependency, Complexity>();
         }
 
         public override void Visit(Dependency dependency)
@@ -47,27 +47,33 @@ namespace DeepEnds.Core.Complex
             base.Visit(dependency);
             if (dependency.Children.Count != 0)
             {
-                var item = new Summed(Complexities.Complexity(dependency, this.links));
+                var item = Complexities.Complexity(dependency, this.links);
                 this.List.Add(item);
                 this.summed[dependency] = item;
                 foreach (var child in dependency.Children)
                 {
-                    item.SumN += this.summed[child].SumN;
-                    item.SumEPN += this.summed[child].SumEPN;
-                    item.SumEPNN += this.summed[child].SumEPNN;
+                    var complexity = this.summed[child];
+                    if (complexity == null)
+                    {
+                        continue;
+                    }
+
+                    item.Ns.AddChild(complexity.Ns);
+                    item.EPNs.AddChild(complexity.EPNs);
+                    item.EPNNs.AddChild(complexity.EPNNs);
                 }
             }
             else
             {
-                this.summed[dependency] = new Summed(null);
+                this.summed[dependency] = new Complexity(0, 0, dependency);
             }
         }
 
-        public static List<Summed> Factory(Dependency root, Dictionary<Dependency, Links> links)
+        public static List<Complexity> Factory(Dependency root, Dictionary<Dependency, Links> links)
         {
             var complexities = new Complexities(links);
             complexities.Visit(root);
-            return complexities.List.OrderByDescending(o => o.Complexity.EPNN).ToList();
+            return complexities.List.OrderByDescending(o => o.EPNNs.Value).ToList();
         }
 
         public static Complexity Complexity(Dependency branch, Dictionary<Dependency, Links> links)

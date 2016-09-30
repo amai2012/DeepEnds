@@ -27,35 +27,27 @@ namespace DeepEnds.Core.Complex
 
     public class Complexity
     {
-        public int N { get;  }
+        public Statistic Ns { get; }
 
-        public int EPN { get; }
+        public Statistic EPNs { get; }
 
-        public double EPNN
-        {
-            get
-            {
-                if (this.N == 0)
-                {
-                    return 0.0;
-                }
-
-                return this.EPN / (1.0 * this.N);
-            }
-        }
+        public Statistic EPNNs { get; }
 
         public Dependency Branch { get; }
 
         public Complexity(int n, int epn, Dependency branch)
         {
-            this.N = n;
-            this.EPN = epn;
             this.Branch = branch;
-        }
 
-        public string[] StatusStrings(string sep)
-        {
-            return new string[] { this.Branch.Path(sep), this.N.ToString(), this.EPN.ToString(), string.Format("{0:0.00}", this.EPNN) };
+            double epnn = 0;
+            if (n != 0)
+            {
+                epnn = epn / (n * 0.0001);
+            }
+
+            this.Ns = new Statistic(n);
+            this.EPNs = new Statistic(epn);
+            this.EPNNs = new Statistic((int)epnn);
         }
     }
 }
