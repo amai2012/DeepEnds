@@ -139,7 +139,7 @@ The following Max refers to the maximum of that value and the value at any child
 ");
         }
 
-        private void Section(Dependency branch, int index)
+        private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping)
         {
             var name = branch.Path(this.sep);
             if (name == string.Empty)
@@ -148,6 +148,15 @@ The following Max refers to the maximum of that value and the value at any child
             }
 
             this.file.Write(string.Format("<h2><a id=\"section{0}\"></a>{1}</h2>\n", index, name));
+
+            if (branch.Parent == null)
+            {
+                return;
+            }
+
+            index = mapping[branch.Parent];
+            name = branch.Parent.Path(this.sep);
+            this.file.Write(string.Format("Up to <a href=\"{0}#section{1}\">{2}</a><p/>", this.fileName, index, name));
         }
 
         private void DependencyTable(Dependency branch)
@@ -191,7 +200,7 @@ The following Max refers to the maximum of that value and the value at any child
             }
         }
 
-        private void LinksTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<string, int> mapping)
+        private void LinksTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<Dependency, int> mapping)
         {
             this.file.Write("<table>\n");
             foreach (var child in branch.Children)
@@ -199,15 +208,15 @@ The following Max refers to the maximum of that value and the value at any child
                 foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
                 {
                     var first = child.Path(this.sep);
-                    if (mapping.Keys.Contains(first))
+                    if (mapping.Keys.Contains(child))
                     {
-                        first = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[first], first);
+                        first = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[child], first);
                     }
 
                     var second = dep.Path(this.sep);
-                    if (mapping.Keys.Contains(second))
+                    if (mapping.Keys.Contains(dep))
                     {
-                        second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[second], second);
+                        second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[dep], second);
                     }
 
                     this.file.Write(string.Format("<tr id=\"main\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
@@ -267,10 +276,10 @@ The following Max refers to the maximum of that value and the value at any child
 
             var rows = Complexities.Factory(dependencies.Root, dependencies.Assembled.Linkings);
 
-            var mapping = new Dictionary<string, int>();
+            var mapping = new Dictionary<Dependency, int>();
             for (int i = 0; i < rows.Count; ++i)
             {
-                mapping[rows[i].Complexity.Branch.Path(this.sep)] = i;
+                mapping[rows[i].Complexity.Branch] = i;
             }
 
             this.TableTop();
@@ -285,19 +294,18 @@ The following Max refers to the maximum of that value and the value at any child
             {
                 var branch = rows[i].Complexity.Branch;
 
-                this.Section(branch, i);
+                this.Section(branch, i, mapping);
 
                 this.TableTop();
                 this.TableRow(rows[i], i, dependencies);
                 foreach (var child in branch.Children.OrderBy(o => o.Name))
                 {
-                    var key = child.Path(this.sep);
-                    if (!mapping.ContainsKey(key))
+                    if (!mapping.ContainsKey(child))
                     {
                         continue;
                     }
 
-                    var index = mapping[key];
+                    var index = mapping[child];
                     this.TableRow(rows[index], index, dependencies);
                 }
 
