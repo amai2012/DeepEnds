@@ -1,3 +1,8 @@
+DeepEnds version 1.5
+========================
+* Report the max for N, E + P - N and (E + P - N) / N
+* Report the stats at each level
+
 DeepEnds version 1.4.1
 ========================
 * Allow use of .. in include directories for C++
