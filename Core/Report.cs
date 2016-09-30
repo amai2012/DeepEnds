@@ -83,16 +83,16 @@ The following Max refers to the maximum of that value and the value at any child
         private void TableTop()
         {
             this.file.Write(@"<table id=""main"">
-<tr><th id=""main"">(E + P - N) / N</th><th id=""main""></th>
-<th id=""main"">E + P - N</th><th id=""main""></th>
-<th id=""main"">N</th><th id=""main""></th>
+<tr><th id=""main"">(E + P - N) / N</th><th id=""main""></th><th id=""main""></th>
+<th id=""main"">E + P - N</th><th id=""main""></th><th id=""main""></th>
+<th id=""main"">N</th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">Externals</th><th id=""main""></th>
 <th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">Cycle</th>
 <th id=""main"">Section</th></tr>
-<tr><th id=""main"">Value</th><th id=""main"">Sum</th>
-<th id=""main"">Value</th><th id=""main"">Sum</th>
-<th id=""main"">Value</th><th id=""main"">Sum</th>
+<tr><th id=""main"">Value</th><th id=""main"">Sum</th><th id=""main"">Max</th>
+<th id=""main"">Value</th><th id=""main"">Sum</th><th id=""main"">Max</th>
+<th id=""main"">Value</th><th id=""main"">Sum</th><th id=""main"">Max</th>
 <th id=""main"">Count</th><th id=""main"">Max</th>
 <th id=""main"">Sum</th><th id=""main"">Max</th><th id=""main"">Average</th>
 <th id=""main""></th>
@@ -108,19 +108,24 @@ The following Max refers to the maximum of that value and the value at any child
                 labels[0] = "Top level";
             }
 
+            var branch = row.Complexity.Branch;
+
             this.file.Write("<tr>");
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[5]));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[6]));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", string.Empty));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[3]));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[4]));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", string.Empty));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[1]));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", labels[2]));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[row.Complexity.Branch].Merged.Count));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[row.Complexity.Branch].MaxInTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[row.Complexity.Branch].SumOverTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[row.Complexity.Branch].MaxInTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[row.Complexity.Branch].Average()));
-            if (dependencies.Assembled.Structures[row.Complexity.Branch].HasCycle)
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", string.Empty));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].Merged.Count));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].SumOverTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].MaxInTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].Average()));
+            if (dependencies.Assembled.Structures[branch].HasCycle)
             {
                 this.file.Write("<td id=\"main\">Cycle</td>");
             }
