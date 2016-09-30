@@ -229,7 +229,27 @@ The following Max refers to the maximum of that value and the value at any child
 
         private void Matrix(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            dependencies.Assembled.Structures[branch].Write(this.file);
+            var list = dependencies.Assembled.Structures[branch].Extract();
+
+            if (list.Count == 0)
+            {
+                return;
+            }
+
+            this.file.Write("<p/>\n<table>\n");
+            foreach (var item in list)
+            {
+                this.file.Write(string.Format("<tr>"));
+                this.file.Write(string.Format("<th>{0}</th>\n", item.Key));
+                foreach (var c in item.Value)
+                {
+                    this.file.Write(string.Format("<td style=\"width: 6px\">{0}</td>\n", c));
+                }
+
+                this.file.Write(string.Format("</tr>\n"));
+            }
+
+            this.file.Write("</table>\n");
         }
 
         private void Bottom()

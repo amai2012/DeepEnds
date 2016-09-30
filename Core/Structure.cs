@@ -148,38 +148,37 @@ namespace DeepEnds.Core
             this.order = reorder.ToArray();
         }
 
-        public void Write(System.IO.StreamWriter file)
+        public List<KeyValuePair<string, string>> Extract()
         {
             var length = this.parent.Children.Count;
-            if (length == 0)
-            {
-                return;
-            }
 
-            file.Write("<p/>\n<table>\n");
+            var list = new List<KeyValuePair<string, string>>();
+
             for (int i = 0; i < length; ++i)
             {
-                file.Write(string.Format("<tr>"));
-                file.Write(string.Format("<th>{0}</th>\n", this.parent.Children[this.order[i]].Name));
+                var row = string.Empty;
                 for (int j = 0; j < length; ++j)
                 {
                     var entry = string.Empty;
                     if (i == j)
                     {
-                        entry = "\\";
+                        row += '\\';
                     }
                     else if (this.matrix[this.order[i], this.order[j]] == 1)
                     {
-                        entry = "1";
+                        row += '1';
                     }
-
-                    file.Write(string.Format("<td>{0}</td>\n", entry));
+                    else
+                    {
+                        row += ' ';
+                    }
                 }
 
-                file.Write(string.Format("</tr>\n"));
+                var pair = new KeyValuePair<string, string>(this.parent.Children[this.order[i]].Name, row);
+                list.Add(pair);
             }
 
-            file.Write("</table>\n");
+            return list;
         }
 
         public static void Assemble(Dependency dependency, Dictionary<Dependency, Links> links, Dictionary<Dependency, Structure> structures)
