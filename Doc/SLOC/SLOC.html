@@ -1,0 +1,305 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Counting lines of code</title>
+</head>
+<body>
+
+<div>
+
+<span id="ArticleContent">
+
+<h2>Introduction</h2>
+
+<p>When monitoring the health of a codebase one smell is file size. Excessive file size may indicate, for example, breach of the Single Responsibility principle of SOLID. So it is tempting to track the maximum file size over the hierarchy of the project.</p>
+
+<p>Unfortunately this strategy necessarily finds the outliers. The reason a file may be bloated is that it contains boilerplate in which case the tracking of this information is of no use to the developer. It&nbsp;is possible that small file size is also of interest.&nbsp;For example books for&nbsp;learning C in the early 90&#39;s showed the wonders that could be achieved in only a single line of clever code. Unfortunately all the synonyms for clever that should rather be used are too rude to repeat here.</p>
+
+<p>So how to track meaningful statistics for the number of lines of code in a file (or a class, etc.)? By using Statistics! Specifically by reporting a confidence interval, i.e. the minimum and maximum values that the variable is&nbsp;expected&nbsp;to lie between with a particular probability. For example a weather forecaster may state that there is a 90% chance that there will be between 2cm and 10cm of rain tomorrow.</p>
+
+<h2>Fitting a probability distribution</h2>
+
+<p>To calculate the confidence interval the area under a probability distribution is integrated. It is known that the number of lines of code (LOC) in a file is a non-negative integer and it is expected that the value of LOC may be shared by some files and that between different values of LOC that are found in the project there will be intermediate values that no file has. Thus it can be&nbsp;deduced that a continuous probability distribution over the semi-infinite real line is required.</p>
+
+<p>Things are much easier to assess be examining some data, for example the files from an ARM build of the Linux kernel 4.6. This comprises of&nbsp;<code>19912871 </code>lines (just a basic count no filtering of blank lines / comments) in&nbsp;<code>42186 </code>files, which gives a mean of <code>472 </code>lines per file. The largest file contains <code>33510 </code>lines. Chopping the interval from <code>0</code> to <code>34000 </code>into <code>100 </code>bins and counting the number of files that are sorted into each bin (the first bin contains a count of all files with between <code>1</code> and <code>340 </code>lines). This constructs the&nbsp;following histogram,</p>
+
+<p><img alt="Uniform bins" src="histogram1.png" /></p>
+
+<p>It&#39;s going to be hard to fit a curve given that it is so steep so time to think again. Note that it looks like an exponential decay, also normally the number of lines is rounded to the nearest power of 10.&nbsp; So construct a histogram from a base 10 logarithm of the number of lines to produce the&nbsp;following,</p>
+
+<p><img alt="log10(LOC) histogram" src="histogram2.png" /></p>
+
+<p>By taking the logarithm the semi-infinite real line is mapped to the infinite real line, <code>[0, +inf) =&gt; (-inf, +inf)</code>, and thus to a different class of probability distributions. The histogram looks very much like a normal (a.k.a. Gauss or bell curve) distribution. Denoting the&nbsp;original random variable as X and the new one as <code>Y = log(X)</code> then define the mean as <code>Y_bar = sum(Y) / sum(1)</code> and the variance as <code>s^2 =&nbsp;sum( (Y -Y_bar)^2 ) / (sum(1) - 1)</code> where the sum is taken over the files. The 90% confidence interval, for a normal distribution, can then be calculated as <code>Y_bar +/-&nbsp;1.645 * s</code>, then take the exponential to return back to <code>X = 10^Y</code>.</p>
+
+<p>The particular numbers for the example data are:</p>
+
+<ul>
+	<li><code>Y_bar =&nbsp;2.260263</code></li>
+	<li><font color="#990000" face="Consolas, Courier New, Courier, mono"><span style="font-size: 14.6667px;">s =&nbsp;0.635845</span></font></li>
+	<li><code>Y_bar +/-&nbsp;1.645 * s =&nbsp;[1.214297, 3.306228]</code></li>
+	<li><code>10^Y_bar = 182</code></li>
+	<li><code>[10^1.214297, 10^3.306228] =&nbsp;[16, 2024]</code></li>
+</ul>
+
+<p>So the numbers suggest that the average file size is 182 lines and that it is expected that the files to vary between 16 and 2024 lines. Doing an actual comparison shows that 91% of the files are within the interval.</p>
+
+<ul>
+</ul>
+
+<h2>Implementation in software</h2>
+
+<p>The method has been implemented in the HTML reporting of my Software Architecture tool&nbsp;<a href="https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc">DeepEnds </a>(<a href="https://github.com/zebmason/DeepEnds/blob/master/Core/SLOC.cs">source code</a>). This allows running on some sample projects to evaluate usefulness. Looking at one level in a Visual C++ project hierarchy (section refers to the filter)</p>
+
+<table>
+	<tbody>
+		<tr>
+			<th style="text-align: left;">SLOC</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">Section</th>
+		</tr>
+		<tr>
+			<th style="text-align: left;">Sum</th>
+			<th style="text-align: left;">Lower</th>
+			<th style="text-align: left;">Expected</th>
+			<th style="text-align: left;">Upper</th>
+			<th style="text-align: left;">Max</th>
+			<th>&nbsp;</th>
+		</tr>
+		<tr>
+			<td>5060</td>
+			<td>6</td>
+			<td>28</td>
+			<td>130</td>
+			<td>469</td>
+			<td>FEA</td>
+		</tr>
+		<tr>
+			<td>3493</td>
+			<td>7</td>
+			<td>28</td>
+			<td>105</td>
+			<td>469</td>
+			<td>FEA\Core</td>
+		</tr>
+		<tr>
+			<td>472</td>
+			<td>9</td>
+			<td>33</td>
+			<td>114</td>
+			<td>93</td>
+			<td>FEA\Equations</td>
+		</tr>
+		<tr>
+			<td>522</td>
+			<td>6</td>
+			<td>36</td>
+			<td>195</td>
+			<td>189</td>
+			<td>FEA\FileIO</td>
+		</tr>
+		<tr>
+			<td>48</td>
+			<td>17</td>
+			<td>23</td>
+			<td>31</td>
+			<td>27</td>
+			<td>FEA\LinearSystem</td>
+		</tr>
+		<tr>
+			<td>237</td>
+			<td>12</td>
+			<td>47</td>
+			<td>178</td>
+			<td>101</td>
+			<td>FEA\Mesh</td>
+		</tr>
+		<tr>
+			<td>281</td>
+			<td>12</td>
+			<td>99</td>
+			<td>774</td>
+			<td>240</td>
+			<td>FEA\Solver</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>At the top level the numbers look fine, however it is seen that the ratio of upper to max for FEA\Solver is greater than 3. Examining that section it is seen to comprise of only two leaf nodes</p>
+
+<table>
+	<tbody>
+		<tr id="main">
+			<th style="text-align: left;">Dependency</th>
+			<th style="text-align: left;">SLOC</th>
+		</tr>
+		<tr>
+			<td>FEA\Solver\Solver.cpp</td>
+			<td align="right">240</td>
+		</tr>
+		<tr>
+			<td>FEA\Solver\Solver.h</td>
+			<td align="right">41</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Thus the great difference can be seen to be due to comparing files which are not expected to be of the same magnitude.</p>
+
+<p>Changing to&nbsp;a C# project and&nbsp;parsing&nbsp;with Roslyn (section refers to namespace)</p>
+
+<table>
+	<tbody>
+		<tr>
+			<th style="text-align: left;">SLOC</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">&nbsp;</th>
+			<th style="text-align: left;">Section</th>
+		</tr>
+		<tr>
+			<th style="text-align: left;">Sum</th>
+			<th style="text-align: left;">Lower</th>
+			<th style="text-align: left;">Expected</th>
+			<th style="text-align: left;">Upper</th>
+			<th style="text-align: left;">Max</th>
+			<th>&nbsp;</th>
+		</tr>
+		<tr>
+			<td>1751</td>
+			<td>5</td>
+			<td>25</td>
+			<td>118</td>
+			<td>189</td>
+			<td>DeepEnds</td>
+		</tr>
+		<tr>
+			<td>119</td>
+			<td>37</td>
+			<td>58</td>
+			<td>92</td>
+			<td>71</td>
+			<td>DeepEnds.Console</td>
+		</tr>
+		<tr>
+			<td>712</td>
+			<td>4</td>
+			<td>23</td>
+			<td>122</td>
+			<td>189</td>
+			<td>DeepEnds.Core</td>
+		</tr>
+		<tr>
+			<td>68</td>
+			<td>4</td>
+			<td>26</td>
+			<td>143</td>
+			<td>55</td>
+			<td>DeepEnds.Core.Complex</td>
+		</tr>
+		<tr>
+			<td>94</td>
+			<td>1</td>
+			<td>12</td>
+			<td>116</td>
+			<td>63</td>
+			<td>DeepEnds.Core.Dependent</td>
+		</tr>
+		<tr>
+			<td>71</td>
+			<td>6</td>
+			<td>19</td>
+			<td>64</td>
+			<td>44</td>
+			<td>DeepEnds.Core.Linked</td>
+		</tr>
+		<tr>
+			<td>112</td>
+			<td>3</td>
+			<td>26</td>
+			<td>181</td>
+			<td>59</td>
+			<td>DeepEnds.Cpp</td>
+		</tr>
+		<tr>
+			<td>284</td>
+			<td>5</td>
+			<td>23</td>
+			<td>104</td>
+			<td>132</td>
+			<td>DeepEnds.CSharp</td>
+		</tr>
+		<tr>
+			<td>253</td>
+			<td>6</td>
+			<td>28</td>
+			<td>126</td>
+			<td>132</td>
+			<td>DeepEnds.CSharp.ParseTree</td>
+		</tr>
+		<tr>
+			<td>61</td>
+			<td>61</td>
+			<td>61</td>
+			<td>61</td>
+			<td>61</td>
+			<td>DeepEnds.Decompile</td>
+		</tr>
+		<tr>
+			<td>65</td>
+			<td>65</td>
+			<td>65</td>
+			<td>65</td>
+			<td>65</td>
+			<td>DeepEnds.DGML</td>
+		</tr>
+		<tr>
+			<td>106</td>
+			<td>3</td>
+			<td>18</td>
+			<td>103</td>
+			<td>60</td>
+			<td>DeepEnds.GUI</td>
+		</tr>
+		<tr>
+			<td>292</td>
+			<td>5</td>
+			<td>23</td>
+			<td>109</td>
+			<td>136</td>
+			<td>DeepEnds.VBasic</td>
+		</tr>
+		<tr>
+			<td>261</td>
+			<td>6</td>
+			<td>29</td>
+			<td>133</td>
+			<td>136</td>
+			<td>DeepEnds.VBasic.ParseTree</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>It can be seen that the upper / max ratio is much better behaved at the lower levels but still not great.</p>
+
+<h2>Conclusions</h2>
+
+<p>The log-normal probability distribution has been shown to be appropriate to modelling the distribution of the number of lines of code in a project between its comprising files / classes. The usefulness of the confidence intervals only applies at the higher level in a hierarchy.</p>
+
+<h2>History</h2>
+
+<ul>
+	<li>2016/10/04: First release</li>
+</ul>
+</span>
+<!-- End Article -->
+
+
+
+
+</div> 
+</body>
+</html>

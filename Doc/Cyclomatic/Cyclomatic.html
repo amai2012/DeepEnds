@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Why Favour the Cyclomatic Number?</title>
+</head>
+<body>
+
+<div>
+
+<span id="ArticleContent">
+
+<h2>Introduction</h2>
+
+<p>I&#39;ve written a couple of codes to extract architecture information from source and written other articles for CodeProject to describe them. When refactoring my code, I find myself competing to optimise metrics over each iteration. Obviously, any system can be gamed and my choice of Cyclometric number as metric is because it has a number of invariances which stop the value changing under various refactorings.</p>
+
+<p>The Cyclomatic number of a graph is defined as <code>E + P &ndash; N</code> where <code>E</code> is the number of edges, <code>P</code> is the number of parts and <code>N</code> is the number of nodes. Given that there are no duplicate edges, the number varies from <code>0</code> to <code>N</code> times <code>(N-1)</code> for a digraph.</p>
+
+<h2>Examples</h2>
+
+<p>A basic digraph equivalent to a 3-layer architecture can be drawn as...</p>
+
+<p><img alt="3 layer" src="fig1.png" style="height: 426px; width: 310px;" /></p>
+
+<p>...for which the Cyclomatic number is <code>E + P &ndash; N = 2 + 1 - 3 = 0</code>.</p>
+
+<p>Adding a solitary node also adds a part...</p>
+
+<p><img alt="Add a node" src="fig2.png" style="height: 587px; width: 321px;" /></p>
+
+<p>...for which the Cyclomatic number is <code>E + P &ndash; N = 2 + 2 - 4 = 0</code>.</p>
+
+<p>Drawing an edge to the new node makes one whole part...</p>
+
+<p><img alt="Link the node" src="fig3.png" style="height: 584px; width: 294px;" /></p>
+
+<p>...for which the Cyclomatic number is <code>E + P &ndash; N = 3 + 1 - 4 = 0</code>.</p>
+
+<p>Taking the two middle nodes and making them into their own graph...</p>
+
+<p><img alt="subgraph" src="fig4.png" style="height: 587px; width: 388px;" /></p>
+
+<p>...for which the Cyclomatic number is <code>E + P &ndash; N = (2 + 1 - 3) + (1 + 1 - 2) = 0</code>.</p>
+
+<h2>Notes</h2>
+
+<p>So all the examples have the same Cyclomatic number which is the same as stating that, under the transforms used, the number is invariant. If the examples included some branching&nbsp;then this may not necessarily be the case.</p>
+
+<p>The main example of note was the final one when the subgraph was created. In the context of architecture modelling, it is preferable to place elements within a hierarchy to simplify the architectural views. The ability to do this without either increasing or decreasing the appropriate metric allows the architect to simplify their views whilst maintaining their score.</p>
+
+<p>This property has allowed me to write architectural software that takes C# code structured by layers of namespace, create a dependency graph at each namespace level and sum the Cyclomatic numbers to produce one number for the whole application with some confidence that it is meaningful. Then, I can track it over time to see how it improves and deteriorates.</p>
+
+<h2>History</h2>
+
+<ul>
+	<li>2016/08/03: First release</li>
+	<li>2016/08/04: Fix typos</li>
+</ul>
+
+</span>
+<!-- End Article -->
+
+
+
+
+</div> 
+</body>
+</html>
