@@ -76,6 +76,11 @@ th {
 <p>The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.</p>
 <p>Externals refers to the number of dependencies which aren't childen.
 The following Max refers to the maximum of that value and the value at any child nodes.</p>
+<p>SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or
+comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit 
+the log-normal distribution to data which has then been use to calculate a 90% confidence interval (lower and upper) 
+and the expected value, this is expected to only make sense high up in the hierarchy. 
+Finally the maximum actual value is reported to compare with the calculated upper.</p>
 </div>
 ");
             this.file.Write(string.Format("Skip to <a href=\"{0}#section{1}\">Top level</a><p/>\n", this.fileName, topIndex));
@@ -89,7 +94,7 @@ The following Max refers to the maximum of that value and the value at any child
 <th id=""main"">E + P - N</th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">N</th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">Externals</th><th id=""main""></th>
-<th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th>
+<th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th><th id=""main""></th><th id=""main""></th>
 <th id=""main"">Cycle</th>
 <th id=""main"">Section</th>
 </tr>
@@ -98,7 +103,7 @@ The following Max refers to the maximum of that value and the value at any child
 <th id=""main"">Value</th><th id=""main"">Max</th><th id=""main"">Sum</th>
 <th id=""main"">Value</th><th id=""main"">Max</th><th id=""main"">Sum</th>
 <th id=""main"">Count</th><th id=""main"">Max</th>
-<th id=""main"">Sum</th><th id=""main"">Max</th><th id=""main"">Average</th>
+<th id=""main"">Sum</th><th id=""main"">Lower</th><th id=""main"">Expected</th><th id=""main"">Upper</th><th id=""main"">Max</th>
 <th id=""main""></th>
 <th id=""main""></th>
 </tr>
@@ -127,9 +132,14 @@ The following Max refers to the maximum of that value and the value at any child
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", row.Ns.SumOverTree));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].Merged.Count));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
+
+            int lower, upper, expected;
+            dependencies.Assembled.SLOCs[branch].Stats(out lower, out upper, out expected);
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].SumOverTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", lower));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", expected));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", upper));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].MaxInTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].Average()));
             if (dependencies.Assembled.Structures[branch].HasCycle)
             {
                 this.file.Write("<td id=\"main\">Cycle</td>");

@@ -28,6 +28,10 @@ namespace DeepEnds.Core
 
     public class SLOC
     {
+        public double SumLog { get; set; }
+
+        public double SumLog2 { get; set; }
+
         public int MaxInTree { get; set; }
 
         public int SumOverTree { get; set; }
@@ -36,24 +40,35 @@ namespace DeepEnds.Core
 
         public SLOC()
         {
+            this.SumLog = 0.0;
+            this.SumLog2 = 0.0;
             this.MaxInTree = 0;
             this.SumOverTree = 0;
             this.NumFiles = 0;
         }
 
-        public int Average()
+        public void Stats(out int lower, out int upper, out int expected)
         {
-            double av = 1.0 * this.SumOverTree;
-            if (this.NumFiles > 0)
+            if (this.NumFiles <= 1)
             {
-                av /= this.NumFiles;
+                lower = upper = expected = this.SumOverTree;
+                return;
             }
 
-            return (int)av;
+            var mean = this.SumLog / this.NumFiles;
+            var variance = (this.SumLog2 - this.SumLog * mean) / (this.NumFiles - 1.0);
+            var sd = System.Math.Sqrt(variance);
+
+            lower = (int)System.Math.Pow(10, mean - 1.645 * sd);
+            upper = (int)System.Math.Pow(10, mean + 1.645 * sd);
+            expected = (int)System.Math.Pow(10, mean);
         }
 
         private void Append(int loc)
         {
+            if (loc == 0)
+                return;
+
             if (this.MaxInTree < loc)
             {
                 this.MaxInTree = loc;
@@ -61,6 +76,10 @@ namespace DeepEnds.Core
 
             this.SumOverTree += loc;
             ++this.NumFiles;
+
+            var logSLOC = System.Math.Log10(loc);
+            this.SumLog += logSLOC;
+            this.SumLog2 += logSLOC * logSLOC;
         }
 
         private void Append(SLOC loc)
@@ -72,6 +91,9 @@ namespace DeepEnds.Core
 
             this.SumOverTree += loc.SumOverTree;
             this.NumFiles += loc.NumFiles;
+
+            this.SumLog += loc.SumLog;
+            this.SumLog2 += loc.SumLog2;
         }
 
         public static void Assemble(Dependency dependency, Dictionary<Dependency, SLOC> slocs)
