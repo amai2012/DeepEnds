@@ -1,3 +1,7 @@
+DeepEnds version 1.6
+========================
+* For SLOC compute the log-normal distribution and report the 90% confidence interval and geometric mean
+
 DeepEnds version 1.5
 ========================
 * Report the max for N, E + P - N and (E + P - N) / N
