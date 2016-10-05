@@ -6,6 +6,8 @@ DeepEnds seeks to bridge the code-model gap as described by [George Fairbanks](h
 * [As-Is Software Architecture](http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture)
 * [Dive into Architecture with DeepEnds](http://htmlpreview.github.com/?https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html) - now withdrawn
 * [Why Favour the Cyclomatic Number?](http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number)
+* [Counting Lines of Code](http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code)
+* [Releasing a Visual Studio Extension](http://www.codeproject.com/Tips/1136303/Releasing-a-Visual-Studio-Extension)
 
 The basis of the software is the manipulation of dependencies between units of code. The directly supported units are
 
