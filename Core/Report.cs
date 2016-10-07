@@ -284,11 +284,11 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             this.file.Write("<p/>\n<table>\n");
             foreach (var item in list)
             {
-                this.file.Write(string.Format("<tr title=\"Node of the graph followed by dependencies (structure matrix)\">"));
+                this.file.Write(string.Format("<tr style=\"height: 8px\" title=\"Node of the graph followed by dependencies (structure matrix)\">"));
                 this.file.Write(string.Format("<th>{0}</th>\n", item.Key));
                 foreach (var c in item.Value)
                 {
-                    this.file.Write(string.Format("<td style=\"width: 6px\">{0}</td>\n", c));
+                    this.file.Write(string.Format("<td style=\"width: 8px;\">{0}</td>\n", c));
                 }
 
                 this.file.Write(string.Format("</tr>\n"));
