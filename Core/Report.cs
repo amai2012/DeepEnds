@@ -89,24 +89,35 @@ Finally the maximum actual value is reported to compare with the calculated uppe
         private void TableTop()
         {
             this.file.Write(@"<table id=""main"">
+<thead>
 <tr>
-<th id=""main"">(E + P - N) / N</th><th id=""main""></th><th id=""main""></th>
-<th id=""main"">E + P - N</th><th id=""main""></th><th id=""main""></th>
-<th id=""main"">N</th><th id=""main""></th><th id=""main""></th>
-<th id=""main"">Externals</th><th id=""main""></th>
-<th id=""main"">SLOC</th><th id=""main""></th><th id=""main""></th><th id=""main""></th><th id=""main""></th>
-<th id=""main"">Cycle</th>
-<th id=""main"">Section</th>
+<th colspan=""3"" id=""main"" title=""Cyclomatic number normalised by the number of nodes"">(E + P - N) / N</th>
+<th colspan=""3"" id=""main"" title=""Cyclomatic number"">E + P - N</th>
+<th colspan=""3"" id=""main"" title=""Number of nodes"">N</th>
+<th colspan=""2"" id=""main"" title=""Number of leaf nodes not contained by this node that are depended upon"">Externals</th>
+<th colspan=""5"" id=""main"" title=""Source lines of code"">SLOC</th>
+<th rowspan=""2"" id=""main"" title=""Whether a cycle occurs"">Cycle</th>
+<th rowspan=""2"" id=""main"" title=""The label of the graph node"">Section</th>
 </tr>
 <tr>
-<th id=""main"">Value</th><th id=""main"">Max</th><th id=""main"">Sum</th>
-<th id=""main"">Value</th><th id=""main"">Max</th><th id=""main"">Sum</th>
-<th id=""main"">Value</th><th id=""main"">Max</th><th id=""main"">Sum</th>
-<th id=""main"">Count</th><th id=""main"">Max</th>
-<th id=""main"">Sum</th><th id=""main"">Lower</th><th id=""main"">Expected</th><th id=""main"">Upper</th><th id=""main"">Max</th>
-<th id=""main""></th>
-<th id=""main""></th>
+<th id=""main"" title=""Value at the node"">Val</th>
+<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
+<th id=""main"" title=""Value at the node"">Val</th>
+<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
+<th id=""main"" title=""Value at the node"">Val</th>
+<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
+<th id=""main"" title=""Value at the node"">Count</th>
+<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
+<th id=""main"" title=""Lower bound of the 90% confidence interval for file size"">Lower</th>
+<th id=""main"" title=""Expected file size given a log-normal distribution"">Expected</th>
+<th id=""main"" title=""Upper bound of the 90% confidence interval for file size"">Upper</th>
+<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 </tr>
+</thead>
 ");
         }
 
@@ -200,7 +211,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             if (locs.Count > 0)
             {
                 this.file.Write("<table>\n");
-                this.file.Write(string.Format("<tr id=\"main\"><th>Dependency</th><th>SLOC</th></tr>\n"));
+                this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf of this node\"><th>Dependency</th><th title=\"Number of lines of source code\">SLOC</th></tr>\n"));
                 foreach (var pair in locs.OrderByDescending(o => o.Value))
                 {
                     this.file.Write(string.Format("<tr><td>{0}</td><td align=\"right\">{1}</td></tr>\n", pair.Key, pair.Value));
@@ -215,7 +226,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             if (dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
             {
                 this.file.Write("<table>\n");
-                this.file.Write(string.Format("<tr id=\"main\"><th>External dependencies</th></tr>\n"));
+                this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf nodes not contained by this node that are depended upon\"><th>External dependencies</th></tr>\n"));
                 foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.sep)))
                 {
                     this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(this.sep)));
@@ -244,7 +255,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                         second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[dep], second);
                     }
 
-                    this.file.Write(string.Format("<tr id=\"main\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
+                    this.file.Write(string.Format("<tr id=\"main\" title=\"Dependencies that cause this edge of the graph to be formed\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
                     var found = FindLinks.Get(child, dep, this.sep);
                     if (found.Count == 0)
                     {
@@ -273,7 +284,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             this.file.Write("<p/>\n<table>\n");
             foreach (var item in list)
             {
-                this.file.Write(string.Format("<tr>"));
+                this.file.Write(string.Format("<tr title=\"Node of the graph followed by dependencies (structure matrix)\">"));
                 this.file.Write(string.Format("<th>{0}</th>\n", item.Key));
                 foreach (var c in item.Value)
                 {
