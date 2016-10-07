@@ -112,9 +112,9 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 <th id=""main"" title=""Value at the node"">Count</th>
 <th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 <th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
-<th id=""main"" title=""Lower bound of the 90% confidence interval for file size"">Lower</th>
-<th id=""main"" title=""Expected file size given a log-normal distribution"">Expected</th>
-<th id=""main"" title=""Upper bound of the 90% confidence interval for file size"">Upper</th>
+<th id=""main"" title=""Lower bound of the 90% confidence interval for leaf size"">Lower</th>
+<th id=""main"" title=""Expected leaf size given a log-normal distribution"">Expected</th>
+<th id=""main"" title=""Upper bound of the 90% confidence interval for leaf size"">Upper</th>
 <th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 </tr>
 </thead>
