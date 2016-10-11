@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dependency analysis in Visual C++</title>
+<style>
+table, tr#main, th#main, td#main {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th {
+    font-weight: normal;
+    background-color: LightGray;
+	text-align: left;
+}
+</style>
+</head>
+<body>
+<h2>Introduction</h2>
+
+<p>When developing a piece of software circular dependencies between classes, etc. make the code fragile to modification and, if they are at the level where it is between binaries, cause build issues. Trawling through the source code to find and fix can be time consuming so this article analyses some project code with the open source Visual Studio plug-in&nbsp;<a href="https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc">DeepEnds </a>(<a href="https://github.com/zebmason/DeepEnds">source code</a>).</p>
+
+<h2>Setting up the problem</h2>
+
+<p><img alt="screenshot" src="screenshot2.png" /></p>
+
+<p>The above diagram shows input on the left and some output on the right. Please note the mapping between the hierarchical filters of the project files in the Solution Explorer and the resulting graph in the dgml file viewer of Visual Studio Community 2015. Please note that the <code>Gherkin </code>filter contains feature files which aren&#39;t parsed by DeepEnds as they contain DSL code (the interested reader is referred to <a href="http://www.codeproject.com/Articles/1084071/A-Slice-of-Cucumber">A Slice of Cucumber</a>).</p>
+
+<p>If the input had instead been .NET the nodes in the graph would have been labelled with the names of the namespaces and the classes, the associated hierarchy resulting in subgraphs. So that is a reasonable strategy for choosing the filter names. Note that care should be taken when re-using filter names across projects as this can lead to the hiding of circular dependencies between the binaries.</p>
+
+<p>This then leaves the question of which file goes into which filter. This leads to the rather contrived example that the above diagram illustrates.</p>
+
+<h2>What does the graph mean?</h2>
+
+<p>In the DGML graph the TestFEA node has been expanded to show a cycle. This is more easily investigated by looking at the associated HTML report which includes a summary for each level. A truncated version of the report for the top level contains the following table</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr>
+			<th colspan="3" id="main" title="Cyclomatic number normalised by the number of nodes">(E + P - N) / N</th>
+			<th colspan="3" id="main" title="Cyclomatic number">E + P - N</th>
+			<th colspan="3" id="main" title="Number of nodes">N</th>
+			<th colspan="2" id="main" title="Number of leaf nodes not contained by this node that are depended upon">Externals</th>
+			<th colspan="3" id="main" title="Source lines of code">SLOC</th>
+			<th rowspan="2" id="main" title="Whether a cycle occurs">Cycle</th>
+			<th rowspan="2" id="main" title="The label of the graph node">Section</th>
+		</tr>
+		<tr>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Count</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Expected leaf size given a log-normal distribution">Expected</th>
+			<th id="main" title="Maximum value of the expected leaf size at the node and child nodes recursively">Max</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td id="main">0.50</td>
+			<td id="main">0.50</td>
+			<td id="main">1.88</td>
+			<td id="main">3</td>
+			<td id="main">4</td>
+			<td id="main">12</td>
+			<td id="main">6</td>
+			<td id="main">53</td>
+			<td id="main">234</td>
+			<td id="main">0</td>
+			<td id="main">19</td>
+			<td id="main">10672</td>
+			<td id="main">30</td>
+			<td id="main">469</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">Top level</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">12</td>
+			<td id="main">12</td>
+			<td id="main">80</td>
+			<td id="main">80</td>
+			<td id="main">80</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">App</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.27</td>
+			<td id="main">0.27</td>
+			<td id="main">0</td>
+			<td id="main">3</td>
+			<td id="main">3</td>
+			<td id="main">2</td>
+			<td id="main">11</td>
+			<td id="main">17</td>
+			<td id="main">0</td>
+			<td id="main">3</td>
+			<td id="main">513</td>
+			<td id="main">29</td>
+			<td id="main">99</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">BLAS</td>
+		</tr>
+		<tr>
+			<td id="main">0.44</td>
+			<td id="main">0.44</td>
+			<td id="main">0.61</td>
+			<td id="main">4</td>
+			<td id="main">4</td>
+			<td id="main">5</td>
+			<td id="main">9</td>
+			<td id="main">53</td>
+			<td id="main">124</td>
+			<td id="main">7</td>
+			<td id="main">16</td>
+			<td id="main">4928</td>
+			<td id="main">28</td>
+			<td id="main">469</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">FEA</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">52</td>
+			<td id="main">52</td>
+			<td id="main">52</td>
+			<td id="main">2</td>
+			<td id="main">3</td>
+			<td id="main">2854</td>
+			<td id="main">33</td>
+			<td id="main">347</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">Solvers</td>
+		</tr>
+		<tr>
+			<td id="main">0.50</td>
+			<td id="main">0.50</td>
+			<td id="main">0.50</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">2</td>
+			<td id="main">16</td>
+			<td id="main">28</td>
+			<td id="main">26</td>
+			<td id="main">12</td>
+			<td id="main">1958</td>
+			<td id="main">36</td>
+			<td id="main">432</td>
+			<td id="main">Cycle</td>
+			<td id="main">TestFEA</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">3</td>
+			<td id="main">3</td>
+			<td id="main">6</td>
+			<td id="main">19</td>
+			<td id="main">19</td>
+			<td id="main">339</td>
+			<td id="main">11</td>
+			<td id="main">203</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">TestLinear</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>The first nine columns have formulas based on the number of edges (<code>E</code>), parts (<code>P</code>) and nodes (<code>N</code>), these are discussed in <a href="http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number">Why Favour the Cyclomatic Number?</a> Specifically the value at that level in the tree and the sum and maximum over the tree of the three formulas <code>(E+P-N)/N</code>, <code>E+P-N</code> and <code>N</code>. The next two columns are the count of the number of externals that corresponds to the dependencies which form the edges and its maximum value as traverse further down the tree. Then the sum of the source lines of code as the tree is traversed is given followed by the result of fitting a log-normal distribution as detailed in <a href="http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code">Counting Lines of Code</a>, followed by the maximum in the tree.</p>
+
+<p>The final two columns contain the information that is of interest to our example. Whether there is a cycle and the (sub)graph in which it occurs.</p>
+
+<p>Navigating down to the report for <code>TestFEA </code>section there is a similar table</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr>
+			<th colspan="3" id="main" title="Cyclomatic number normalised by the number of nodes">(E + P - N) / N</th>
+			<th colspan="3" id="main" title="Cyclomatic number">E + P - N</th>
+			<th colspan="3" id="main" title="Number of nodes">N</th>
+			<th colspan="2" id="main" title="Number of leaf nodes not contained by this node that are depended upon">Externals</th>
+			<th colspan="3" id="main" title="Source lines of code">SLOC</th>
+			<th rowspan="2" id="main" title="Whether a cycle occurs">Cycle</th>
+			<th rowspan="2" id="main" title="The label of the graph node">Section</th>
+		</tr>
+		<tr>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Val</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Value at the node">Count</th>
+			<th id="main" title="Maximum value of the node and child nodes recursively">Max</th>
+			<th id="main" title="Sum of node value and child node values recursively">Sum</th>
+			<th id="main" title="Expected leaf size given a log-normal distribution">Expected</th>
+			<th id="main" title="Maximum value of the expected leaf size at the node and child nodes recursively">Max</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td id="main">0.50</td>
+			<td id="main">0.50</td>
+			<td id="main">0.50</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">1</td>
+			<td id="main">2</td>
+			<td id="main">16</td>
+			<td id="main">28</td>
+			<td id="main">26</td>
+			<td id="main">12</td>
+			<td id="main">1958</td>
+			<td id="main">36</td>
+			<td id="main">432</td>
+			<td id="main">Cycle</td>
+			<td id="main">TestFEA</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">10</td>
+			<td id="main">10</td>
+			<td id="main">10</td>
+			<td id="main">22</td>
+			<td id="main">12</td>
+			<td id="main">683</td>
+			<td id="main">86</td>
+			<td id="main">149</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">TestFEA\App</td>
+		</tr>
+		<tr>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0.00</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">0</td>
+			<td id="main">16</td>
+			<td id="main">16</td>
+			<td id="main">16</td>
+			<td id="main">18</td>
+			<td id="main">8</td>
+			<td id="main">1275</td>
+			<td id="main">25</td>
+			<td id="main">432</td>
+			<td id="main">&nbsp;</td>
+			<td id="main">TestFEA\Classes</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>This is followed by a table for the 26 externals that, when truncated, looks like</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr id="main" title="Leaf nodes not contained by this node that are depended upon">
+			<th>External dependencies</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>BLAS\Algebra\Full.h</td>
+		</tr>
+		<tr>
+			<td>BLAS\Algebra\Matrix.h</td>
+		</tr>
+		<tr>
+			<td>BLAS\Algebra\Vector.h</td>
+		</tr>
+		<tr>
+			<td>BLAS\FileIO\WriteMatrix.h</td>
+		</tr>
+		<tr>
+			<td>FEA\Core\Elements\ElementHandler.h</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Next a table that lists which files form the end of the edges</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr id="main" title="Dependencies that cause the edges of the graph to be formed">
+			<th>Internal Dependencies</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>TestFEA\Classes\AreaCalculator.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\BoxMesh.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\DiffFiles.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\LocalNodes.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\OneMesh.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\stdafx.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\TestSolver.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\VolumeCalculator.h</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Then a table detailing which dependencies form the edges that, when truncated, looks like</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr id="main" title="Dependencies that cause this edge of the graph to be formed">
+			<th>TestFEA\Classes</th>
+			<th>&rarr;</th>
+			<th>TestFEA\App</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>TestFEA\Classes\DiffFiles.h</td>
+			<td>&rarr;</td>
+			<td>TestFEA\App\stdafx.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\Classes\LocalNodes.h</td>
+			<td>&rarr;</td>
+			<td>TestFEA\App\stdafx.h</td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr id="main" title="Dependencies that cause this edge of the graph to be formed">
+			<th>TestFEA\App</th>
+			<th>&rarr;</th>
+			<th>TestFEA\Classes</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>TestFEA\App\GenerateGridTests.cpp</td>
+			<td>&rarr;</td>
+			<td>TestFEA\Classes\DiffFiles.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\App\GenerateGridTests.cpp</td>
+			<td>&rarr;</td>
+			<td>TestFEA\Classes\BoxMesh.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\App\GenerateTests.cpp</td>
+			<td>&rarr;</td>
+			<td>TestFEA\Classes\AreaCalculator.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\App\GenerateTests.cpp</td>
+			<td>&rarr;</td>
+			<td>TestFEA\Classes\DiffFiles.h</td>
+		</tr>
+		<tr>
+			<td>TestFEA\App\GenerateTests.cpp</td>
+			<td>&rarr;</td>
+			<td>TestFEA\Classes\LocalNodes.h</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Finally a table containing the structure matrix is given for completeness as it is just another way of reporting the graph</p>
+
+<table class="ArticleTable">
+	<tbody>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th scope="row">App</th>
+			<td style="width: 8px;">\</td>
+			<td style="width: 8px;">1</td>
+		</tr>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th scope="row">Classes</th>
+			<td style="width: 8px;">1</td>
+			<td style="width: 8px;">\</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>Fixing the issue</h2>
+
+<p>When looking to fix circular dependencies the information of choice is the underlying dependencies which form the edges. In this contrived example it can be seen that the issue was due to placing <code>stdafx.h</code> under <code>TestFEA\App</code> and not <code>TestFEA\Classes</code>. Moving it along with <code>stdafx.cpp</code> and <code>targetver.h</code> into <code>TestFEA\Classes</code> proved effective in removing the cycle.</p>
+
+<h2>Discussion</h2>
+
+<p>As mentioned this example is contrived, in an earlier iteration of the example the code had one class with two responsibilities leading to a cycle that was causing extreme prevarication in how to refactor. Specifically wading through the source code was not causing the issue to be found and this led to the original (code and subsequently) article on this topic - <a href="http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture">As-Is Software Architecture</a>. Incidentally the cycle was broken by splitting the class at issue into two pieces. Note that as all the code was in the same binary there was no build issue. In fact there when looked at from the level of the individual files there was no circular dependency. i.e. It was only at the level of the (mis)design that the issue existed.</p>
+
+<h2>History</h2>
+
+<ul>
+	<li>2016/10/07: First release</li>
+	<li>2016/10/11: Updated tables</li>
+</ul>
+</body>
+</html>
