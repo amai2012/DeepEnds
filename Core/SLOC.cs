@@ -61,11 +61,7 @@ namespace DeepEnds.Core
 
         private void Stats()
         {
-            if (this.NumFiles <= 1)
-            {
-                this.Lower = this.Upper = this.Expected = this.SumOverTree;
-            }
-            else
+            if (this.NumFiles > 1)
             {
                 var mean = this.SumLog / this.NumFiles;
                 var variance = (this.SumLog2 - this.SumLog * mean) / (this.NumFiles - 1.0);
