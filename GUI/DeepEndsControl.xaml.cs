@@ -93,7 +93,7 @@ namespace DeepEnds.GUI
             // Configure save file dialog box
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
             dlg.DefaultExt = ".dgml"; // Default file extension
-            dlg.Filter = "Directed Graph Markup Language (.dgml)|*.dgml|Report (.html)|*.html"; // Filter files by extension
+            dlg.Filter = "Directed Graph Markup Language (.dgml)|*.dgml|Report (.html, .htm)|*.html;*.htm"; // Filter files by extension
 
             // Show save file dialog box
             var result = dlg.ShowDialog();
@@ -116,7 +116,16 @@ namespace DeepEnds.GUI
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
         private void read_Click(object sender, RoutedEventArgs e)
         {
-            var read = this.view.Read(this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+            bool read = false;
+            try
+            {
+                read = this.view.Read(this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+            }
+            catch (System.Exception excep)
+            {
+                MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             if (read)
             {
                 this.writeButton.IsEnabled = this.outputFile.Text != string.Empty;
@@ -144,7 +153,14 @@ namespace DeepEnds.GUI
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
         private void write_Click(object sender, RoutedEventArgs e)
         {
-            this.view.Write(this.outputFile.Text);
+            try
+            {
+                this.view.Write(this.outputFile.Text);
+            }
+            catch (System.Exception excep)
+            {
+                MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]

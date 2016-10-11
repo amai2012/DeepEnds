@@ -142,15 +142,21 @@ namespace DeepEnds.Console
         public void Write(string fileName)
         {
             var ext = System.IO.Path.GetExtension(fileName);
-            if (ext == ".html")
+            if (ext == ".html" || ext == ".htm")
             {
                 var report = new DeepEnds.Core.Report(fileName, this.sep);
                 report.Write(this.dependencies);
                 return;
             }
 
-            var assemble = DeepEnds.DGML.Assemble.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
-            assemble.Save(fileName);
+            if (ext == ".dgml")
+            {
+                var assemble = DeepEnds.DGML.Assemble.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
+                assemble.Save(fileName);
+                return;
+            }
+
+            throw new Exception(string.Format("Extension({0}) not recognised", ext));
         }
     }
 }
