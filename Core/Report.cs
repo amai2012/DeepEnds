@@ -236,6 +236,39 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             }
         }
 
+        private void InternalsTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<Dependency, int> mapping)
+        {
+            var set = new HashSet<string>();
+            foreach (var child in branch.Children)
+            {
+                foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
+                {
+                    var found = FindLinks.Get(child, dep, this.sep);
+                    if (found.Count == 0)
+                    {
+                        continue;
+                    }
+
+                    foreach (var link in FindLinks.Get(child, dep, this.sep))
+                    {
+                        set.Add(link.Value);
+                    }
+                }
+            }
+
+            var list = set.ToList();
+            list.Sort();
+
+            this.file.Write("<table>\n");
+            this.file.Write("<tr id=\"main\" title=\"Dependencies that cause the edges of the graph to be formed\"><th>Internal Dependencies</th></tr>\n");
+            foreach (var item in list)
+            {
+                this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", item));
+            }
+
+            this.file.Write("</table>\n<p/>\n\n");
+        }
+
         private void LinksTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<Dependency, int> mapping)
         {
             this.file.Write("<table>\n");
@@ -350,6 +383,8 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                 this.DependencyTable(branch);
 
                 this.ExternalsTable(branch, dependencies);
+
+                this.InternalsTable(branch, dependencies, mapping);
 
                 this.LinksTable(branch, dependencies, mapping);
 
