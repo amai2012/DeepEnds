@@ -38,6 +38,14 @@ namespace DeepEnds.Core
 
         public int NumFiles { get; set; }
 
+        public int Lower { get; set; }
+
+        public int Upper { get; set; }
+
+        public int Expected { get; set; }
+
+        public int ExpectedMax { get; set; }
+
         public SLOC()
         {
             this.SumLog = 0.0;
@@ -45,29 +53,41 @@ namespace DeepEnds.Core
             this.MaxInTree = 0;
             this.SumOverTree = 0;
             this.NumFiles = 0;
+            this.Lower = 0;
+            this.Upper = 0;
+            this.Expected = 0;
+            this.ExpectedMax = 0;
         }
 
-        public void Stats(out int lower, out int upper, out int expected)
+        private void Stats()
         {
             if (this.NumFiles <= 1)
             {
-                lower = upper = expected = this.SumOverTree;
-                return;
+                this.Lower = this.Upper = this.Expected = this.SumOverTree;
+            }
+            else
+            {
+                var mean = this.SumLog / this.NumFiles;
+                var variance = (this.SumLog2 - this.SumLog * mean) / (this.NumFiles - 1.0);
+                var sd = System.Math.Sqrt(variance);
+
+                this.Lower = System.Convert.ToInt32(System.Math.Pow(10, mean - 1.645 * sd));
+                this.Upper = System.Convert.ToInt32(System.Math.Pow(10, mean + 1.645 * sd));
+                this.Expected = System.Convert.ToInt32(System.Math.Pow(10, mean));
             }
 
-            var mean = this.SumLog / this.NumFiles;
-            var variance = (this.SumLog2 - this.SumLog * mean) / (this.NumFiles - 1.0);
-            var sd = System.Math.Sqrt(variance);
-
-            lower = (int)System.Math.Pow(10, mean - 1.645 * sd);
-            upper = (int)System.Math.Pow(10, mean + 1.645 * sd);
-            expected = (int)System.Math.Pow(10, mean);
+            if (this.ExpectedMax < this.Expected)
+            {
+                this.ExpectedMax = this.Expected;
+            }
         }
 
         private void Append(int loc)
         {
             if (loc == 0)
+            {
                 return;
+            }
 
             if (this.MaxInTree < loc)
             {
@@ -89,6 +109,11 @@ namespace DeepEnds.Core
                 this.MaxInTree = loc.MaxInTree;
             }
 
+            if (this.ExpectedMax < loc.ExpectedMax)
+            {
+                this.ExpectedMax = loc.ExpectedMax;
+            }
+
             this.SumOverTree += loc.SumOverTree;
             this.NumFiles += loc.NumFiles;
 
@@ -106,6 +131,8 @@ namespace DeepEnds.Core
             {
                 sloc.Append(slocs[child]);
             }
+
+            sloc.Stats();
         }
     }
 }

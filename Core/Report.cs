@@ -95,7 +95,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 <th colspan=""3"" id=""main"" title=""Cyclomatic number"">E + P - N</th>
 <th colspan=""3"" id=""main"" title=""Number of nodes"">N</th>
 <th colspan=""2"" id=""main"" title=""Number of leaf nodes not contained by this node that are depended upon"">Externals</th>
-<th colspan=""5"" id=""main"" title=""Source lines of code"">SLOC</th>
+<th colspan=""3"" id=""main"" title=""Source lines of code"">SLOC</th>
 <th rowspan=""2"" id=""main"" title=""Whether a cycle occurs"">Cycle</th>
 <th rowspan=""2"" id=""main"" title=""The label of the graph node"">Section</th>
 </tr>
@@ -112,10 +112,8 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 <th id=""main"" title=""Value at the node"">Count</th>
 <th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 <th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
-<th id=""main"" title=""Lower bound of the 90% confidence interval for leaf size"">Lower</th>
 <th id=""main"" title=""Expected leaf size given a log-normal distribution"">Expected</th>
-<th id=""main"" title=""Upper bound of the 90% confidence interval for leaf size"">Upper</th>
-<th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Maximum value of the expected leaf size at the node and child nodes recursively"">Max</th>
 </tr>
 </thead>
 ");
@@ -144,13 +142,9 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].Merged.Count));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
 
-            int lower, upper, expected;
-            dependencies.Assembled.SLOCs[branch].Stats(out lower, out upper, out expected);
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].SumOverTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", lower));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", expected));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", upper));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].MaxInTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].Expected));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].ExpectedMax));
             if (dependencies.Assembled.Structures[branch].HasCycle)
             {
                 this.file.Write("<td id=\"main\">Cycle</td>");
