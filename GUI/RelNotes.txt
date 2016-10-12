@@ -1,3 +1,8 @@
+DeepEnds version 1.7.1
+========================
+* Fix the docs at the very top of the html report
+* Report cycles as white on a red background
+
 DeepEnds version 1.7
 ========================
 * Prettify the tables
