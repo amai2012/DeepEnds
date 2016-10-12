@@ -302,7 +302,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 
         private void LinksTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<Dependency, int> mapping)
         {
-            this.file.Write("<table>\n<thead>\n");
+            this.file.Write("<table>\n");
             foreach (var child in branch.Children)
             {
                 foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
@@ -319,6 +319,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                         second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[dep], second);
                     }
 
+                    this.file.Write("<thead>\n");
                     this.file.Write(string.Format("<tr id=\"main\" title=\"Dependencies that cause this edge of the graph to be formed\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
                     this.file.Write("</thead>\n<tbody>\n");
                     var found = FindLinks.Get(child, dep, this.sep);
@@ -331,10 +332,11 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                     {
                         this.file.Write(string.Format("<tr><td>{0}</td><td>&rarr;</td><td>{1}</td></tr>\n", link.Key, link.Value));
                     }
+                    this.file.Write("</tbody>\n");
                 }
             }
 
-            this.file.Write("</tbody>\n</table>\n");
+            this.file.Write("</tbody>\n");
         }
 
         private void Matrix(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies)
