@@ -10,7 +10,13 @@ table, tr#main, th#main, td#main {
 th {
     font-weight: normal;
     background-color: LightGray;
-	text-align: left;
+    text-align: left;
+}
+td#alert {
+    border: 1px solid black;
+    border-collapse: collapse;
+    color:white;
+    background-color:red;
 }
 </style>
 </head>
@@ -167,7 +173,7 @@ th {
 			<td id="main">1958</td>
 			<td id="main">36</td>
 			<td id="main">432</td>
-			<td id="main">Cycle</td>
+			<td id="alert">Cycle</td>
 			<td id="main">TestFEA</td>
 		</tr>
 		<tr>
@@ -241,7 +247,7 @@ th {
 			<td id="main">1958</td>
 			<td id="main">36</td>
 			<td id="main">432</td>
-			<td id="main">Cycle</td>
+			<td id="alert">Cycle</td>
 			<td id="main">TestFEA</td>
 		</tr>
 		<tr>
@@ -320,6 +326,9 @@ th {
 	</thead>
 	<tbody>
 		<tr>
+			<td>TestFEA\App\stdafx.h</td>
+		</tr>
+		<tr>
 			<td>TestFEA\Classes\AreaCalculator.h</td>
 		</tr>
 		<tr>
@@ -333,9 +342,6 @@ th {
 		</tr>
 		<tr>
 			<td>TestFEA\Classes\OneMesh.h</td>
-		</tr>
-		<tr>
-			<td>TestFEA\Classes\stdafx.h</td>
 		</tr>
 		<tr>
 			<td>TestFEA\Classes\TestSolver.h</td>
@@ -433,7 +439,7 @@ th {
 
 <ul>
 	<li>2016/10/07: First release</li>
-	<li>2016/10/11: Updated tables</li>
+	<li>2016/10/12: Updated tables</li>
 </ul>
 </body>
 </html>

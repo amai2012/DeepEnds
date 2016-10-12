@@ -60,13 +60,19 @@ table, tr#main, th#main, td#main {
 th {
     font-weight: normal;
     background-color: LightGray;
-	text-align: left;
+    text-align: left;
+}
+td#alert {
+    border: 1px solid black;
+    border-collapse: collapse;
+    color:white;
+    background-color:red;
 }
 </style>
 </head>
 <body>
 <h1>Summary of graph complexity</h1>
-<h2>Cyclomatic Number</h2>
+<h3>Cyclomatic Number</h3>
 <div>
 <p>The larger the value of (E + P) / N then the more complex the directed graph is, where</p>
 <ul>
@@ -78,13 +84,13 @@ th {
 <p>The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.</p>
 </div>
 
-<h2>Externals</h2>
+<h3>Externals</h3>
 <div>
 <p>Externals refers to the number of dependencies which aren't childen.
 The following max refers to the maximum of that value and the value at any child nodes.</p>
 </div>
 
-<h2>SLOC</h2>
+<h3>SLOC</h3>
 <div>
 <p>SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or
 comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit 
@@ -94,18 +100,18 @@ The following max refers to the maximum of that value and the value at any child
 one item to fit so as to avoid domination of the statistic by boilerplate.</p>
 </div>
 
-<h2>Cycle</h2>
+<h3>Cycle</h3>
 <div>
 <p>If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it 
 is left blank.</p>
 </div>
 
-<h2>Section</h2>
+<h3>Section</h3>
 <div>
 <p>The node label of the graph (with the obvious exception of ""Top level"") with a hyperlink to it.</p>
 </div>
 
-<h2>Table</h2>
+<h3>Table</h3>
 ");
             this.file.Write(string.Format("<p>Skip to <a href=\"{0}#section{1}\">Top level</a><p/>\n", this.fileName, topIndex));
             this.file.Write(@"
@@ -175,7 +181,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].ExpectedMax));
             if (dependencies.Assembled.Structures[branch].HasCycle)
             {
-                this.file.Write("<td id=\"main\">Cycle</td>");
+                this.file.Write("<td id=\"alert\">Cycle</td>");
             }
             else
             {
