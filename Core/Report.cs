@@ -66,7 +66,9 @@ th {
 </head>
 <body>
 <h1>Summary of graph complexity</h1>
-<div><p>The larger the value of (E + P) / N then the more complex the directed graph is, where</p>
+<h2>Cyclomatic Number</h2>
+<div>
+<p>The larger the value of (E + P) / N then the more complex the directed graph is, where</p>
 <ul>
 <li>E: Number of edges</li>
 <li>P: Number of parts</li>
@@ -74,16 +76,41 @@ th {
 </ul>
 <p>The value of (E + P - N) / N varies between 0 and N. A strictly layered architecture will have a value of 0.</p>
 <p>The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.</p>
+</div>
+
+<h2>Externals</h2>
+<div>
 <p>Externals refers to the number of dependencies which aren't childen.
-The following Max refers to the maximum of that value and the value at any child nodes.</p>
+The following max refers to the maximum of that value and the value at any child nodes.</p>
+</div>
+
+<h2>SLOC</h2>
+<div>
 <p>SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or
 comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit 
-the log-normal distribution to data which has then been use to calculate a 90% confidence interval (lower and upper) 
-and the expected value, this is expected to only make sense high up in the hierarchy. 
-Finally the maximum actual value is reported to compare with the calculated upper.</p>
+the log-normal distribution to data which has then been used to calculate 
+the expected value, this is expected to only make sense high up in the hierarchy. 
+The following max refers to the maximum of that value and the value at any child nodes as long as there is more than
+one item to fit so as to avoid domination of the statistic by boilerplate.</p>
 </div>
+
+<h2>Cycle</h2>
+<div>
+<p>If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it 
+is left blank.</p>
+</div>
+
+<h2>Section</h2>
+<div>
+<p>The node label of the graph (with the obvious exception of ""Top level"") with a hyperlink to it.</p>
+</div>
+
+<h2>Table</h2>
 ");
-            this.file.Write(string.Format("Skip to <a href=\"{0}#section{1}\">Top level</a><p/>\n", this.fileName, topIndex));
+            this.file.Write(string.Format("<p>Skip to <a href=\"{0}#section{1}\">Top level</a><p/>\n", this.fileName, topIndex));
+            this.file.Write(@"
+<p>The following table is sorted on its first column, subsequent instances of this table type are sorted on 
+the final column. Hover over the table headers to make tool tips appear.</p>");
         }
 
         private void TableTop()
@@ -112,10 +139,11 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 <th id=""main"" title=""Value at the node"">Count</th>
 <th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 <th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
-<th id=""main"" title=""Expected leaf size given a log-normal distribution"">Expected</th>
+<th id=""main"" title=""Expected leaf size given a log-normal distribution"">Exp</th>
 <th id=""main"" title=""Maximum value of the expected leaf size at the node and child nodes recursively"">Max</th>
 </tr>
 </thead>
+<tbody>
 ");
         }
 
@@ -160,7 +188,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 
         private void TableBottom()
         {
-            this.file.Write(@" </table><p/>
+            this.file.Write(@" </tbody></table><p/>
 ");
         }
 
@@ -204,14 +232,15 @@ Finally the maximum actual value is reported to compare with the calculated uppe
 
             if (locs.Count > 0)
             {
-                this.file.Write("<table>\n");
+                this.file.Write("<table>\n<thead>\n");
                 this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf of this node\"><th>Dependency</th><th title=\"Number of lines of source code\">SLOC</th></tr>\n"));
+                this.file.Write("</thead>\n<tbody>\n");
                 foreach (var pair in locs.OrderByDescending(o => o.Value))
                 {
                     this.file.Write(string.Format("<tr><td>{0}</td><td align=\"right\">{1}</td></tr>\n", pair.Key, pair.Value));
                 }
 
-                this.file.Write("</table>\n<p/>\n");
+                this.file.Write("</tbody>\n</table>\n<p/>\n");
             }
         }
 
@@ -219,14 +248,15 @@ Finally the maximum actual value is reported to compare with the calculated uppe
         {
             if (dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
             {
-                this.file.Write("<table>\n");
+                this.file.Write("<table><thead>\n\n");
                 this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf nodes not contained by this node that are depended upon\"><th>External dependencies</th></tr>\n"));
+                this.file.Write("</thead>\n<tbody>\n");
                 foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.sep)))
                 {
                     this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(this.sep)));
                 }
 
-                this.file.Write("</table>\n<p/>\n");
+                this.file.Write("</tbody>\n</table>\n<p/>\n");
             }
         }
 
@@ -253,19 +283,20 @@ Finally the maximum actual value is reported to compare with the calculated uppe
             var list = set.ToList();
             list.Sort();
 
-            this.file.Write("<table>\n");
+            this.file.Write("<table>\n<thead>\n");
             this.file.Write("<tr id=\"main\" title=\"Dependencies that cause the edges of the graph to be formed\"><th>Internal Dependencies</th></tr>\n");
+            this.file.Write("</thead>\n<tbody>\n");
             foreach (var item in list)
             {
                 this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", item));
             }
 
-            this.file.Write("</table>\n<p/>\n\n");
+            this.file.Write("</tbody>\n</table>\n<p/>\n\n");
         }
 
         private void LinksTable(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies, Dictionary<Dependency, int> mapping)
         {
-            this.file.Write("<table>\n");
+            this.file.Write("<table>\n<thead>\n");
             foreach (var child in branch.Children)
             {
                 foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
@@ -283,6 +314,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                     }
 
                     this.file.Write(string.Format("<tr id=\"main\" title=\"Dependencies that cause this edge of the graph to be formed\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
+                    this.file.Write("</thead>\n<tbody>\n");
                     var found = FindLinks.Get(child, dep, this.sep);
                     if (found.Count == 0)
                     {
@@ -296,7 +328,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                 }
             }
 
-            this.file.Write("</table>\n");
+            this.file.Write("</tbody>\n</table>\n");
         }
 
         private void Matrix(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies)
@@ -308,7 +340,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                 return;
             }
 
-            this.file.Write("<p/>\n<table>\n");
+            this.file.Write("<p/>\n<table>\n<tbody>\n");
             foreach (var item in list)
             {
                 this.file.Write(string.Format("<tr style=\"height: 8px\" title=\"Node of the graph followed by dependencies (structure matrix)\">"));
@@ -321,7 +353,7 @@ Finally the maximum actual value is reported to compare with the calculated uppe
                 this.file.Write(string.Format("</tr>\n"));
             }
 
-            this.file.Write("</table>\n");
+            this.file.Write("</tbody>\n</table>\n");
         }
 
         private void Bottom()
