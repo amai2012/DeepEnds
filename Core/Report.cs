@@ -97,7 +97,9 @@ comment lines. The sum is sum over the child nodes recursively down to the leaf 
 the log-normal distribution to data which has then been used to calculate 
 the expected value, this is expected to only make sense high up in the hierarchy. 
 The following max refers to the maximum of that value and the value at any child nodes as long as there is more than
-one item to fit so as to avoid domination of the statistic by boilerplate.</p>
+one item to fit so as to avoid domination of the statistic by boilerplate. These two values are bracketed by the lower 
+and upper limits of the 90% confidence interval is the upper limit is less than the maximal value of SLOC on a leaf,
+otherwise it is left blank.</p>
 </div>
 
 <h3>Cycle</h3>
@@ -128,7 +130,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 <th colspan=""3"" id=""main"" title=""Cyclomatic number"">E + P - N</th>
 <th colspan=""3"" id=""main"" title=""Number of nodes"">N</th>
 <th colspan=""2"" id=""main"" title=""Number of leaf nodes not contained by this node that are depended upon"">Externals</th>
-<th colspan=""3"" id=""main"" title=""Source lines of code"">SLOC</th>
+<th colspan=""5"" id=""main"" title=""Source lines of code"">SLOC</th>
 <th rowspan=""2"" id=""main"" title=""Whether a cycle occurs"">Cycle</th>
 <th rowspan=""2"" id=""main"" title=""The label of the graph node"">Section</th>
 </tr>
@@ -145,8 +147,10 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 <th id=""main"" title=""Value at the node"">Count</th>
 <th id=""main"" title=""Maximum value of the node and child nodes recursively"">Max</th>
 <th id=""main"" title=""Sum of node value and child node values recursively"">Sum</th>
+<th id=""main"" title=""Lower bound of the 90% confidence interval for leaf size"">Lower</th>
 <th id=""main"" title=""Expected leaf size given a log-normal distribution"">Exp</th>
 <th id=""main"" title=""Maximum value of the expected leaf size at the node and child nodes recursively"">Max</th>
+<th id=""main"" title=""Upper bound of the 90% confidence interval for leaf size"">Upper</th>
 </tr>
 </thead>
 <tbody>
@@ -176,9 +180,20 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].Merged.Count));
             this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
 
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].SumOverTree));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].Expected));
-            this.file.Write(string.Format("<td id=\"main\">{0}</td>", dependencies.Assembled.SLOCs[branch].ExpectedMax));
+            var sloc = dependencies.Assembled.SLOCs[branch];
+            var lower = string.Empty;
+            var upper = string.Empty;
+            if (sloc.MaxInTree > sloc.Upper)
+            {
+                lower = sloc.Lower.ToString();
+                upper = sloc.Upper.ToString();
+            }
+
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", sloc.SumOverTree));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", lower));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", sloc.Expected));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", sloc.ExpectedMax));
+            this.file.Write(string.Format("<td id=\"main\">{0}</td>", upper));
             if (dependencies.Assembled.Structures[branch].HasCycle)
             {
                 this.file.Write("<td id=\"alert\">Cycle</td>");
@@ -332,6 +347,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                     {
                         this.file.Write(string.Format("<tr><td>{0}</td><td>&rarr;</td><td>{1}</td></tr>\n", link.Key, link.Value));
                     }
+
                     this.file.Write("</tbody>\n");
                 }
             }
