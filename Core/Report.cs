@@ -352,7 +352,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                 }
             }
 
-            this.file.Write("</tbody>\n");
+            this.file.Write("</tbody>\n</table>\n");
         }
 
         private void Matrix(Dependency branch, DeepEnds.Core.Linked.Dependencies dependencies)
