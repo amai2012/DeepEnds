@@ -53,6 +53,35 @@ namespace DeepEnds.DoxygenXml
 
             this.ReadLoc(root, leaf);
             this.ReadReferences(root, leaf);
+            this.ReadMembers(root, leaf);
+        }
+
+        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        {
+            var list = new List<System.Xml.XmlElement>();
+            this.SelectNodes(root, "memberdef", list);
+            foreach (var element in list)
+            {
+                var kind = element.GetAttribute("kind");
+                var id = element.GetAttribute("id");
+                if (kind == "enum")
+                {
+                    var nodes = element.SelectNodes("name");
+                    foreach (var node in nodes)
+                    {
+                        if (node.GetType() != typeof(System.Xml.XmlElement))
+                        {
+                            continue;
+                        }
+
+                        var name = node as System.Xml.XmlElement;
+                        var child = new Core.Dependent.Dependency(name.InnerText, leaf);
+                        leaf.AddChild(child);
+                        this.lookup[id] = child;
+                        this.ReadLoc(element, child);
+                    }
+                }
+            }
         }
 
         private void ReadLoc(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
