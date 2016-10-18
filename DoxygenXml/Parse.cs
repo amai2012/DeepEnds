@@ -119,12 +119,13 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        private void ReadFile(string fileName)
+        private void ReadFile(string fileName, System.Text.StringBuilder messages)
         {
             var doc = new System.Xml.XmlDocument();
             doc.Load(fileName);
             var root = doc.DocumentElement;
             var nodes = root.SelectNodes("compounddef");
+            var hasRead = false;
             foreach (var node in nodes)
             {
                 if (node.GetType() != typeof(System.Xml.XmlElement))
@@ -135,6 +136,15 @@ namespace DeepEnds.DoxygenXml
                 var element = node as System.Xml.XmlElement;
                 var language = element.GetAttribute("language");
                 var kind = element.GetAttribute("kind");
+                if (!hasRead)
+                {
+                    if (kind == "class")
+                    {
+                        messages.AppendLine(string.Format("Reading {0}", fileName));
+                        hasRead = true;
+                    }
+                }
+
                 if (kind == "class")
                 {
                     var sep = ".";
@@ -167,7 +177,7 @@ namespace DeepEnds.DoxygenXml
                     continue;
                 }
 
-                this.ReadFile(fileName);
+                this.ReadFile(fileName, messages);
             }
         }
 
