@@ -98,9 +98,54 @@ namespace DeepEnds.Console
 
         static int Main(string[] args)
         {
+            System.Console.WriteLine(@"    +###############################,   
+  #,                                 #` 
+ #                                    @ 
+ ,                              `;     @
++                              .###    #
+#                              ####    #
+#                             ####@    #
+#                             ####     #
+#                            @###:     #
+#                            ####      #
+#                           ####       #
+#                          '###@       #
+#                          ####        #
+#                         @###'        #
+#                       `#####         #
+#                      @#####`         #
+#                    +######@          #
+#           ###    `########           #
+#          #####  @#######@            #
+#          ##### @#######              #
+#          ##### ######+               #
+#           ### #####@                 #
+#              :####,                  #
+#              ###@                    #
+#             ###@                     #
+#             ###                      #
+#            @###                      #
+#           `###                       #
+#           ###,                       #
+#          '###                        #
+#          ###                         #
+#          @#@                         #
+#                                      #
+#   `'#####;,+#####:,#####@:,#####@,   #
+#   ,###############################   #
+#   ,##@+@#####@+@######+@######+###   #
+,   `       ,      `.      `.      .   #
+ #                                    :.
+  @                                  :@ 
+   @#################################.  
+
+Dive into architecture with DeepEnds
+
+");
+
             var prog = new Program();
             prog.Parse(args);
-            if (prog.UnsupportedExtension())
+            if (prog.UnsupportedExtension() || args.Length == 0)
             {
                 System.Console.WriteLine("DeepEnds command line application for batch execution");
                 System.Console.WriteLine("Usage:");
