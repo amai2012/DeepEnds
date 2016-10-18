@@ -144,6 +144,7 @@ namespace DeepEnds.Console
 
             csharp.Finalise(dlls);
             vbasic.Finalise(dlls);
+            xml.Finalise();
             parser.Finalise(this.sep);
 
             return true;
