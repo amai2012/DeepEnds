@@ -93,6 +93,9 @@ namespace DeepEnds.Core
             }
 
             var reorder = new List<int>();
+            var remaining = new List<int>();
+
+            // Add all nodes with no dependencies to reorder
             for (int i = 0; i < length; ++i)
             {
                 var count = 0;
@@ -105,45 +108,50 @@ namespace DeepEnds.Core
                 {
                     reorder.Add(i);
                 }
+                else
+                {
+                    remaining.Add(i);
+                }
             }
 
-            for (int i = reorder.Count; i < length; ++i)
+            // Try to remove more
+            var left = remaining.Count + 1;
+            while (remaining.Count > 0)
             {
-                var dummy = length;
-                bool fine = true;
-                for (int j = 0; j < length; ++j)
+                if (remaining.Count == left)
                 {
-                    fine = true;
-                    if (reorder.Contains(j))
-                    {
-                        continue;
-                    }
+                    this.HasCycle = true;
+                    break;
+                }
 
-                    dummy = j;
-
+                left = remaining.Count;
+                for (int i = 0; i < left; ++i)
+                {
+                    var test = remaining[i];
+                    var covered = true;
                     for (int k = 0; k < length; ++k)
                     {
-                        var val = this.matrix[j, k];
+                        var val = this.matrix[test, k];
                         if (val == 0 || reorder.Contains(k))
                         {
                             continue;
                         }
 
-                        fine = false;
+                        covered = false;
+                        break;
                     }
 
-                    if (fine)
+                    if (covered)
                     {
+                        reorder.Add(test);
+                        remaining.Remove(test);
                         break;
                     }
                 }
-
-                reorder.Add(dummy);
-                if (!fine)
-                {
-                    this.HasCycle = true;
-                }
             }
+
+            // Have broken early if there are any remaining
+            reorder.AddRange(remaining);
 
             this.order = reorder.ToArray();
         }
