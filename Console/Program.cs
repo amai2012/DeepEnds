@@ -29,13 +29,14 @@ namespace DeepEnds.Console
     {
         private View view;
         private List<string> inputFiles;
-        private List<string> outputFiles;
+        private Dictionary<string, string> options;
 
         Program()
         {
             this.view = new View();
             inputFiles = new List<string>();
-            outputFiles = new List<string>();
+            options = new Dictionary<string, string>();
+            options["source"] = string.Empty;
         }
 
         private void Parse(string[] args)
@@ -51,7 +52,7 @@ namespace DeepEnds.Console
                     continue;
                 }
 
-                outputFiles.Add(arg.Substring(i + 1));
+                options[arg.Substring(0, i)] = arg.Substring(i + 1);
             }
         }
 
@@ -65,8 +66,14 @@ namespace DeepEnds.Console
                 return true;
             }
 
-            foreach (var fileName in this.outputFiles)
+            foreach (var pair in this.options)
             {
+                if (pair.Key == "source")
+                {
+                    continue;
+                }
+
+                var fileName = pair.Value;
                 var ext = System.IO.Path.GetExtension(fileName);
                 if (ext == ".html" || ext == ".dgml")
                     continue;
@@ -81,7 +88,7 @@ namespace DeepEnds.Console
         /// </summary>
         private void Read()
         {
-            this.view.Read(this.inputFiles.ToArray());
+            this.view.Read(this.options["source"], this.inputFiles.ToArray());
 
             System.Console.Write(this.view.Messages.ToString());
         }
@@ -91,8 +98,16 @@ namespace DeepEnds.Console
         /// </summary>
         private void Write()
         {
-            foreach (var fileName in this.outputFiles)
+            foreach (var pair in this.options)
+            {
+                if (pair.Key == "source")
+                {
+                    continue;
+                }
+
+                var fileName = pair.Value;
                 this.view.Write(fileName);
+            }
         }
 
 
@@ -149,10 +164,12 @@ Dive into architecture with DeepEnds
             {
                 System.Console.WriteLine("DeepEnds command line application for batch execution");
                 System.Console.WriteLine("Usage:");
-                System.Console.WriteLine("  DeepEnds.Console.exe [report] [graph] filenames");
+                System.Console.WriteLine("  DeepEnds.Console.exe [report] [graph] [source] filenames");
                 System.Console.WriteLine("  where report is of the form 'report=report.html'");
                 System.Console.WriteLine("        graph is of the form 'graph=graph.dgml'");
-                System.Console.WriteLine("        filenames is a list of sln, csproj, vcxproj, vbproj, dll and exe files");
+                System.Console.WriteLine("        source is (a directory) of the form 'source=C:\\...'");
+                System.Console.WriteLine("        filenames is a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files");
+                System.Console.WriteLine("  for parsing Doxygen XML output supply one xml file and set source");
                 return 1;
             }
 

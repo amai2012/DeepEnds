@@ -148,16 +148,16 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        public Parse(DeepEnds.Core.Parser parser)
+        public Parse(DeepEnds.Core.Parser parser, string sourceDirectory)
         {
             this.parser = parser;
+            this.sourceDirectory = sourceDirectory;
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }
 
-        public void Read(string directory, string sourceDirectory, System.Text.StringBuilder messages)
+        public void Read(string directory, System.Text.StringBuilder messages)
         {
-            this.sourceDirectory = sourceDirectory;
             var files = System.IO.Directory.GetFiles(directory);
             foreach (var fileName in files)
             {

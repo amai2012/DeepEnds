@@ -77,7 +77,7 @@ namespace DeepEnds.Console
             }
         }
 
-        public bool Read(string[] lines)
+        public bool Read(string source, string[] lines)
         {
             this.Messages = new System.Text.StringBuilder("Reading\n");
             var fileNames = new List<KeyValuePair<string, string>>();
@@ -112,7 +112,7 @@ namespace DeepEnds.Console
             var vbasic = new VBasic.Parse(parser);
             var cpp = new Cpp.ParseVS(parser);
             var dotnet = new Decompile.Parse(parser);
-            var xml = new DoxygenXml.Parse(parser);
+            var xml = new DoxygenXml.Parse(parser, source);
 
             var dlls = new List<string>();
             foreach (var pair in fileNames)
@@ -138,14 +138,7 @@ namespace DeepEnds.Console
                 }
                 else if (ext == ".xml")
                 {
-                    string sourceDirectory = string.Empty;
-                    var i = pair.Value.IndexOf("doxygen");
-                    if (i != -1)
-                    {
-                        sourceDirectory = pair.Value.Substring(0, i);
-                    }
-
-                    xml.Read(pair.Value, sourceDirectory, this.Messages);
+                    xml.Read(pair.Value, this.Messages);
                 }
             }
 
