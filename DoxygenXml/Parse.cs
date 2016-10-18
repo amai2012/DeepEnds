@@ -42,6 +42,28 @@ namespace DeepEnds.DoxygenXml
                 var path = element.InnerText;
                 leaf = this.parser.Dependencies.GetPath(path, sep);
             }
+
+            this.ReadLoc(root, leaf);
+        }
+
+        private void ReadLoc(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        {
+            int loc = 0;
+            var nodes = root.SelectNodes("location");
+            foreach (var node in nodes)
+            {
+                if (node.GetType() != typeof(System.Xml.XmlElement))
+                {
+                    continue;
+                }
+
+                var element = node as System.Xml.XmlElement;
+                var bodystart = element.GetAttribute("bodystart");
+                var bodyend = element.GetAttribute("bodyend");
+                loc += System.Convert.ToInt32(bodyend) - System.Convert.ToInt32(bodystart);
+            }
+
+            leaf.LOC = loc;
         }
 
         private void ReadFile(string fileName)
