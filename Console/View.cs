@@ -138,7 +138,14 @@ namespace DeepEnds.Console
                 }
                 else if (ext == ".xml")
                 {
-                    xml.Read(pair.Value, this.Messages);
+                    string sourceDirectory = string.Empty;
+                    var i = pair.Value.IndexOf("doxygen");
+                    if (i != -1)
+                    {
+                        sourceDirectory = pair.Value.Substring(0, i);
+                    }
+
+                    xml.Read(pair.Value, sourceDirectory, this.Messages);
                 }
             }
 

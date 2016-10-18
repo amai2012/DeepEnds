@@ -33,6 +33,8 @@ namespace DeepEnds.DoxygenXml
 
         private Dictionary<Core.Dependent.Dependency, List<string>> links;
 
+        private string sourceDirectory;
+
         private void ReadClass(System.Xml.XmlElement root, string sep)
         {
             Core.Dependent.Dependency leaf = null;
@@ -56,6 +58,7 @@ namespace DeepEnds.DoxygenXml
         private void ReadLoc(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
         {
             int loc = 0;
+            var fileName = string.Empty;
             var nodes = root.SelectNodes("location");
             foreach (var node in nodes)
             {
@@ -67,10 +70,14 @@ namespace DeepEnds.DoxygenXml
                 var element = node as System.Xml.XmlElement;
                 var bodystart = element.GetAttribute("bodystart");
                 var bodyend = element.GetAttribute("bodyend");
+                fileName = element.GetAttribute("bodyfile");
                 loc += 1 + System.Convert.ToInt32(bodyend) - System.Convert.ToInt32(bodystart);
             }
 
             leaf.LOC = loc;
+
+            fileName = System.IO.Path.Combine(this.sourceDirectory, fileName);
+            this.parser.Sources.Create(leaf, new DeepEnds.Core.SourceProvider(leaf, fileName));
         }
 
         private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
@@ -148,8 +155,9 @@ namespace DeepEnds.DoxygenXml
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }
 
-        public void Read(string directory, System.Text.StringBuilder messages)
+        public void Read(string directory, string sourceDirectory, System.Text.StringBuilder messages)
         {
+            this.sourceDirectory = sourceDirectory;
             var files = System.IO.Directory.GetFiles(directory);
             foreach (var fileName in files)
             {
