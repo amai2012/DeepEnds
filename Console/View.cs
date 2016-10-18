@@ -70,6 +70,11 @@ namespace DeepEnds.Console
                     this.Files(name, direc, fileNames, extensions, messages);
                 }
             }
+            else if (ext == ".xml")
+            {
+                direc = System.IO.Path.GetDirectoryName(fileName);
+                fileNames.Add(new KeyValuePair<string, string>(fileName, direc));
+            }
         }
 
         public bool Read(string[] lines)
@@ -107,6 +112,7 @@ namespace DeepEnds.Console
             var vbasic = new VBasic.Parse(parser);
             var cpp = new Cpp.ParseVS(parser);
             var dotnet = new Decompile.Parse(parser);
+            var xml = new DoxygenXml.Parse(parser);
 
             var dlls = new List<string>();
             foreach (var pair in fileNames)
@@ -129,6 +135,10 @@ namespace DeepEnds.Console
                 else if (ext == ".vcxproj")
                 {
                     cpp.Read(pair.Key, pair.Value, this.Messages);
+                }
+                else if (ext == ".xml")
+                {
+                    xml.Read(pair.Value, this.Messages);
                 }
             }
 

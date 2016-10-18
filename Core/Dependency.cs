@@ -80,7 +80,7 @@ namespace DeepEnds.Core.Dependent
             {
                 var i = path.IndexOf(sep);
                 name = path.Substring(0, i);
-                path = path.Substring(i + 1);
+                path = path.Substring(i + sep.Length);
             }
             else
             {

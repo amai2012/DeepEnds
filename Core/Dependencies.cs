@@ -54,7 +54,7 @@ namespace DeepEnds.Core.Linked
 
             var i = path.LastIndexOf(sep);
             var parent = path.Substring(0, i);
-            var name = path.Substring(i + 1);
+            var name = path.Substring(i + sep.Length);
             return new Tuple<string, string>(parent, name);
         }
 

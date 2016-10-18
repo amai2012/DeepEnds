@@ -60,7 +60,7 @@ namespace DeepEnds.Console
             foreach (var fileName in this.inputFiles)
             {
                 var ext = System.IO.Path.GetExtension(fileName);
-                if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll" || ext == ".sln")
+                if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll" || ext == ".sln" || ext == ".xml")
                     continue;
                 return true;
             }

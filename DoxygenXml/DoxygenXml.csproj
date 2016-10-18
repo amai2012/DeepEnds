@@ -1,20 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{240EA70D-F0EB-4DB1-A320-CA410DB79227}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>5330eb25-e6d5-4fb9-92f8-afd0d67d354a</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Console</RootNamespace>
-    <AssemblyName>DeepEnds.Console</AssemblyName>
+    <RootNamespace>DeepEnds.DoxygenXml</RootNamespace>
+    <AssemblyName>DeepEnds.DoxygenXml</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,55 +29,41 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System"/>
+    
+    <Reference Include="System.Core"/>
+    <Reference Include="System.Xml.Linq"/>
+    <Reference Include="System.Data.DataSetExtensions"/>
+    
+    
+    <Reference Include="Microsoft.CSharp"/>
+    
+    <Reference Include="System.Data"/>
+    
+    <Reference Include="System.Net.Http"/>
+    
+    <Reference Include="System.Xml"/>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Parse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="View.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{4d1dc118-24b5-45f4-a86a-7d419d9b8340}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Cpp\Cpp.csproj">
-      <Project>{dc04d6a0-269f-4c51-8f6b-f396d31b6bb6}</Project>
-      <Name>Cpp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CSharp\CSharp.csproj">
-      <Project>{ba1ae885-d8b4-44c9-b4c0-5c093c1cf7f0}</Project>
-      <Name>CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Decompile\Decompile.csproj">
-      <Project>{18adfe7e-ea97-4ee1-812a-cc07018bc8b8}</Project>
-      <Name>Decompile</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DGML\DGML.csproj">
-      <Project>{fce94f81-4aee-4d9f-bb99-c3fe05bff170}</Project>
-      <Name>DGML</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DoxygenXml\DoxygenXml.csproj">
-      <Project>{5330eb25-e6d5-4fb9-92f8-afd0d67d354a}</Project>
-      <Name>DoxygenXml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\VBasic\VBasic.csproj">
-      <Project>{81b48a82-3c0b-416a-95d1-1eaec5fccd95}</Project>
-      <Name>VBasic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\StyleCop.Targets" Condition=" '$(StyleCopDirec)'!='' " />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -88,4 +71,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-</Project>
+
+ </Project>
