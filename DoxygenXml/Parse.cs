@@ -73,9 +73,9 @@ namespace DeepEnds.DoxygenXml
             leaf.LOC = loc;
         }
 
-        private void ReadReferences(System.Xml.XmlNodeList nodes, List<string> refs)
+        private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
         {
-            foreach (var node in nodes)
+            foreach (var node in root.ChildNodes)
             {
                 if (node.GetType() != typeof(System.Xml.XmlElement))
                 {
@@ -83,8 +83,14 @@ namespace DeepEnds.DoxygenXml
                 }
 
                 var element = node as System.Xml.XmlElement;
-                var refid = element.GetAttribute("refid");
-                refs.Add(refid);
+                if (element.Name == name)
+                {
+                    list.Add(element);
+                }
+                else
+                {
+                    this.SelectNodes(element, name, list);
+                }
             }
         }
 
@@ -93,10 +99,17 @@ namespace DeepEnds.DoxygenXml
             var id = root.GetAttribute("id");
             this.lookup[id] = leaf;
 
+            var list = new List<System.Xml.XmlElement>();
+            this.SelectNodes(root, "basecompoundref", list);
+            this.SelectNodes(root, "ref", list);
+
             var links = new List<string>();
             this.links[leaf] = links;
-            this.ReadReferences(root.SelectNodes("basecompoundref"), links);
-            this.ReadReferences(root.SelectNodes("ref"), links);
+            foreach (var element in list)
+            {
+                var refid = element.GetAttribute("refid");
+                links.Add(refid);
+            }
         }
 
         private void ReadFile(string fileName)
