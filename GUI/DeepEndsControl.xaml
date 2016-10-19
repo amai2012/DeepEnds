@@ -8,25 +8,17 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
-    <Grid Margin="0,0,0,154">
+    <Grid x:Name="grid" Margin="0,0,0,154">
         <Grid.RowDefinitions>
-            <RowDefinition MinHeight="50"/>
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60" />
             <ColumnDefinition />
             <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" Margin="10" HorizontalAlignment="Left">Input</TextBlock>
-        <TextBox Grid.Row="0" Grid.Column="1" MinWidth="120" Name="inputFiles" AcceptsReturn="True" TextWrapping="Wrap" TextChanged="inputFiles_TextChanged"></TextBox>
-        <Button Grid.Row="0" Grid.Column="2" Content="Browse..." Click="input_Click" Name="inputButton"/>
-        <Button Grid.Row="0" Grid.Column="3" Content="Read" Click="read_Click" Name="readButton"/>
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="10" HorizontalAlignment="Left" Width="50">Output</TextBlock>
-        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="120" Name="outputFile" TextChanged="outputFile_TextChanged"></TextBox>
-        <Button Grid.Row="1" Grid.Column="2" Content="Browse..." Click="output_Click" Name="outputButton"/>
-        <Button Grid.Row="1" Grid.Column="3" Content="Write" Click="write_Click" Name="writeButton"/>
+        <Button Grid.Row="0" Grid.Column="0" Content="Command" Click="Command_Click" Name="CommandButton" ToolTip="Display the batch file command"/>
+        <Button Grid.Row="0" Grid.Column="2" Content="Execute" Click="Execute_Click" Name="ExecuteButton" ToolTip="Execute the batch file command"/>
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
             </StackPanel>

@@ -32,6 +32,7 @@ namespace DeepEnds.Console
             var options = new Dictionary<string, string>();
 
             // internal
+            options["filenames"] = string.Empty;
             options["sep"] = ".";
 
             // external
@@ -45,6 +46,7 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Help()
         {
             var options = new Dictionary<string, string>();
+            options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files\n  for parsing Doxygen XML output supply one xml file and set source";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
             options["source"] = "The directory containing the source (used by Doxygen XML input for DGML)";
@@ -54,15 +56,17 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Types()
         {
             var options = new Dictionary<string, string>();
+            options["filenames"] = "fileIn";
             options["graph"] = "fileOut";
             options["report"] = "fileOut";
             options["source"] = "directoryIn";
             return options;
         }
 
-        static public Dictionary<string, string> Extensions()
+        static public Dictionary<string, string> Filters()
         {
             var options = new Dictionary<string, string>();
+            options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml";
             options["graph"] = "Directed Graph Markup Language (.dgml)|*.dgml";
             options["report"] = "Report (.html, .htm)|*.html;*.htm";
             return options;

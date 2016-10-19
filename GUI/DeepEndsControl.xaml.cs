@@ -25,6 +25,7 @@ namespace DeepEnds.GUI
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
 
@@ -34,8 +35,10 @@ namespace DeepEnds.GUI
     public partial class DeepEndsControl : UserControl
     {
         private DeepEnds.Console.View view;
-        private bool read;
         private Dictionary<string, string> options;
+        private Dictionary<string, string> types;
+        private Dictionary<string, string> filters;
+        private Dictionary<string, TextBox> values;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="DeepEndsControl"/> class.
@@ -45,9 +48,67 @@ namespace DeepEnds.GUI
             this.InitializeComponent();
 
             this.view = new DeepEnds.Console.View();
-            this.writeButton.IsEnabled = false;
-            this.read = false;
             this.options = DeepEnds.Console.Options.Defaults();
+            this.types = DeepEnds.Console.Options.Types();
+            this.filters = DeepEnds.Console.Options.Filters();
+            this.values = new Dictionary<string, TextBox>();
+
+            var help = DeepEnds.Console.Options.Help();
+            int row = 0;
+
+            var keys = help.Keys.OrderBy(o => o).ToList();
+            keys.Remove("filenames");
+            keys.Add("filenames");
+            foreach (var key in keys)
+            {
+                ++row;
+                var def = new RowDefinition();
+                this.grid.RowDefinitions.Add(def);
+                if (key == "filenames")
+                {
+                    def.MinHeight = 20.0;
+                }
+                else
+                {
+                    def.Height = new GridLength(10.0, GridUnitType.Auto);
+                }
+
+                var label = new TextBlock();
+                label.Name = key;
+                label.ToolTip = help[key];
+                label.Text = key;
+                label.Margin = new Thickness(10.0);
+                label.HorizontalAlignment = HorizontalAlignment.Left;
+                label.Width = 50.0;
+                Grid.SetColumn(label, 0);
+                Grid.SetRow(label, row);
+                this.grid.Children.Add(label);
+
+                var value = new TextBox();
+                value.Name = key;
+                value.ToolTip = help[key];
+                value.Text = this.options[key];
+                value.MinWidth = 120.0;
+                value.TextChanged += this.Value_TextChanged;
+                Grid.SetColumn(value, 1);
+                Grid.SetRow(value, row);
+                this.grid.Children.Add(value);
+                this.values[key] = value;
+                if (key == "filenames")
+                {
+                    value.AcceptsReturn = true;
+                    value.TextWrapping = TextWrapping.Wrap;
+                }
+
+                var browse = new Button();
+                browse.Name = key;
+                browse.ToolTip = help[key];
+                browse.Content = "Browse...";
+                browse.Click += this.Browse_Click;
+                Grid.SetColumn(browse, 2);
+                Grid.SetRow(browse, row);
+                this.grid.Children.Add(browse);
+            }
         }
 
         /// <summary>
@@ -57,31 +118,49 @@ namespace DeepEnds.GUI
         /// <param name="e">The event args.</param>
         [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void input_Click(object sender, RoutedEventArgs e)
+        private void Browse_Click(object sender, RoutedEventArgs e)
         {
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.DefaultExt = ".sln"; // Default file extension
-            dlg.Filter = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml"; // Filter files by extension
-            dlg.Multiselect = true;
+            var name = ((System.Windows.Controls.Button)e.Source).Name;
 
-            // Show open file dialog box
-            var result = dlg.ShowDialog();
-
-            // Process open file dialog box results
-            if (result != true)
+            var type = this.types[name];
+            if (type == "fileOut")
             {
-                return;
+                // Configure save file dialog box
+                var dlg = new System.Windows.Forms.SaveFileDialog();
+                dlg.Filter = this.filters[name];
+                var result = dlg.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    this.values[name].Text = dlg.FileName;
+                }
             }
-
-            var selection = inputFiles.Text;
-            foreach (var item in dlg.FileNames)
+            else if (type == "fileIn")
             {
-                selection += string.Format("{0}\n", item);
-            }
+                // Configure save file dialog box
+                var dlg = new System.Windows.Forms.OpenFileDialog();
+                dlg.Filter = this.filters[name];
+                dlg.Multiselect = true;
+                var result = dlg.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    var selection = this.values[name].Text;
+                    foreach (var item in dlg.FileNames)
+                    {
+                        selection += string.Format("{0}\n", item);
+                    }
 
-            inputFiles.Text = selection;
-            this.read = true;
+                    this.values[name].Text = selection;
+                }
+            }
+            else if (type == "directoryIn")
+            {
+                var dlg = new System.Windows.Forms.FolderBrowserDialog();
+                var result = dlg.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    this.values[name].Text = dlg.SelectedPath;
+                }
+            }
         }
 
         /// <summary>
@@ -91,54 +170,27 @@ namespace DeepEnds.GUI
         /// <param name="e">The event args.</param>
         [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void output_Click(object sender, RoutedEventArgs e)
+        private void Execute_Click(object sender, RoutedEventArgs e)
         {
-            // Configure save file dialog box
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.DefaultExt = ".dgml"; // Default file extension
-            dlg.Filter = "Directed Graph Markup Language (.dgml)|*.dgml|Report (.html, .htm)|*.html;*.htm"; // Filter files by extension
-
-            // Show save file dialog box
-            var result = dlg.ShowDialog();
-
-            // Process save file dialog box results
-            if (result != true)
-            {
-                return;
-            }
-
-            outputFile.Text = dlg.FileName;
-        }
-
-        /// <summary>
-        /// Handles click on the button by displaying a message box.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event args.</param>
-        [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void read_Click(object sender, RoutedEventArgs e)
-        {
-            bool read = false;
             try
             {
-                read = this.view.Read(this.options, this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+                this.view.Read(this.options, this.options["filenames"].Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+                this.view.Write(this.options);
             }
             catch (System.Exception excep)
             {
                 MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            if (read)
-            {
-                this.writeButton.IsEnabled = this.outputFile.Text != string.Empty;
-                this.read = true;
-            }
+            ShowMessage(this.view.Messages.ToString());
+        }
 
+        private void ShowMessage(string message)
+        {
             var path = System.IO.Path.GetTempPath();
             var filePath = System.IO.Path.Combine(path, "deepends.txt");
             var file = new System.IO.StreamWriter(filePath);
-            file.Write(this.view.Messages.ToString());
+            file.Write(message);
             file.Close();
 
             var p = new System.Diagnostics.Process();
@@ -154,25 +206,35 @@ namespace DeepEnds.GUI
         /// <param name="e">The event args.</param>
         [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void write_Click(object sender, RoutedEventArgs e)
+        private void Command_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                this.options["graph"] = string.Empty;
-                this.options["report"] = string.Empty;
-
-                var fileName = this.outputFile.Text;
-                var ext = System.IO.Path.GetExtension(fileName);
-                if (ext == ".dgml")
+                var message = System.Reflection.Assembly.GetAssembly(typeof(DeepEnds.Console.View)).Location;
+                var defaults = DeepEnds.Console.Options.Defaults();
+                foreach (var key in this.options.Keys)
                 {
-                    this.options["graph"] = fileName;
-                }
-                else if (ext == ".html" || ext == ".htm")
-                {
-                    this.options["report"] = fileName;
+                    if (key == "filenames" || key == "sep")
+                    {
+                        continue;
+                    }
+
+                    var val = this.options[key];
+                    if (val == defaults[key])
+                    {
+                        continue;
+                    }
+
+                    if (val.Contains(" "))
+                    {
+                        val = string.Format("\"{0}\"", val);
+                    }
+
+                    message = string.Format("{0} {1}={2}", message, key, val);
                 }
 
-                this.view.Write(this.options);
+                message = string.Format("{0} {1}", message, this.options["filenames"].Replace('\n', ' '));
+                this.ShowMessage(message);
             }
             catch (System.Exception excep)
             {
@@ -181,16 +243,10 @@ namespace DeepEnds.GUI
         }
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void inputFiles_TextChanged(object sender, TextChangedEventArgs e)
+        private void Value_TextChanged(object sender, TextChangedEventArgs e)
         {
-            this.read = false;
-            this.writeButton.IsEnabled = false;
-        }
-
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void outputFile_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            this.writeButton.IsEnabled = this.read && (this.outputFile.Text != string.Empty);
+            var name = ((System.Windows.Controls.TextBox)e.Source).Name;
+            this.options[name] = this.values[name].Text;
         }
     }
 }
