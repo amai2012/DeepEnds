@@ -155,6 +155,12 @@ namespace DeepEnds.Console
                 report.Write(this.dependencies);
             }
 
+            if (options["doxygen"] != string.Empty)
+            {
+                var report = new DeepEnds.Core.Doxygen(options);
+                report.Write(this.dependencies);
+            }
+
             if (options["graph"] != string.Empty)
             {
                 var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);

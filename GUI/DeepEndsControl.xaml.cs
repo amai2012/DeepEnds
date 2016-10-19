@@ -100,14 +100,17 @@ namespace DeepEnds.GUI
                     value.TextWrapping = TextWrapping.Wrap;
                 }
 
-                var browse = new Button();
-                browse.Name = key;
-                browse.ToolTip = help[key];
-                browse.Content = "Browse...";
-                browse.Click += this.Browse_Click;
-                Grid.SetColumn(browse, 2);
-                Grid.SetRow(browse, row);
-                this.grid.Children.Add(browse);
+                if (this.filters.ContainsKey(key))
+                {
+                    var browse = new Button();
+                    browse.Name = key;
+                    browse.ToolTip = help[key];
+                    browse.Content = "Browse...";
+                    browse.Click += this.Browse_Click;
+                    Grid.SetColumn(browse, 2);
+                    Grid.SetRow(browse, row);
+                    this.grid.Children.Add(browse);
+                }
             }
         }
 
@@ -182,7 +185,7 @@ namespace DeepEnds.GUI
                 MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            ShowMessage(this.view.Messages.ToString());
+            this.ShowMessage(this.view.Messages.ToString());
         }
 
         private void ShowMessage(string message)
@@ -212,9 +215,10 @@ namespace DeepEnds.GUI
             {
                 var message = System.Reflection.Assembly.GetAssembly(typeof(DeepEnds.Console.View)).Location;
                 var defaults = DeepEnds.Console.Options.Defaults();
+                var internals = DeepEnds.Console.Options.Internals();
                 foreach (var key in this.options.Keys)
                 {
-                    if (key == "filenames" || key == "sep")
+                    if (internals.Contains(key))
                     {
                         continue;
                     }
