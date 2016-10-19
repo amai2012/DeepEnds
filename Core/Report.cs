@@ -33,17 +33,14 @@ namespace DeepEnds.Core
     {
         private System.IO.StreamWriter file;
 
-        private string filePath;
+        private Dictionary<string, string> options;
 
         private string fileName;
 
-        private string sep;
-
-        public Report(string filePath, string sep)
+        public Report(Dictionary<string, string> options)
         {
-            this.filePath = filePath;
-            this.fileName = System.IO.Path.GetFileName(filePath);
-            this.sep = sep;
+            this.options = options;
+            this.fileName = System.IO.Path.GetFileName(options["report"]);
         }
 
         private void Top(int topIndex)
@@ -159,7 +156,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 
         private void TableRow(Complexity row, int index, DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            var name = row.Branch.Path(this.sep);
+            var name = row.Branch.Path(this.options["sep"]);
             if (name == string.Empty)
             {
                 name = "Top level";
@@ -215,7 +212,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 
         private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping)
         {
-            var name = branch.Path(this.sep);
+            var name = branch.Path(this.options["sep"]);
             if (name == string.Empty)
             {
                 name = "Top level";
@@ -229,7 +226,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
             }
 
             index = mapping[branch.Parent];
-            name = branch.Parent.Path(this.sep);
+            name = branch.Parent.Path(this.options["sep"]);
             if (name == string.Empty)
             {
                 name = "Top level";
@@ -248,7 +245,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                     continue;
                 }
 
-                locs[child.Path(this.sep)] = child.LOC;
+                locs[child.Path(this.options["sep"])] = child.LOC;
             }
 
             if (locs.Count > 0)
@@ -272,9 +269,9 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                 this.file.Write("<table><thead>\n\n");
                 this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf nodes not contained by this node that are depended upon\"><th>External dependencies</th></tr>\n"));
                 this.file.Write("</thead>\n<tbody>\n");
-                foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.sep)))
+                foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(options["sep"])))
                 {
-                    this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(this.sep)));
+                    this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(this.options["sep"])));
                 }
 
                 this.file.Write("</tbody>\n</table>\n<p/>\n");
@@ -288,13 +285,13 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
             {
                 foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
                 {
-                    var found = FindLinks.Get(child, dep, this.sep);
+                    var found = FindLinks.Get(child, dep, this.options["sep"]);
                     if (found.Count == 0)
                     {
                         continue;
                     }
 
-                    foreach (var link in FindLinks.Get(child, dep, this.sep))
+                    foreach (var link in FindLinks.Get(child, dep, this.options["sep"]))
                     {
                         set.Add(link.Value);
                     }
@@ -322,13 +319,13 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
             {
                 foreach (var dep in dependencies.Assembled.Linkings[child].Interlinks)
                 {
-                    var first = child.Path(this.sep);
+                    var first = child.Path(this.options["sep"]);
                     if (mapping.Keys.Contains(child))
                     {
                         first = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[child], first);
                     }
 
-                    var second = dep.Path(this.sep);
+                    var second = dep.Path(this.options["sep"]);
                     if (mapping.Keys.Contains(dep))
                     {
                         second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[dep], second);
@@ -337,13 +334,13 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                     this.file.Write("<thead>\n");
                     this.file.Write(string.Format("<tr id=\"main\" title=\"Dependencies that cause this edge of the graph to be formed\"><th>{0}</th><th>&rarr;</th><th>{1}</th></tr>\n", first, second));
                     this.file.Write("</thead>\n<tbody>\n");
-                    var found = FindLinks.Get(child, dep, this.sep);
+                    var found = FindLinks.Get(child, dep, this.options["sep"]);
                     if (found.Count == 0)
                     {
                         continue;
                     }
 
-                    foreach (var link in FindLinks.Get(child, dep, this.sep))
+                    foreach (var link in FindLinks.Get(child, dep, options["sep"]))
                     {
                         this.file.Write(string.Format("<tr><td>{0}</td><td>&rarr;</td><td>{1}</td></tr>\n", link.Key, link.Value));
                     }
@@ -389,7 +386,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
 
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            this.file = new System.IO.StreamWriter(this.filePath);
+            this.file = new System.IO.StreamWriter(this.options["report"]);
 
             var rows = Complexities.Factory(dependencies.Root, dependencies.Assembled.Linkings);
 

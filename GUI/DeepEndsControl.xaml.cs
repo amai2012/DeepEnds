@@ -23,6 +23,7 @@
 
 namespace DeepEnds.GUI
 {
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
@@ -34,6 +35,7 @@ namespace DeepEnds.GUI
     {
         private DeepEnds.Console.View view;
         private bool read;
+        private Dictionary<string, string> options;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="DeepEndsControl"/> class.
@@ -45,6 +47,7 @@ namespace DeepEnds.GUI
             this.view = new DeepEnds.Console.View();
             this.writeButton.IsEnabled = false;
             this.read = false;
+            this.options = DeepEnds.Console.View.Options();
         }
 
         /// <summary>
@@ -119,7 +122,7 @@ namespace DeepEnds.GUI
             bool read = false;
             try
             {
-                read = this.view.Read(this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+                read = this.view.Read(this.options, this.inputFiles.Text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
             }
             catch (System.Exception excep)
             {
@@ -155,7 +158,21 @@ namespace DeepEnds.GUI
         {
             try
             {
-                this.view.Write(this.outputFile.Text);
+				options["graph"] = string.Empty;
+				options["report"] = string.Empty;
+
+                var fileName = this.outputFile.Text;
+                var ext = System.IO.Path.GetExtension(fileName);
+                if (ext == ".dgml")
+                {
+                    this.options["graph"] = fileName;
+                }
+                else if (ext == ".html" || ext == ".htm")
+                {
+                    this.options["report"] = fileName;
+                }
+
+                this.view.Write(this.options);
             }
             catch (System.Exception excep)
             {

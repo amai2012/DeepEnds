@@ -33,7 +33,7 @@ namespace DeepEnds.DoxygenXml
 
         private Dictionary<Core.Dependent.Dependency, List<string>> links;
 
-        private string sourceDirectory;
+        private Dictionary<string, string> options;
 
         private void ReadClass(System.Xml.XmlElement root, string sep)
         {
@@ -105,7 +105,7 @@ namespace DeepEnds.DoxygenXml
 
             leaf.LOC = loc;
 
-            fileName = System.IO.Path.Combine(this.sourceDirectory, fileName);
+            fileName = System.IO.Path.Combine(this.options["source"], fileName);
             this.parser.Sources.Create(leaf, new DeepEnds.Core.SourceProvider(leaf, fileName));
         }
 
@@ -187,10 +187,10 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        public Parse(DeepEnds.Core.Parser parser, string sourceDirectory)
+        public Parse(DeepEnds.Core.Parser parser, Dictionary<string, string> options)
         {
             this.parser = parser;
-            this.sourceDirectory = sourceDirectory;
+            this.options = options;
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }

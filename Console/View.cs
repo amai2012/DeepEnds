@@ -34,9 +34,18 @@ namespace DeepEnds.Console
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> sets;
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
         private Sources sources;
-        private string sep;
 
         public System.Text.StringBuilder Messages { get; set; }
+
+        static public Dictionary<string, string> Options()
+        {
+            var options = new Dictionary<string, string>();
+            options["graph"] = string.Empty;
+            options["report"] = string.Empty;
+            options["sep"] = ".";
+            options["source"] = string.Empty;
+            return options;
+        }
 
         public View()
         {
@@ -44,7 +53,6 @@ namespace DeepEnds.Console
             this.sets = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
             this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
             this.sources = new Sources();
-            this.sep = ".";
             this.Messages = new System.Text.StringBuilder();
         }
 
@@ -77,7 +85,7 @@ namespace DeepEnds.Console
             }
         }
 
-        public bool Read(string source, string[] lines)
+        public bool Read(Dictionary<string, string> options, string[] lines)
         {
             this.Messages = new System.Text.StringBuilder("Reading\n");
             var fileNames = new List<KeyValuePair<string, string>>();
@@ -102,17 +110,16 @@ namespace DeepEnds.Console
             this.dependencies = new Dependencies();
             var parser = new Parser(this.dependencies, this.sources);
 
-            this.sep = ".";
             if (extensions.Contains(".vcxproj"))
             {
-                this.sep = "\\";
+                options["sep"] = "\\";
             }
 
             var csharp = new CSharp.Parse(parser);
             var vbasic = new VBasic.Parse(parser);
             var cpp = new Cpp.ParseVS(parser);
             var dotnet = new Decompile.Parse(parser);
-            var xml = new DoxygenXml.Parse(parser, source);
+            var xml = new DoxygenXml.Parse(parser, options);
 
             var dlls = new List<string>();
             foreach (var pair in fileNames)
@@ -145,29 +152,24 @@ namespace DeepEnds.Console
             csharp.Finalise(dlls);
             vbasic.Finalise(dlls);
             xml.Finalise();
-            parser.Finalise(this.sep);
+            parser.Finalise(options["sep"]);
 
             return true;
         }
 
-        public void Write(string fileName)
+        public void Write(Dictionary<string, string> options)
         {
-            var ext = System.IO.Path.GetExtension(fileName);
-            if (ext == ".html" || ext == ".htm")
+            if (options["report"] != string.Empty)
             {
-                var report = new DeepEnds.Core.Report(fileName, this.sep);
+                var report = new DeepEnds.Core.Report(options);
                 report.Write(this.dependencies);
-                return;
             }
 
-            if (ext == ".dgml")
+            if (options["graph"] != string.Empty)
             {
-                var assemble = DeepEnds.DGML.Assemble.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
-                assemble.Save(fileName);
-                return;
+                var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
+                assemble.Save();
             }
-
-            throw new Exception(string.Format("Extension({0}) not recognised", ext));
         }
     }
 }

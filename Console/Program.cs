@@ -35,8 +35,7 @@ namespace DeepEnds.Console
         {
             this.view = new View();
             inputFiles = new List<string>();
-            options = new Dictionary<string, string>();
-            options["source"] = string.Empty;
+            options = View.Options();
         }
 
         private void Parse(string[] args)
@@ -66,20 +65,6 @@ namespace DeepEnds.Console
                 return true;
             }
 
-            foreach (var pair in this.options)
-            {
-                if (pair.Key == "source")
-                {
-                    continue;
-                }
-
-                var fileName = pair.Value;
-                var ext = System.IO.Path.GetExtension(fileName);
-                if (ext == ".html" || ext == ".dgml")
-                    continue;
-                return true;
-            }
-
             return false;
         }
 
@@ -88,7 +73,7 @@ namespace DeepEnds.Console
         /// </summary>
         private void Read()
         {
-            this.view.Read(this.options["source"], this.inputFiles.ToArray());
+            this.view.Read(this.options, this.inputFiles.ToArray());
 
             System.Console.Write(this.view.Messages.ToString());
         }
@@ -98,16 +83,7 @@ namespace DeepEnds.Console
         /// </summary>
         private void Write()
         {
-            foreach (var pair in this.options)
-            {
-                if (pair.Key == "source")
-                {
-                    continue;
-                }
-
-                var fileName = pair.Value;
-                this.view.Write(fileName);
-            }
+            this.view.Write(this.options);
         }
 
 

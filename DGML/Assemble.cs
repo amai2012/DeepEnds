@@ -41,8 +41,11 @@ namespace DeepEnds.DGML
         private Sources sources;
         private bool descend;
 
-        internal Assemble(Dictionary<Dependency, Links> links, Sources sources, bool descend)
+        private Dictionary<string, string> options;
+
+        internal Assemble(Dictionary<string, string> options, Dictionary<Dependency, Links> links, Sources sources, bool descend)
         {
+            this.options = options;
             this.links = links;
             this.sources = sources;
             this.descend = descend;
@@ -115,19 +118,19 @@ namespace DeepEnds.DGML
             base.Visit(dependency);
         }
 
-        public void Save(string filePath)
+        public void Save()
         {
 #if false
             var paths = new GraphPathSerializationDictionary();
             paths.Add(new KeyValuePair<string, string>("RelPath", ""));
             Microsoft.VisualStudio.GraphModel.GraphPathSerializer s = new GraphPathSerializer(paths);
 #endif
-            this.graph.Save(filePath);
+            this.graph.Save(this.options["graph"]);
         }
 
-        public static Assemble Factory(Dependency root, Dictionary<Dependency, Links> links, Sources sources, bool descend)
+        public static Assemble Factory(Dictionary<string, string> options, Dependency root, Dictionary<Dependency, Links> links, Sources sources, bool descend)
         {
-            var assemble = new Assemble(links, sources, descend);
+            var assemble = new Assemble(options, links, sources, descend);
             assemble.Node(root, "Expanded");
             if (descend)
             {
