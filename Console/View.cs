@@ -47,6 +47,15 @@ namespace DeepEnds.Console
             return options;
         }
 
+        static public Dictionary<string, string> Help()
+        {
+            var options = new Dictionary<string, string>();
+            options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
+            options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
+            options["source"] = "The directory containing the source (used by Doxygen XML input)";
+            return options;
+        }
+
         public View()
         {
             this.dependencies = new Dependencies();
