@@ -31,7 +31,7 @@ namespace DeepEnds.Core
     {
         private Dependency parent;
 
-        private int[,] matrix;
+        private List<int>[] matrix;
 
         private int[] order;
 
@@ -48,15 +48,11 @@ namespace DeepEnds.Core
                 return;
             }
 
-            this.matrix = new int[size, size];
+            this.matrix = new List<int>[size];
             this.order = new int[size];
             for (int i = 0; i < size; ++i)
             {
-                for (int j = 0; j < size; ++j)
-                {
-                    this.matrix[i, j] = 0;
-                }
-
+                this.matrix[i] = new List<int>();
                 this.order[i] = i;
             }
 
@@ -79,7 +75,7 @@ namespace DeepEnds.Core
                 foreach (var dep in links[child].Interlinks)
                 {
                     var nodeB = nodes[dep];
-                    this.matrix[nodeA, nodeB] = 1;
+                    this.matrix[nodeA].Add(nodeB);
                 }
             }
         }
@@ -98,13 +94,7 @@ namespace DeepEnds.Core
             // Add all nodes with no dependencies to reorder
             for (int i = 0; i < length; ++i)
             {
-                var count = 0;
-                for (int j = 0; j < length; ++j)
-                {
-                    count += this.matrix[i, j];
-                }
-
-                if (count == 0)
+                if (this.matrix[i].Count == 0)
                 {
                     reorder.Add(i);
                 }
@@ -129,10 +119,9 @@ namespace DeepEnds.Core
                 {
                     var test = remaining[i];
                     var covered = true;
-                    for (int k = 0; k < length; ++k)
+                    foreach(var index in this.matrix[test])
                     {
-                        var val = this.matrix[test, k];
-                        if (val == 0 || reorder.Contains(k))
+                        if (reorder.Contains(index))
                         {
                             continue;
                         }
@@ -172,7 +161,7 @@ namespace DeepEnds.Core
                     {
                         row += '\\';
                     }
-                    else if (this.matrix[this.order[i], this.order[j]] == 1)
+                    else if (this.matrix[this.order[i]].Contains(this.order[j]))
                     {
                         row += '1';
                     }
