@@ -269,7 +269,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                 this.file.Write("<table><thead>\n\n");
                 this.file.Write(string.Format("<tr id=\"main\" title=\"Leaf nodes not contained by this node that are depended upon\"><th>External dependencies</th></tr>\n"));
                 this.file.Write("</thead>\n<tbody>\n");
-                foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(options["sep"])))
+                foreach (var dep in dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.options["sep"])))
                 {
                     this.file.Write(string.Format("<tr><td>{0}</td></tr>\n", dep.Path(this.options["sep"])));
                 }
@@ -340,7 +340,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                         continue;
                     }
 
-                    foreach (var link in FindLinks.Get(child, dep, options["sep"]))
+                    foreach (var link in FindLinks.Get(child, dep, this.options["sep"]))
                     {
                         this.file.Write(string.Format("<tr><td>{0}</td><td>&rarr;</td><td>{1}</td></tr>\n", link.Key, link.Value));
                     }

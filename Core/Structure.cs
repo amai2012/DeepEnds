@@ -119,7 +119,7 @@ namespace DeepEnds.Core
                 {
                     var test = remaining[i];
                     var covered = true;
-                    foreach(var index in this.matrix[test])
+                    foreach (var index in this.matrix[test])
                     {
                         if (reorder.Contains(index))
                         {
