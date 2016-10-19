@@ -47,7 +47,7 @@ namespace DeepEnds.GUI
             this.view = new DeepEnds.Console.View();
             this.writeButton.IsEnabled = false;
             this.read = false;
-            this.options = DeepEnds.Console.View.Options();
+            this.options = DeepEnds.Console.Options.Defaults();
         }
 
         /// <summary>
@@ -158,8 +158,8 @@ namespace DeepEnds.GUI
         {
             try
             {
-				options["graph"] = string.Empty;
-				options["report"] = string.Empty;
+                this.options["graph"] = string.Empty;
+                this.options["report"] = string.Empty;
 
                 var fileName = this.outputFile.Text;
                 var ext = System.IO.Path.GetExtension(fileName);

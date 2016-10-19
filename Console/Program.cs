@@ -36,7 +36,7 @@ namespace DeepEnds.Console
         {
             this.view = new View();
             inputFiles = new List<string>();
-            options = View.Options();
+            options = Options.Defaults();
         }
 
         private void Parse(string[] args)
@@ -139,8 +139,8 @@ Dive into architecture with DeepEnds
             prog.Parse(args);
             if (prog.UnsupportedExtension() || args.Length == 0)
             {
-                var options = View.Options();
-                var help = View.Help();
+                var options = Options.Defaults();
+                var help = Options.Help();
                 System.Console.WriteLine("DeepEnds command line application for batch execution");
                 System.Console.WriteLine("Usage:");
                 System.Console.Write("  DeepEnds.Console.exe ");
