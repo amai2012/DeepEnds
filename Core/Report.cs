@@ -35,12 +35,9 @@ namespace DeepEnds.Core
 
         private Dictionary<string, string> options;
 
-        private string fileName;
-
         public Report(Dictionary<string, string> options)
         {
             this.options = options;
-            this.fileName = System.IO.Path.GetFileName(options["report"]);
         }
 
         private void Top(int topIndex)
@@ -83,7 +80,7 @@ td#alert {
 
 <h3>Externals</h3>
 <div>
-<p>Externals refers to the number of dependencies which aren't childen.
+<p>Externals refers to the number of dependencies which aren't children.
 The following max refers to the maximum of that value and the value at any child nodes.</p>
 </div>
 
@@ -112,7 +109,7 @@ is left blank.</p>
 
 <h3>Table</h3>
 ");
-            this.file.Write(string.Format("<p>Skip to <a href=\"{0}#section{1}\">Top level</a><p/>\n", this.fileName, topIndex));
+            this.file.Write(string.Format("<p>Skip to <a href=\"#section{0}\">Top level</a><p/>\n", topIndex));
             this.file.Write(@"
 <p>The following table is sorted on its first column, subsequent instances of this table type are sorted on 
 the final column. Hover over the table headers to make tool tips appear.</p>");
@@ -200,7 +197,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                 this.file.Write("<td id=\"main\"></td>");
             }
 
-            this.file.Write(string.Format("<td id=\"main\"><a href=\"{0}#section{1}\">{2}</a></td>", this.fileName, index, name));
+            this.file.Write(string.Format("<td id=\"main\"><a href=\"#section{0}\">{1}</a></td>", index, name));
             this.file.Write("</tr>\n");
         }
 
@@ -232,7 +229,7 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                 name = "Top level";
             }
 
-            this.file.Write(string.Format("Up to <a href=\"{0}#section{1}\">{2}</a><p/>", this.fileName, index, name));
+            this.file.Write(string.Format("Up to <a href=\"#section{0}\">{1}</a><p/>", index, name));
         }
 
         private void DependencyTable(Dependency branch)
@@ -322,13 +319,13 @@ the final column. Hover over the table headers to make tool tips appear.</p>");
                     var first = child.Path(this.options["sep"]);
                     if (mapping.Keys.Contains(child))
                     {
-                        first = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[child], first);
+                        first = string.Format("<a href=\"#section{0}\">{1}</a>", mapping[child], first);
                     }
 
                     var second = dep.Path(this.options["sep"]);
                     if (mapping.Keys.Contains(dep))
                     {
-                        second = string.Format("<a href=\"{0}#section{1}\">{2}</a>", this.fileName, mapping[dep], second);
+                        second = string.Format("<a href=\"#section{0}\">{1}</a>", mapping[dep], second);
                     }
 
                     this.file.Write("<thead>\n");
