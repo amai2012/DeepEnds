@@ -35,6 +35,7 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Defaults()
         {
             var options = new Dictionary<string, string>();
+            options["csv"] = string.Empty;
             options["doxygen"] = string.Empty;
             options["filenames"] = string.Empty;
             options["graph"] = string.Empty;
@@ -47,6 +48,7 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Help()
         {
             var options = new Dictionary<string, string>();
+            options["csv"] = "Write a csv file containing the main table";
             options["doxygen"] = "Write a source file for Doxygen to process, create dot files in the same directory";
             options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files\n  for parsing Doxygen XML output supply one xml file and set source";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
@@ -58,6 +60,7 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Types()
         {
             var options = new Dictionary<string, string>();
+            options["csv"] = "fileOut";
             options["doxygen"] = "fileOut";
             options["filenames"] = "fileIn";
             options["graph"] = "fileOut";
@@ -69,6 +72,7 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Filters()
         {
             var options = new Dictionary<string, string>();
+            options["csv"] = "comma separated variable (.csv)|*.csv";
             options["doxygen"] = "C# (.cs)|*.cs";
             options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml";
             options["graph"] = "Directed Graph Markup Language (.dgml)|*.dgml";

@@ -51,6 +51,7 @@
     <Compile Include="ClearDependencies.cs" />
     <Compile Include="Complexities.cs" />
     <Compile Include="Complexity.cs" />
+    <Compile Include="CSV.cs" />
     <Compile Include="Dependencies.cs" />
     <Compile Include="Dependency.cs" />
     <Compile Include="DependencyUpWalker.cs" />

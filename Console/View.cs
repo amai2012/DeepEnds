@@ -161,6 +161,12 @@ namespace DeepEnds.Console
                 report.Write(this.dependencies);
             }
 
+            if (options["csv"] != string.Empty)
+            {
+                var report = new DeepEnds.Core.CSV(options);
+                report.Write(this.dependencies);
+            }
+
             if (options["graph"] != string.Empty)
             {
                 var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);

@@ -207,7 +207,7 @@ namespace DeepEnds.Core
             this.file.Write(this.LineBegin + "\n");
         }
 
-        private void TableTop()
+        private void TableTop(bool forceVisible)
         {
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableBegin, " id=\"main\""));
@@ -215,16 +215,53 @@ namespace DeepEnds.Core
             this.file.Write(this.TableHeadBegin);
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+
             this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Cyclomatic number normalised by the number of nodes\"", "(E + P - N) / N"));
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Cyclomatic number\"", "E + P - N"));
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Number of nodes\"", "N"));
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " colspan=\"2\" title=\"Number of leaf nodes not contained by this node that are depended upon\"", "Externals"));
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " colspan=\"5\" title=\"Source lines of code\"", "SLOC"));
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
             this.file.Write(string.Format(this.TableHeadItem, " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
             this.file.Write(this.TableRowEnd);
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            if (forceVisible)
+            {
+                this.file.Write(this.TableHeadBegin);
+            }
+
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Value at the node\"", "Val"));
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Sum of node value and child node values recursively\"", "Sum"));
@@ -241,6 +278,13 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Expected leaf size given a log-normal distribution\"", "Exp"));
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
             this.file.Write(string.Format(this.TableHeadItem, " title=\"Upper bound of the 90% confidence interval for leaf size\"", "Upper"));
+
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+            }
+
             this.file.Write(this.TableRowEnd);
             this.file.Write(this.LineBegin);
             this.file.Write(this.TableHeadEnd);
@@ -248,7 +292,7 @@ namespace DeepEnds.Core
             this.file.Write(this.TableBodyBegin);
         }
 
-        private void TableRow(Complexity row, int index)
+        private void TableRow(Complexity row, int index, bool forceVisible)
         {
             var name = row.Branch.Path(this.options["sep"]);
             if (name == string.Empty)
@@ -273,13 +317,14 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
 
             var sloc = this.dependencies.Assembled.SLOCs[branch];
+
             var lower = string.Empty;
             var upper = string.Empty;
             var expected = string.Empty;
             var expectedMax = string.Empty;
-            if (sloc.Expected > 0)
+            if (sloc.Expected > 0 || forceVisible)
             {
-                if (sloc.MaxInTree > sloc.Upper)
+                if ((sloc.MaxInTree > sloc.Upper) || forceVisible)
                 {
                     lower = sloc.Lower.ToString();
                     upper = sloc.Upper.ToString();
@@ -618,24 +663,31 @@ namespace DeepEnds.Core
             fp.Close();
         }
 
-        public List<Complexity> TableRows()
+        private List<Complexity> TableRows()
         {
             return Complexities.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings);
         }
 
-        public void Table(List<Complexity> rows)
+        private void Table(List<Complexity> rows, bool forceVisible)
         {
-            this.TableTop();
+            this.TableTop(forceVisible);
             for (int i = 0; i < rows.Count; ++i)
             {
-                this.TableRow(rows[i], i);
+                this.TableRow(rows[i], i, forceVisible);
             }
 
             this.TableBottom();
         }
 
+        public void TableOnly()
+        {
+            this.Table(this.TableRows(), true);
+        }
+
         public void Report(bool writeDot)
         {
+            bool forceVisible = false;
+
             var rows = this.TableRows();
 
             var mapping = new Dictionary<Dependency, int>();
@@ -646,7 +698,7 @@ namespace DeepEnds.Core
 
             this.TableTopText(mapping[this.dependencies.Root]);
 
-            this.Table(rows);
+            this.Table(rows, forceVisible);
 
             this.file.Write(this.SubsectionEnd);
 
@@ -661,8 +713,8 @@ namespace DeepEnds.Core
                     this.DotFile(branch, mapping);
                 }
 
-                this.TableTop();
-                this.TableRow(rows[i], i);
+                this.TableTop(forceVisible);
+                this.TableRow(rows[i], i, forceVisible);
                 foreach (var child in branch.Children.OrderBy(o => o.Name))
                 {
                     if (!mapping.ContainsKey(child))
@@ -671,7 +723,7 @@ namespace DeepEnds.Core
                     }
 
                     var index = mapping[child];
-                    this.TableRow(rows[index], index);
+                    this.TableRow(rows[index], index, forceVisible);
                 }
 
                 this.TableBottom();
