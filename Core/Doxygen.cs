@@ -40,18 +40,10 @@ namespace DeepEnds.Core
             this.options = options;
         }
 
-        private void Top()
-        {
-        }
-
-        private void Bottom()
-        {
-        }
-
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            this.file = new System.IO.StreamWriter(this.options["doxygen"]);
-            this.Top();
+            var fileName = this.options["doxygen"];
+            this.file = new System.IO.StreamWriter(fileName);
 
             var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "\\ref DeepEnds{0}";
@@ -72,9 +64,27 @@ namespace DeepEnds.Core
             reporter.TableRowBegin = "<tr{1}>";
             reporter.TableRowEnd = "\n";
 
-            reporter.Report(true);
+            var fortran = new string[] { ".f", ".for", ".f90", ".f95", ".f03", ".f08" };
+            var python = new string[] { ".py", ".pyw" };
+            var vhdl = new string[] { ".vhd", ".vhdl", ".ucf", ".qsf" };
 
-            this.Bottom();
+            var ext = System.IO.Path.GetExtension(fileName);
+            if (fortran.Contains(ext))
+            {
+                this.file.WriteLine("!>");
+                reporter.LineBegin = "!! ";
+            }
+            else if (python.Contains(ext) || ext == ".tcl")
+            {
+                this.file.WriteLine("##");
+                reporter.LineBegin = "# ";
+            }
+            else if (vhdl.Contains(ext))
+            {
+                reporter.LineBegin = "--! ";
+            }
+
+            reporter.Report(true);
 
             this.file.Close();
         }

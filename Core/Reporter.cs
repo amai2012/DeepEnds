@@ -284,6 +284,7 @@ namespace DeepEnds.Core
                     lower = sloc.Lower.ToString();
                     upper = sloc.Upper.ToString();
                 }
+
                 expected = sloc.Expected.ToString();
                 expectedMax = sloc.ExpectedMax.ToString();
             }
