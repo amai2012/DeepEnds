@@ -23,7 +23,60 @@
 
 namespace DeepEnds.Core
 {
+    using DeepEnds.Core.Complex;
+    using Dependent;
+
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class Doxygen
     {
+        private System.IO.StreamWriter file;
+
+        private Dictionary<string, string> options;
+
+        public Doxygen(Dictionary<string, string> options)
+        {
+            this.options = options;
+        }
+
+        private void Top()
+        {
+        }
+
+        private void Bottom()
+        {
+        }
+
+        public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
+        {
+            this.file = new System.IO.StreamWriter(this.options["doxygen"]);
+            this.Top();
+
+            var reporter = new Reporter(this.file, options, dependencies);
+            reporter.Link = "\\ref DeepEnds{0}";
+            reporter.LineBegin = "//! ";
+            reporter.ListEnd = "\n";
+            reporter.ListItem = "- {0}\n";
+            reporter.RightArrow = "&rarr;";
+            reporter.SectionBegin = "\\page DeepEnds{0} {1}\n";
+            reporter.SubsectionBegin = "\\section DeepEnds{0} {1}\n";
+            reporter.TableBegin = "<table>\n";
+            reporter.TableEnd = "</table>\n";
+            reporter.TableBodyBegin = "\n";
+            reporter.TableBodyEnd = "\n";
+            reporter.TableBodyItem = "<td{0}>{1} ";
+            reporter.TableHeadBegin = "\n";
+            reporter.TableHeadEnd = "\n";
+            reporter.TableHeadItem = "<th{0}>{1} ";
+            reporter.TableRowBegin = "<tr{1}>";
+            reporter.TableRowEnd = "\n";
+
+            reporter.Report();
+
+            this.Bottom();
+
+            this.file.Close();
+        }
     }
 }

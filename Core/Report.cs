@@ -81,15 +81,15 @@ td#alert {
             this.Top();
 
             var reporter = new Reporter(this.file, options, dependencies);
-            reporter.Destination = "<a id=\"section{0}\"></a>{1}";
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
             reporter.ListBegin = "<ul>\n";
             reporter.ListEnd = "</ul>\n";
             reporter.ListItem = "<li>{0}</li>\n";
-            reporter.Paragraph = "<p>{0}</p>\n";
+            reporter.ParagraphBegin = "<p>";
+            reporter.ParagraphEnd = "</p>\n";
             reporter.RightArrow = "&rarr;";
-            reporter.SectionBegin = "<h2>{0}</h2>\n";
-            reporter.SubsectionBegin = "<h3>{0}</h3>\n<div>\n";
+            reporter.SectionBegin = "<h2><a id=\"section{0}\"></a>{1}</h2>\n";
+            reporter.SubsectionBegin = "<h3>{1}</h3>\n<div>\n";
             reporter.SubsectionEnd = "</div>\n\n";
             reporter.TableBegin = "<table{0}>\n";
             reporter.TableEnd = "</table>\n";
@@ -99,7 +99,7 @@ td#alert {
             reporter.TableHeadBegin = "<thead>\n";
             reporter.TableHeadEnd = "</thead>\n";
             reporter.TableHeadItem = "<th{0}>{1}</th>\n";
-            reporter.TableRowBegin = "<tr{0}>\n";
+            reporter.TableRowBegin = "<tr{0}{1}>\n";
             reporter.TableRowEnd = "</tr>\n";
 
             reporter.Report();
