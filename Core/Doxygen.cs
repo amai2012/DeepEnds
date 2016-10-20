@@ -64,17 +64,26 @@ namespace DeepEnds.Core
             reporter.TableRowBegin = "<tr{1}>";
             reporter.TableRowEnd = "\n";
 
-            var fortran = new string[] { ".f", ".for", ".f90", ".f95", ".f03", ".f08" };
-            var python = new string[] { ".py", ".pyw" };
-            var vhdl = new string[] { ".vhd", ".vhdl", ".ucf", ".qsf" };
+            var cpp = "*.dox;*.txt;*.doc;*.c;*.C;*.cc;*.CC;*.cxx;*.cpp;*.c++;*.ii;*.ixx;*.ipp;*.i++;*.inl;*.h;*.H;*.hh;*.HH;*.hxx;*.hpp;*.h++;*.mm;";
+            var cs = "*.cs;";
+            var d = "*.d;";
+            var fortran = "*.f;*.for;*.f90;*.f95;*.f03;*.f08;";
+            var idl = "*.idl;*.ddl;*.odl;";
+            var java = "*.java;";
+            var objectiveC = "*.m;*.M;";
+            var php = "*.php;*.php4;*.php5;*.inc;*.phtml;";
+            var python = "*.py;*.pyw;";
+            var tcl = "*.tcl;";
+            var vhdl = "*.vhd;*.vhdl;*.ucf;*.qsf;";
 
-            var ext = System.IO.Path.GetExtension(fileName);
+            var ext = string.Format("*{0};", System.IO.Path.GetExtension(fileName));
+            ext = ext.ToLower();
             if (fortran.Contains(ext))
             {
                 this.file.WriteLine("!>");
                 reporter.LineBegin = "!! ";
             }
-            else if (python.Contains(ext) || ext == ".tcl")
+            else if (python.Contains(ext) || tcl.Contains(ext))
             {
                 this.file.WriteLine("##");
                 reporter.LineBegin = "# ";
@@ -82,6 +91,9 @@ namespace DeepEnds.Core
             else if (vhdl.Contains(ext))
             {
                 reporter.LineBegin = "--! ";
+            }
+            else if (cpp.Contains(ext) || cs.Contains(ext) || d.Contains(ext) || idl.Contains(ext) || java.Contains(ext) || objectiveC.Contains(ext) || php.Contains(ext))
+            {
             }
 
             reporter.Report(true);
