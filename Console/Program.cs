@@ -139,24 +139,30 @@ Dive into architecture with DeepEnds
             prog.Parse(args);
             if (prog.UnsupportedExtension() || args.Length == 0)
             {
+                var ordered = Options.Ordered();
                 var options = Options.Defaults();
                 var help = Options.Help();
                 System.Console.WriteLine("DeepEnds command line application for batch execution");
                 System.Console.WriteLine("Usage:");
                 System.Console.Write("  DeepEnds.Console.exe ");
-                foreach (var key in help.Keys.OrderBy(o => o))
+                foreach (var key in ordered)
                 {
                     System.Console.Write(string.Format("[{0}] ", key));
                 }
-                System.Console.WriteLine("filenames");
-                System.Console.WriteLine("  where optional arguments are of the form key=value");
+                System.Console.WriteLine("\n  where optional arguments are of the form key=value");
                 System.Console.WriteLine("  there now follows a list of 'key(default value): help'");
-                foreach (var key in help.Keys.OrderBy(o => o))
+                foreach (var key in ordered)
                 {
+                    if (key == "filenames")
+                    {
+                        break;
+                    }
+
                     System.Console.WriteLine(string.Format("        {0}({1}): {2}", key, options[key], help[key]));
                 }
-                System.Console.WriteLine("    and filenames is a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files");
-                System.Console.WriteLine("  for parsing Doxygen XML output supply one xml file and set source");
+                System.Console.Write("  and filenames is ");
+                System.Console.Write(help["filenames"]);
+                System.Console.WriteLine();
                 return 1;
             }
 

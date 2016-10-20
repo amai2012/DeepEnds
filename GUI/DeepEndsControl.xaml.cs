@@ -56,10 +56,8 @@ namespace DeepEnds.GUI
             var help = DeepEnds.Console.Options.Help();
             int row = 0;
 
-            var keys = help.Keys.OrderBy(o => o).ToList();
-            keys.Remove("filenames");
-            keys.Add("filenames");
-            foreach (var key in keys)
+            var ordered = DeepEnds.Console.Options.Ordered();
+            foreach (var key in ordered)
             {
                 ++row;
                 var def = new RowDefinition();
@@ -214,11 +212,16 @@ namespace DeepEnds.GUI
             try
             {
                 var message = System.Reflection.Assembly.GetAssembly(typeof(DeepEnds.Console.View)).Location;
+                if (message.Contains(" "))
+                {
+                    message = string.Format("\"{0}\"", message);
+                }
+
                 var defaults = DeepEnds.Console.Options.Defaults();
-                var internals = DeepEnds.Console.Options.Internals();
+                var ordered = DeepEnds.Console.Options.Ordered();
                 foreach (var key in this.options.Keys)
                 {
-                    if (internals.Contains(key))
+                    if (!ordered.Contains(key) || key == "filenames")
                     {
                         continue;
                     }

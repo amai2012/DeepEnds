@@ -27,9 +27,9 @@ namespace DeepEnds.Console
 
     static public class Options
     {
-        static public string[] Internals()
+        static public string[] Ordered()
         {
-            return new string[] { "filenames", "sep" };
+            return new string[] { "report", "csv", "doxygen", "graph", "source", "filenames" };
         }
 
         static public Dictionary<string, string> Defaults()
@@ -48,9 +48,9 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Help()
         {
             var options = new Dictionary<string, string>();
-            options["csv"] = "Write a csv file containing the main table";
-            options["doxygen"] = "Write a source file for Doxygen to process, create dot files in the same directory";
-            options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files\n  for parsing Doxygen XML output supply one xml file and set source";
+            options["csv"] = "Write a csv file containing the main table from the statistics";
+            options["doxygen"] = "Write the statistics to a source file for Doxygen to process, create dot files in the same directory";
+            options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files.\n  For parsing Doxygen XML output supply one xml file and set source if DGML required";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
             options["source"] = "The directory containing the source (used by Doxygen XML input for DGML)";
@@ -73,7 +73,7 @@ namespace DeepEnds.Console
         {
             var options = new Dictionary<string, string>();
             options["csv"] = "comma separated variable (.csv)|*.csv";
-            options["doxygen"] = "C# (.cs)|*.cs";
+            options["doxygen"] = "C/C++ (.dox, .txt, .doc, .c, .C, .cc, .CC, .cxx, .cpp, .c++, .ii, .ixx, .ipp, .i++, .inl, .h, .H, .hh, .HH, .hxx, .hpp, .h++, .mm)|*.dox;*.txt;*.doc;*.c;*.C;*.cc;*.CC;*.cxx;*.cpp;*.c++;*.ii;*.ixx;*.ipp;*.i++;*.inl;*.h;*.H;*.hh;*.HH;*.hxx;*.hpp;*.h++;*.mm|C# (.cs)|*.cs|D (.d)|*.d|Fortran (.f, .for, .f90, .f95, .f03, .f08)|*.f;*.for;*.f90;*.f95;*.f03;*.f08|IDL (.idl, .ddl, .odl)|*.idl;*.ddl;*.odl|Java (.java)|*.java|Objective-C (.m, .M)|*.m;*.M|PHP (.php, .php4, .php5, .inc, .phtml)|*.php;*.php4;*.php5;*.inc;*.phtml|Python (.py, .pyw)|*.py;*.pyw|TCL (.tcl)|*.tcl|VHDL (.vhd, .vhdl, .ucf, .qsf)|*.vhd;*.vhdl;*.ucf;*.qsf";
             options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml";
             options["graph"] = "Directed Graph Markup Language (.dgml)|*.dgml";
             options["report"] = "Report (.html, .htm)|*.html;*.htm";
