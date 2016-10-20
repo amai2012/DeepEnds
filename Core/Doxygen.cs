@@ -60,7 +60,7 @@ namespace DeepEnds.Core
             reporter.TableBodyItem = "<td{0}>{1} ";
             reporter.TableHeadBegin = "\n";
             reporter.TableHeadEnd = "\n";
-            reporter.TableHeadItem = "<th{0}>{1} ";
+            reporter.TableHeadItem = "<th{1}>{2} ";
             reporter.TableRowBegin = "<tr{1}>";
             reporter.TableRowEnd = "\n";
 

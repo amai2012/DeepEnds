@@ -49,7 +49,7 @@ namespace DeepEnds.Core
             reporter.Link = "{1}";
             reporter.TableBodyItem = "{1},";
             reporter.TableHeadBegin = "# ";
-            reporter.TableHeadItem = reporter.TableBodyItem;
+            reporter.TableHeadItem = "{2},";
             reporter.TableRowEnd = "\n";
 
             reporter.TableOnly();

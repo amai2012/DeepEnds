@@ -98,7 +98,7 @@ td#alert {
             reporter.TableBodyItem = "<td{0}>{1}</td>\n";
             reporter.TableHeadBegin = "<thead>\n";
             reporter.TableHeadEnd = "</thead>\n";
-            reporter.TableHeadItem = "<th{0}>{1}</th>\n";
+            reporter.TableHeadItem = "<th{0}{1}>{2}</th>\n";
             reporter.TableRowBegin = "<tr{0}{1}>\n";
             reporter.TableRowEnd = "</tr>\n";
 

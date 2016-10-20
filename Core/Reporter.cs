@@ -216,44 +216,44 @@ namespace DeepEnds.Core
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
 
-            this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Cyclomatic number normalised by the number of nodes\"", "(E + P - N) / N"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"3\" title=\"Cyclomatic number normalised by the number of nodes\"", "(E + P - N) / N"));
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Cyclomatic number\"", "E + P - N"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"3\" title=\"Cyclomatic number\"", "E + P - N"));
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " colspan=\"3\" title=\"Number of nodes\"", "N"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"3\" title=\"Number of nodes\"", "N"));
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " colspan=\"2\" title=\"Number of leaf nodes not contained by this node that are depended upon\"", "Externals"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"2\" title=\"Number of leaf nodes not contained by this node that are depended upon\"", "Externals"));
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " colspan=\"5\" title=\"Source lines of code\"", "SLOC"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"5\" title=\"Source lines of code\"", "SLOC"));
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
-            this.file.Write(string.Format(this.TableHeadItem, " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
             this.file.Write(this.TableRowEnd);
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
@@ -262,27 +262,27 @@ namespace DeepEnds.Core
                 this.file.Write(this.TableHeadBegin);
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Value at the node\"", "Val"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Sum of node value and child node values recursively\"", "Sum"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Value at the node\"", "Val"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Sum of node value and child node values recursively\"", "Sum"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Value at the node\"", "Val"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Sum of node value and child node values recursively\"", "Sum"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Value at the node\"", "Count"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Sum of node value and child node values recursively\"", "Sum"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Lower bound of the 90% confidence interval for leaf size\"", "Lower"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Expected leaf size given a log-normal distribution\"", "Exp"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
-            this.file.Write(string.Format(this.TableHeadItem, " title=\"Upper bound of the 90% confidence interval for leaf size\"", "Upper"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Val"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Val"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Val"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Count"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Lower bound of the 90% confidence interval for leaf size\"", "Lower"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Expected leaf size given a log-normal distribution\"", "Exp"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Upper bound of the 90% confidence interval for leaf size\"", "Upper"));
 
             if (forceVisible)
             {
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
             this.file.Write(this.TableRowEnd);
@@ -414,8 +414,8 @@ namespace DeepEnds.Core
                 this.file.Write(this.TableHeadBegin);
                 this.file.Write(this.LineBegin);
                 this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf of this node\""));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, "Dependency"));
-                this.file.Write(string.Format(this.TableHeadItem, " title=\"Number of lines of source code\"", "SLOC"));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Dependency"));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, " title=\"Number of lines of source code\"", "SLOC"));
                 this.file.Write(this.TableRowEnd);
                 this.file.Write(this.LineBegin);
                 this.file.Write(this.TableHeadEnd);
@@ -450,7 +450,7 @@ namespace DeepEnds.Core
                 this.file.Write(this.TableHeadBegin);
                 this.file.Write(this.LineBegin);
                 this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf nodes not contained by this node that are depended upon\""));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, "External dependencies"));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "External dependencies"));
                 this.file.Write(this.TableRowEnd);
                 this.file.Write(this.LineBegin);
                 this.file.Write(this.TableHeadEnd);
@@ -508,7 +508,7 @@ namespace DeepEnds.Core
             this.file.Write(this.TableHeadBegin);
             this.file.Write(this.LineBegin);
             this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause the edges of the graph to be formed\""));
-            this.file.Write(string.Format(this.TableHeadItem, string.Empty, "Internal Dependencies"));
+            this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Internal Dependencies"));
             this.file.Write(this.TableRowEnd);
             this.file.Write(this.LineBegin);
             this.file.Write(this.TableHeadEnd);
@@ -556,9 +556,9 @@ namespace DeepEnds.Core
                     this.file.Write(this.TableHeadBegin);
                     this.file.Write(this.LineBegin);
                     this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause this edge of the graph to be formed\""));
-                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, first));
-                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, this.RightArrow));
-                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, second));
+                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, first));
+                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, this.RightArrow));
+                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, second));
                     this.file.Write(this.TableRowEnd);
                     this.file.Write(this.LineBegin);
                     this.file.Write(this.TableHeadEnd);
@@ -611,7 +611,7 @@ namespace DeepEnds.Core
             {
                 this.file.Write(this.LineBegin);
                 this.file.Write(string.Format(this.TableRowBegin, string.Empty, " style=\"height: 8px\" title=\"Node of the graph followed by dependencies (structure matrix)\""));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, item.Key));
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, item.Key));
                 foreach (var c in item.Value)
                 {
                     this.file.Write(string.Format(this.TableBodyItem, " style=\"width: 8px;\"", c));
