@@ -53,7 +53,7 @@ namespace DeepEnds.Core
             this.file = new System.IO.StreamWriter(this.options["doxygen"]);
             this.Top();
 
-            var reporter = new Reporter(this.file, options, dependencies);
+            var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "\\ref DeepEnds{0}";
             reporter.LineBegin = "//! ";
             reporter.ListEnd = "\n";
@@ -72,7 +72,7 @@ namespace DeepEnds.Core
             reporter.TableRowBegin = "<tr{1}>";
             reporter.TableRowEnd = "\n";
 
-            reporter.Report();
+            reporter.Report(true);
 
             this.Bottom();
 

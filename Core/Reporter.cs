@@ -275,16 +275,23 @@ namespace DeepEnds.Core
             var sloc = this.dependencies.Assembled.SLOCs[branch];
             var lower = string.Empty;
             var upper = string.Empty;
-            if (sloc.MaxInTree > sloc.Upper)
+            var expected = string.Empty;
+            var expectedMax = string.Empty;
+            if (sloc.Expected > 0)
             {
-                lower = sloc.Lower.ToString();
-                upper = sloc.Upper.ToString();
+                if (sloc.MaxInTree > sloc.Upper)
+                {
+                    lower = sloc.Lower.ToString();
+                    upper = sloc.Upper.ToString();
+                }
+                expected = sloc.Expected.ToString();
+                expectedMax = sloc.ExpectedMax.ToString();
             }
 
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.SumOverTree));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", lower));
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.Expected));
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.ExpectedMax));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expected));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expectedMax));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", upper));
             if (this.dependencies.Assembled.Structures[branch].HasCycle)
             {
@@ -441,6 +448,11 @@ namespace DeepEnds.Core
                 }
             }
 
+            if (set.Count == 0)
+            {
+                return;
+            }
+
             var list = set.ToList();
             list.Sort();
 
@@ -537,7 +549,7 @@ namespace DeepEnds.Core
         {
             var list = this.dependencies.Assembled.Structures[branch].Extract();
 
-            if (list.Count == 0)
+            if (list.Count < 2)
             {
                 return;
             }
@@ -568,6 +580,43 @@ namespace DeepEnds.Core
             this.file.Write(this.TableEnd);
         }
 
+        private void DotFile(Dependency branch, Dictionary<Dependency, int> mapping)
+        {
+            var fileName = string.Format("section{0}.dot", mapping[branch]);
+            this.file.Write(string.Format("{0}\\dotfile {1}\n{0}\n", this.LineBegin, fileName));
+
+            var direc = System.IO.Path.GetDirectoryName(this.options["doxygen"]);
+            fileName = System.IO.Path.Combine(direc, fileName);
+            var fp = new System.IO.StreamWriter(fileName);
+            fp.WriteLine("digraph solution {");
+            fp.WriteLine("	subgraph cluster_0 {");
+            fp.WriteLine(string.Format("		label=\"{0}\";", branch.Name));
+
+            var links = this.dependencies.Assembled.Linkings;
+            foreach (var child in branch.Children)
+            {
+                var index = branch.Children.IndexOf(child);
+                var url = string.Empty;
+                if (mapping.ContainsKey(child))
+                {
+                    url = string.Format(", URL=\"\\ref DeepEnds{0}\"", mapping[child]);
+                }
+
+                fp.WriteLine(string.Format("		N{0} [label=\"{1}\"{2}];", index, child.Name, url));
+
+                foreach (var dep in links[child].Interlinks)
+                {
+                    var other = branch.Children.IndexOf(dep);
+                    fp.WriteLine(string.Format("		N{0} -> N{1};", index, other));
+                }
+            }
+
+            fp.WriteLine("	}");
+            fp.WriteLine("}");
+
+            fp.Close();
+        }
+
         public List<Complexity> TableRows()
         {
             return Complexities.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings);
@@ -584,9 +633,9 @@ namespace DeepEnds.Core
             this.TableBottom();
         }
 
-        public void Report()
+        public void Report(bool writeDot)
         {
-            var rows = TableRows();
+            var rows = this.TableRows();
 
             var mapping = new Dictionary<Dependency, int>();
             for (int i = 0; i < rows.Count; ++i)
@@ -596,7 +645,7 @@ namespace DeepEnds.Core
 
             this.TableTopText(mapping[this.dependencies.Root]);
 
-            Table(rows);
+            this.Table(rows);
 
             this.file.Write(this.SubsectionEnd);
 
@@ -605,6 +654,11 @@ namespace DeepEnds.Core
                 var branch = rows[i].Branch;
 
                 this.Section(branch, i, mapping);
+
+                if (writeDot)
+                {
+                    this.DotFile(branch, mapping);
+                }
 
                 this.TableTop();
                 this.TableRow(rows[i], i);

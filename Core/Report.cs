@@ -80,7 +80,7 @@ td#alert {
             this.file = new System.IO.StreamWriter(this.options["report"]);
             this.Top();
 
-            var reporter = new Reporter(this.file, options, dependencies);
+            var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
             reporter.ListBegin = "<ul>\n";
             reporter.ListEnd = "</ul>\n";
@@ -102,7 +102,7 @@ td#alert {
             reporter.TableRowBegin = "<tr{0}{1}>\n";
             reporter.TableRowEnd = "</tr>\n";
 
-            reporter.Report();
+            reporter.Report(false);
 
             this.Bottom();
 
