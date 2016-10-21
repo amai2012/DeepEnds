@@ -85,6 +85,37 @@ namespace DeepEnds.Console
             this.view.Write(System.Console.Out, this.options);
         }
 
+        static private void WriteLine(string indent, string line)
+        {
+            var width = System.Console.WindowWidth - indent.Length;
+            if (width < 10)
+            {
+                width = 10;
+            }
+
+            while (line.Length > 0)
+            {
+                if (width >= line.Length)
+                {
+                    System.Console.Write(indent);
+                    System.Console.WriteLine(line);
+                    return;
+                }
+
+                var length = line.LastIndexOf(' ', width);
+                if (length == 0)
+                {
+                    System.Console.Write(indent);
+                    System.Console.WriteLine(line);
+                    return;
+                }
+
+                System.Console.Write(indent);
+                System.Console.WriteLine(line.Substring(0, length));
+                line = line.Substring(length);
+            }
+        }
+
 
         static int Main(string[] args)
         {
@@ -140,24 +171,27 @@ Dive into architecture with DeepEnds
                 var ordered = Options.Ordered();
                 var options = Options.Defaults();
                 var help = Options.Help();
-                System.Console.WriteLine("DeepEnds command line application for batch execution");
-                System.Console.WriteLine("Usage:");
-                System.Console.Write("  DeepEnds.Console.exe ");
+
+                Program.WriteLine(string.Empty, "DeepEnds command line application for batch execution");
+                Program.WriteLine(string.Empty, "Usage:");
+                var line = new System.Text.StringBuilder("DeepEnds.Console.exe ");
                 foreach (var key in ordered)
                 {
                     if (key == "filenames")
                     {
-                        System.Console.WriteLine("filenames");
+                        line.Append("filenames");
                     }
                     else
                     {
-                        System.Console.Write("[");
-                        System.Console.Write(key);
-                        System.Console.Write("] ");
+                        line.Append("[");
+                        line.Append(key);
+                        line.Append("] ");
                     }
                 }
-                System.Console.WriteLine("  where optional arguments are of the form key=value");
-                System.Console.WriteLine("  there now follows a list of 'key(default value): help'");
+                Program.WriteLine("  ", line.ToString());
+                Program.WriteLine("  ", "where optional arguments are of the form key=value");
+                Program.WriteLine("  ", "there now follows a list of 'key(default value): help'");
+
                 foreach (var key in ordered)
                 {
                     if (key == "filenames")
@@ -165,15 +199,20 @@ Dive into architecture with DeepEnds
                         break;
                     }
 
-                    System.Console.Write("        ");
-                    System.Console.Write(key);
-                    System.Console.Write("(");
-                    System.Console.Write(options[key]);
-                    System.Console.Write("): ");
-                    System.Console.WriteLine(help[key]);
+                    line.Clear();
+                    line.Append(key);
+                    line.Append("(");
+                    line.Append(options[key]);
+                    line.Append("): ");
+                    line.Append(help[key]);
+                    Program.WriteLine("        ", line.ToString());
                 }
-                System.Console.Write("  and filenames is ");
-                System.Console.Write(help["filenames"]);
+
+                line.Clear();
+                line.Append("and filenames is ");
+                line.Append(help["filenames"]);
+                Program.WriteLine("  ", line.ToString());
+
                 System.Console.WriteLine();
                 return 1;
             }

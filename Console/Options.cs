@@ -30,17 +30,19 @@ namespace DeepEnds.Console
         /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
-            return new string[] { "report", "csv", "doxygen", "graph", "source", "filenames" };
+            return new string[] { "report", "csv", "doxygen", "graph", "compoundtype", "membertype", "source", "filenames" };
         }
 
         /// <returns>Default values for the arguments</returns>
         static public Dictionary<string, string> Defaults()
         {
             var options = new Dictionary<string, string>();
+            options["compoundtype"] = "class,struct,union,interface";
             options["csv"] = string.Empty;
             options["doxygen"] = string.Empty;
             options["filenames"] = string.Empty;
             options["graph"] = string.Empty;
+            options["membertype"] = "enum";
             options["report"] = string.Empty;
             options["sep"] = ".";
             options["source"] = string.Empty;
@@ -51,10 +53,12 @@ namespace DeepEnds.Console
         static public Dictionary<string, string> Help()
         {
             var options = new Dictionary<string, string>();
+            options["compoundtype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML compounddef element. Types include class, struct, union, interface, protocol, category, exception, file, namespace, group, page, example, dir";
             options["csv"] = "Write a csv file containing the main table from the statistics";
             options["doxygen"] = "Write the statistics to a source file for Doxygen to process";
-            options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files.\n  For parsing Doxygen XML output supply one xml file and set source if DGML required";
+            options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files. For parsing Doxygen XML output supply one xml file and set source if DGML required";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
+            options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
             options["source"] = "The directory containing the source (used by Doxygen XML input for DGML)";
             return options;

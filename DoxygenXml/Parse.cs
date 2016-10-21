@@ -35,7 +35,22 @@ namespace DeepEnds.DoxygenXml
 
         private Dictionary<string, string> options;
 
-        private void ReadCompoundDef(System.Xml.XmlElement root, List<string> members)
+        private List<string> compoundTypes;
+
+        private List<string> memberTypes;
+
+        static private List<string> SplitCSV(string option)
+        {
+            var list = new List<string>();
+            foreach (var opt in option.Split(','))
+            {
+                list.Add(opt.Trim());
+            }
+
+            return list;
+        }
+
+        private void ReadCompoundDef(System.Xml.XmlElement root)
         {
             Core.Dependent.Dependency leaf = null;
             var nodes = root.SelectNodes("compoundname");
@@ -53,10 +68,10 @@ namespace DeepEnds.DoxygenXml
 
             this.ReadLoc(root, leaf);
             this.ReadReferences(root, leaf);
-            this.ReadMembers(root, leaf, members);
+            this.ReadMembers(root, leaf);
         }
 
-        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf, List<string> members)
+        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
         {
             var list = new List<System.Xml.XmlElement>();
             this.SelectNodes(root, "memberdef", list);
@@ -64,7 +79,7 @@ namespace DeepEnds.DoxygenXml
             {
                 var kind = element.GetAttribute("kind");
                 var id = element.GetAttribute("id");
-                if (members.Contains(kind))
+                if (this.memberTypes.Contains(kind))
                 {
                     var nodes = element.SelectNodes("name");
                     foreach (var node in nodes)
@@ -168,9 +183,6 @@ namespace DeepEnds.DoxygenXml
                 element.ParentNode.RemoveChild(element);
             }
 
-            var types = new List<string>() { "class", "interface", "module", "type", "union", "protocol", "category", "exception", "service", "singleton" };
-            var members = new List<string>() { "enum" };
-
             var nodes = root.SelectNodes("compounddef");
             var hasRead = false;
             foreach (var node in nodes)
@@ -182,15 +194,9 @@ namespace DeepEnds.DoxygenXml
 
                 var element = node as System.Xml.XmlElement;
                 var kind = element.GetAttribute("kind");
-                if (!types.Contains(kind))
+                if (!this.compoundTypes.Contains(kind))
                 {
                     continue;
-                }
-
-                var language = element.GetAttribute("language");
-                if (language == "Fortran")
-                {
-                    members.Add("function");
                 }
 
                 if (!hasRead)
@@ -200,7 +206,7 @@ namespace DeepEnds.DoxygenXml
                     hasRead = true;
                 }
 
-                this.ReadCompoundDef(element, members);
+                this.ReadCompoundDef(element);
             }
         }
 
@@ -208,6 +214,8 @@ namespace DeepEnds.DoxygenXml
         {
             this.parser = parser;
             this.options = options;
+            this.compoundTypes = Parse.SplitCSV(options["compoundtype"]);
+            this.memberTypes = Parse.SplitCSV(options["membertype"]);
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }
