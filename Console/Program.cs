@@ -85,38 +85,6 @@ namespace DeepEnds.Console
             this.view.Write(System.Console.Out, this.options);
         }
 
-        static private void WriteLine(string indent, string line)
-        {
-            var width = System.Console.WindowWidth - indent.Length;
-            if (width < 10)
-            {
-                width = 10;
-            }
-
-            while (line.Length > 0)
-            {
-                if (width >= line.Length)
-                {
-                    System.Console.Write(indent);
-                    System.Console.WriteLine(line);
-                    return;
-                }
-
-                var length = line.LastIndexOf(' ', width);
-                if (length == 0)
-                {
-                    System.Console.Write(indent);
-                    System.Console.WriteLine(line);
-                    return;
-                }
-
-                System.Console.Write(indent);
-                System.Console.WriteLine(line.Substring(0, length));
-                line = line.Substring(length);
-            }
-        }
-
-
         static int Main(string[] args)
         {
             System.Console.WriteLine(@"    +###############################,   
@@ -172,8 +140,10 @@ Dive into architecture with DeepEnds
                 var options = Options.Defaults();
                 var help = Options.Help();
 
-                Program.WriteLine(string.Empty, "DeepEnds command line application for batch execution");
-                Program.WriteLine(string.Empty, "Usage:");
+                var splitter = new Splitter(System.Console.Out, System.Console.WindowWidth);
+
+                splitter.WriteLine(string.Empty, "DeepEnds command line application for batch execution");
+                splitter.WriteLine(string.Empty, "Usage:");
                 var line = new System.Text.StringBuilder("DeepEnds.Console.exe ");
                 foreach (var key in ordered)
                 {
@@ -188,9 +158,9 @@ Dive into architecture with DeepEnds
                         line.Append("] ");
                     }
                 }
-                Program.WriteLine("  ", line.ToString());
-                Program.WriteLine("  ", "where optional arguments are of the form key=value");
-                Program.WriteLine("  ", "there now follows a list of 'key(default value): help'");
+                splitter.WriteLine("  ", line.ToString());
+                splitter.WriteLine("  ", "where optional arguments are of the form key=value");
+                splitter.WriteLine("  ", "there now follows a list of 'key(default value): help'");
 
                 foreach (var key in ordered)
                 {
@@ -205,13 +175,13 @@ Dive into architecture with DeepEnds
                     line.Append(options[key]);
                     line.Append("): ");
                     line.Append(help[key]);
-                    Program.WriteLine("        ", line.ToString());
+                    splitter.WriteLine("        ", line.ToString());
                 }
 
                 line.Clear();
-                line.Append("and filenames is ");
-                line.Append(help["filenames"]);
-                Program.WriteLine("  ", line.ToString());
+                line.Append("and filenames is a");
+                line.Append(help["filenames"].Substring(1));
+                splitter.WriteLine("  ", line.ToString());
 
                 System.Console.WriteLine();
                 return 1;

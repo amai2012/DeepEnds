@@ -61,6 +61,12 @@ namespace DeepEnds.GUI
             foreach (var key in ordered)
             {
                 ++row;
+
+                var split = new System.IO.StringWriter();
+                var splitter = new Splitter(split, 80);
+                splitter.WriteLine(string.Empty, help[key]);
+                var toolTip = split.ToString();
+
                 var def = new RowDefinition();
                 this.grid.RowDefinitions.Add(def);
                 if (key == "filenames")
@@ -74,7 +80,7 @@ namespace DeepEnds.GUI
 
                 var label = new TextBlock();
                 label.Name = key;
-                label.ToolTip = help[key];
+                label.ToolTip = toolTip;
                 label.Text = key;
                 label.Margin = new Thickness(10.0);
                 label.HorizontalAlignment = HorizontalAlignment.Left;
@@ -84,7 +90,7 @@ namespace DeepEnds.GUI
 
                 var value = new TextBox();
                 value.Name = key;
-                value.ToolTip = help[key];
+                value.ToolTip = toolTip;
                 value.Text = this.options[key];
                 value.MinWidth = 120.0;
                 value.TextChanged += this.Value_TextChanged;
@@ -102,7 +108,7 @@ namespace DeepEnds.GUI
                 {
                     var browse = new Button();
                     browse.Name = key;
-                    browse.ToolTip = help[key];
+                    browse.ToolTip = toolTip;
                     browse.Content = "Browse...";
                     browse.Click += this.Browse_Click;
                     Grid.SetColumn(browse, 2);
