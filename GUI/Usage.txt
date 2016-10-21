@@ -1,12 +1,17 @@
-DeepEnds version 1.0
+DeepEnds version 2.0
 ====================
 
 * To launch within Visual Studio go to View >> Other Windows >> DeepEnds.
 * Select either 
-** a mix of .NET assemblies and C# projects to load.
+** a mix of .NET assemblies, C# and VB projects to load.
 ** C++ projects to load.
+** one example Doxygen XML output file
 * Create either 
 ** a DGML file to view within Visual Studio
-** or a HTML file containing cyclometric complexity values and the underlying links.
+** a HTML file containing cyclometric complexity values and the underlying links.
+** a source file to process by Doxygen that is equivalent to the HTML file with diagrams added
+** or the main table from the HTML file saved out as a CSV file
    See http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture for further details of the concepts.
-       http://www.codeproject.com/Articles/1115494/Dive-into-Architecture-with-DeepEnds for further details of usage.
+       https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html for further details of usage.
+	   http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number for details of the Cyclomatic number
+	   http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code for fitting a probability distribution to the SLOC

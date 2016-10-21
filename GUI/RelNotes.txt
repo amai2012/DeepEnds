@@ -1,3 +1,14 @@
+DeepEnds version 2.0
+========================
+* Add reading of Doxygen XML
+* Add writing of pages for processing by Doxygen
+* Add writing of the main table to a csv file
+* Change the columns of the main table
+* Change the format of the main page
+* Revamp the GUI and UI
+* Fix bug in cycle calculation
+* Add more logging
+
 DeepEnds version 1.7.1
 ========================
 * Fix the docs at the very top of the html report

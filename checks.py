@@ -44,5 +44,6 @@ for root, dirs, files in os.walk("."):
 		
 PrintLine("GUI\\RelNotes.txt", 1)
 PrintLine("GUI\\License.txt", 1)
+PrintLine("GUI\\Usage.txt", 1)
 PrintLine("GUI\\source.extension.vsixmanifest", 4)
 PrintLine("GUI\\DeepEndsPackage.cs", 49)
