@@ -111,6 +111,11 @@ namespace DeepEnds.Core
             this.TableRowEnd = string.Empty;
         }
 
+        public void WriteLine(string line)
+        {
+            this.file.WriteLine(string.Format("{0}{1}", this.LineBegin, line));
+        }
+
         public void TableTopText(int topIndex)
         {
             this.file.Write(this.LineBegin);
@@ -628,15 +633,10 @@ namespace DeepEnds.Core
 
         private void DotFile(Dependency branch, Dictionary<Dependency, int> mapping)
         {
-            var fileName = string.Format("section{0}.dot", mapping[branch]);
-            this.file.Write(string.Format("{0}\\dotfile {1}\n{0}\n", this.LineBegin, fileName));
-
-            var direc = System.IO.Path.GetDirectoryName(this.options["doxygen"]);
-            fileName = System.IO.Path.Combine(direc, fileName);
-            var fp = new System.IO.StreamWriter(fileName);
-            fp.WriteLine("digraph solution {");
-            fp.WriteLine("	subgraph cluster_0 {");
-            fp.WriteLine(string.Format("		label=\"{0}\";", branch.Name));
+            this.WriteLine("\\dot");
+            this.WriteLine("digraph solution {");
+            this.WriteLine("	subgraph cluster_0 {");
+            this.WriteLine(string.Format("		label=\"{0}\";", branch.Name));
 
             var links = this.dependencies.Assembled.Linkings;
             foreach (var child in branch.Children)
@@ -648,19 +648,18 @@ namespace DeepEnds.Core
                     url = string.Format(", URL=\"\\ref DeepEnds{0}\"", mapping[child]);
                 }
 
-                fp.WriteLine(string.Format("		N{0} [label=\"{1}\"{2}];", index, child.Name, url));
+                this.WriteLine(string.Format("		N{0} [label=\"{1}\"{2}];", index, child.Name, url));
 
                 foreach (var dep in links[child].Interlinks)
                 {
                     var other = branch.Children.IndexOf(dep);
-                    fp.WriteLine(string.Format("		N{0} -> N{1};", index, other));
+                    this.WriteLine(string.Format("		N{0} -> N{1};", index, other));
                 }
             }
 
-            fp.WriteLine("	}");
-            fp.WriteLine("}");
-
-            fp.Close();
+            this.WriteLine("	}");
+            this.WriteLine("}");
+            this.WriteLine("\\enddot");
         }
 
         private List<Complexity> TableRows()
