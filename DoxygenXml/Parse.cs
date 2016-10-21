@@ -153,6 +153,17 @@ namespace DeepEnds.DoxygenXml
             var doc = new System.Xml.XmlDocument();
             doc.Load(fileName);
             var root = doc.DocumentElement;
+
+            // Ensure that spurious dependencies can't form from the documentation
+            var toDelete = new List<System.Xml.XmlElement>();
+            this.SelectNodes(root, "briefdescription", toDelete);
+            this.SelectNodes(root, "detaileddescription", toDelete);
+            this.SelectNodes(root, "inbodydescription", toDelete);
+            foreach (var element in toDelete)
+            {
+                element.ParentNode.RemoveChild(element);
+            }
+
             var nodes = root.SelectNodes("compounddef");
             var hasRead = false;
             foreach (var node in nodes)
