@@ -35,7 +35,7 @@ namespace DeepEnds.DoxygenXml
 
         private Dictionary<string, string> options;
 
-        private void ReadClass(System.Xml.XmlElement root, string sep)
+        private void ReadCompoundDef(System.Xml.XmlElement root, List<string> members)
         {
             Core.Dependent.Dependency leaf = null;
             var nodes = root.SelectNodes("compoundname");
@@ -48,15 +48,15 @@ namespace DeepEnds.DoxygenXml
 
                 var element = node as System.Xml.XmlElement;
                 var path = element.InnerText;
-                leaf = this.parser.Dependencies.GetPath(path, sep);
+                leaf = this.parser.Dependencies.GetPath(path, "::");
             }
 
             this.ReadLoc(root, leaf);
             this.ReadReferences(root, leaf);
-            this.ReadMembers(root, leaf);
+            this.ReadMembers(root, leaf, members);
         }
 
-        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf, List<string> members)
         {
             var list = new List<System.Xml.XmlElement>();
             this.SelectNodes(root, "memberdef", list);
@@ -64,7 +64,7 @@ namespace DeepEnds.DoxygenXml
             {
                 var kind = element.GetAttribute("kind");
                 var id = element.GetAttribute("id");
-                if (kind == "enum")
+                if (members.Contains(kind))
                 {
                     var nodes = element.SelectNodes("name");
                     foreach (var node in nodes)
@@ -79,6 +79,10 @@ namespace DeepEnds.DoxygenXml
                         leaf.AddChild(child);
                         this.lookup[id] = child;
                         this.ReadLoc(element, child);
+                        if (leaf.LOC > child.LOC)
+                        {
+                            leaf.LOC -= child.LOC;
+                        }
                     }
                 }
             }
@@ -155,14 +159,17 @@ namespace DeepEnds.DoxygenXml
             var root = doc.DocumentElement;
 
             // Ensure that spurious dependencies can't form from the documentation
-            var toDelete = new List<System.Xml.XmlElement>();
-            this.SelectNodes(root, "briefdescription", toDelete);
-            this.SelectNodes(root, "detaileddescription", toDelete);
-            this.SelectNodes(root, "inbodydescription", toDelete);
-            foreach (var element in toDelete)
+            var descriptions = new List<System.Xml.XmlElement>();
+            this.SelectNodes(root, "briefdescription", descriptions);
+            this.SelectNodes(root, "detaileddescription", descriptions);
+            this.SelectNodes(root, "inbodydescription", descriptions);
+            foreach (var element in descriptions)
             {
                 element.ParentNode.RemoveChild(element);
             }
+
+            var types = new List<string>() { "class", "interface", "module", "type", "union", "protocol", "category", "exception", "service", "singleton" };
+            var members = new List<string>() { "enum" };
 
             var nodes = root.SelectNodes("compounddef");
             var hasRead = false;
@@ -174,28 +181,26 @@ namespace DeepEnds.DoxygenXml
                 }
 
                 var element = node as System.Xml.XmlElement;
-                var language = element.GetAttribute("language");
                 var kind = element.GetAttribute("kind");
+                if (!types.Contains(kind))
+                {
+                    continue;
+                }
+
+                var language = element.GetAttribute("language");
+                if (language == "Fortran")
+                {
+                    members.Add("function");
+                }
+
                 if (!hasRead)
                 {
-                    if (kind == "class")
-                    {
-                        logger.Write("  Reading ");
-                        logger.WriteLine(fileName);
-                        hasRead = true;
-                    }
+                    logger.Write("  Reading ");
+                    logger.WriteLine(fileName);
+                    hasRead = true;
                 }
 
-                if (kind == "class")
-                {
-                    var sep = ".";
-                    if (language == "C++")
-                    {
-                        sep = "::";
-                    }
-
-                    this.ReadClass(element, sep);
-                }
+                this.ReadCompoundDef(element, members);
             }
         }
 

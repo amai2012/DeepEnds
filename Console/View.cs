@@ -151,6 +151,12 @@ namespace DeepEnds.Console
 
         public void Write(System.IO.TextWriter logger, Dictionary<string, string> options)
         {
+            if (this.dependencies.Root.Children.Count == 0)
+            {
+                logger.WriteLine("Writing nothing so exiting");
+                return;
+            }
+
             if (options["report"] != string.Empty)
             {
                 logger.Write("Writing ");
