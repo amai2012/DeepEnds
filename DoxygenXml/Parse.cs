@@ -50,7 +50,7 @@ namespace DeepEnds.DoxygenXml
             return list;
         }
 
-        private void ReadCompoundDef(System.Xml.XmlElement root)
+        private void ReadCompoundDef(System.Xml.XmlElement root, System.IO.TextWriter logger)
         {
             Core.Dependent.Dependency leaf = null;
             var nodes = root.SelectNodes("compoundname");
@@ -67,7 +67,7 @@ namespace DeepEnds.DoxygenXml
             }
 
             this.ReadLoc(root, leaf);
-            this.ReadReferences(root, leaf);
+            this.ReadReferences(root, leaf, logger);
             this.ReadMembers(root, leaf);
         }
 
@@ -149,7 +149,7 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        private void ReadReferences(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        private void ReadReferences(System.Xml.XmlElement root, Core.Dependent.Dependency leaf, System.IO.TextWriter logger)
         {
             var id = root.GetAttribute("id");
             this.lookup[id] = leaf;
@@ -162,6 +162,15 @@ namespace DeepEnds.DoxygenXml
             this.links[leaf] = links;
             foreach (var element in list)
             {
+                if (!element.HasAttribute("refid"))
+                {
+                    logger.Write("! No refid for ");
+                    logger.Write(element.InnerText);
+                    logger.Write(" whilst processing ");
+                    logger.WriteLine(leaf.Path("."));
+                    continue;
+                }
+
                 var refid = element.GetAttribute("refid");
                 links.Add(refid);
             }
@@ -206,7 +215,7 @@ namespace DeepEnds.DoxygenXml
                     hasRead = true;
                 }
 
-                this.ReadCompoundDef(element);
+                this.ReadCompoundDef(element, logger);
             }
         }
 
