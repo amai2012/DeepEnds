@@ -37,15 +37,17 @@ namespace DeepEnds.Cpp
             this.projects = new Dictionary<string, List<DeepEnds.Core.Dependent.Dependency>>();
         }
 
-        private void ReadProject(string project, System.Text.StringBuilder messages)
+        private void ReadProject(string project, System.IO.TextWriter logger)
         {
             if (!File.Exists(project + ".filters"))
             {
-                messages.AppendFormat("! Cannot find associated filter file of {0}\n", project);
+                logger.Write("! Cannot find associated filter file of");
+                logger.WriteLine(project);
                 return;
             }
 
-            messages.AppendFormat(" Parsing {0}\n", project);
+            logger.Write(" Parsing");
+            logger.WriteLine(project);
             this.projects[project] = new List<DeepEnds.Core.Dependent.Dependency>();
             var direc = System.IO.Path.GetDirectoryName(project);
             foreach (var type in new string[] { "ClInclude", "ClCompile" })
@@ -62,8 +64,9 @@ namespace DeepEnds.Cpp
                             filter = reader.ReadElementContentAsString();
                         }
 
-                        messages.AppendFormat("  Appended {0}\n", DeepEnds.Core.Utilities.Combine(direc, filename));
-                        this.AddFile(project, DeepEnds.Core.Utilities.Combine(direc, filename), filter, this.projects[project], messages);
+                        logger.Write("  Appended ");
+                        logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
+                        this.AddFile(project, DeepEnds.Core.Utilities.Combine(direc, filename), filter, this.projects[project], logger);
                     }
                 }
             }
@@ -108,9 +111,9 @@ namespace DeepEnds.Cpp
             return includes;
         }
 
-        public void Read(string project, string solutionDirec, System.Text.StringBuilder messages)
+        public void Read(string project, string solutionDirec, System.IO.TextWriter logger)
         {
-            this.ReadProject(project, messages);
+            this.ReadProject(project, logger);
             var includes = this.Includes(project, solutionDirec);
             foreach (var node in this.projects[project])
             {

@@ -39,9 +39,9 @@ namespace DeepEnds.VBasic
             this.vbfiles = new Dictionary<string, string>();
         }
 
-        public void ReadProject(string project, System.Text.StringBuilder messages)
+        public void ReadProject(string project, System.IO.TextWriter logger)
         {
-            DeepEnds.Core.Utilities.ReadProject(project, this.vbfiles, messages);
+            DeepEnds.Core.Utilities.ReadProject(project, this.vbfiles, logger);
         }
 
         public void Finalise(List<string> dlls)

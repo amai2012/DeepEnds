@@ -113,12 +113,14 @@ namespace DeepEnds.Core
 
         public void Write(string value)
         {
-            this.file.Write(string.Format("{0}{1}", this.LineBegin, value));
+            this.file.Write(this.LineBegin);
+            this.file.Write(value);
         }
 
         public void WriteLine(string line)
         {
-            this.file.WriteLine(string.Format("{0}{1}", this.LineBegin, line));
+            this.file.Write(this.LineBegin);
+            this.file.WriteLine(line);
         }
 
         public void TableTopText(int topIndex)
@@ -178,7 +180,8 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
             this.file.Write(this.ParagraphBegin);
-            this.WriteLine(string.Format("Skip to {0}", string.Format(this.Link, topIndex, "Top level")));
+            this.Write("Skip to ");
+            this.file.WriteLine(string.Format(this.Link, topIndex, "Top level"));
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The following table is sorted on its first column, subsequent instances of this table type are sorted on ");
@@ -356,7 +359,8 @@ namespace DeepEnds.Core
                 name = "Top level";
             }
 
-            this.WriteLine(string.Format("Up to {0}", string.Format(this.Link, index, name)));
+            this.Write("Up to ");
+            this.file.WriteLine(string.Format(this.Link, index, name));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
@@ -562,24 +566,38 @@ namespace DeepEnds.Core
             this.WriteLine("\\dot");
             this.WriteLine("digraph solution {");
             this.WriteLine("	subgraph cluster_0 {");
-            this.WriteLine(string.Format("		label=\"{0}\";", branch.Name));
+            this.Write("		label=\"");
+            this.file.Write(branch.Name);
+            this.file.WriteLine("\";");
 
             var links = this.dependencies.Assembled.Linkings;
             foreach (var child in branch.Children)
             {
                 var index = branch.Children.IndexOf(child);
-                var url = string.Empty;
+
+                this.Write("		N");
+                this.file.Write(index);
+                this.file.Write(" [label=\"");
+                this.file.Write(child.Name);
+                this.file.Write("\"");
+
                 if (mapping.ContainsKey(child))
                 {
-                    url = string.Format(", URL=\"\\ref DeepEnds{0}\"", mapping[child]);
+                    this.file.Write(", URL=\"\\ref DeepEnds");
+                    this.file.Write(mapping[child]);
+                    this.file.Write("\"");
                 }
 
-                this.WriteLine(string.Format("		N{0} [label=\"{1}\"{2}];", index, child.Name, url));
+                this.file.WriteLine("];");
 
                 foreach (var dep in links[child].Interlinks)
                 {
                     var other = branch.Children.IndexOf(dep);
-                    this.WriteLine(string.Format("		N{0} -> N{1};", index, other));
+                    this.Write("		N");
+                    this.file.Write(index);
+                    this.file.Write(" -> N");
+                    this.file.Write(other);
+                    this.file.WriteLine(";");
                 }
             }
 

@@ -74,9 +74,7 @@ namespace DeepEnds.Console
         /// </summary>
         private void Read()
         {
-            this.view.Read(this.options, this.inputFiles.ToArray());
-
-            System.Console.Write(this.view.Messages.ToString());
+            this.view.Read(System.Console.Out, this.options, this.inputFiles.ToArray());
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace DeepEnds.Console
         /// </summary>
         private void Write()
         {
-            this.view.Write(this.options);
+            this.view.Write(System.Console.Out, this.options);
         }
 
 
@@ -147,9 +145,18 @@ Dive into architecture with DeepEnds
                 System.Console.Write("  DeepEnds.Console.exe ");
                 foreach (var key in ordered)
                 {
-                    System.Console.Write(string.Format("[{0}] ", key));
+                    if (key == "filenames")
+                    {
+                        System.Console.WriteLine("filenames");
+                    }
+                    else
+                    {
+                        System.Console.Write("[");
+                        System.Console.Write(key);
+                        System.Console.Write("] ");
+                    }
                 }
-                System.Console.WriteLine("\n  where optional arguments are of the form key=value");
+                System.Console.WriteLine("  where optional arguments are of the form key=value");
                 System.Console.WriteLine("  there now follows a list of 'key(default value): help'");
                 foreach (var key in ordered)
                 {
@@ -158,7 +165,12 @@ Dive into architecture with DeepEnds
                         break;
                     }
 
-                    System.Console.WriteLine(string.Format("        {0}({1}): {2}", key, options[key], help[key]));
+                    System.Console.Write("        ");
+                    System.Console.Write(key);
+                    System.Console.Write("(");
+                    System.Console.Write(options[key]);
+                    System.Console.Write("): ");
+                    System.Console.WriteLine(help[key]);
                 }
                 System.Console.Write("  and filenames is ");
                 System.Console.Write(help["filenames"]);

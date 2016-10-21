@@ -23,6 +23,7 @@
 
 namespace DeepEnds.GUI
 {
+    using DeepEnds.Console;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -34,9 +35,9 @@ namespace DeepEnds.GUI
     /// </summary>
     public partial class DeepEndsControl : UserControl
     {
-        private DeepEnds.Console.View view;
+        private View view;
         private Dictionary<string, string> options;
-        private Dictionary<string, string> types;
+        private Dictionary<string, Options.Browse> types;
         private Dictionary<string, string> filters;
         private Dictionary<string, TextBox> values;
 
@@ -47,16 +48,16 @@ namespace DeepEnds.GUI
         {
             this.InitializeComponent();
 
-            this.view = new DeepEnds.Console.View();
-            this.options = DeepEnds.Console.Options.Defaults();
-            this.types = DeepEnds.Console.Options.Types();
-            this.filters = DeepEnds.Console.Options.Filters();
+            this.view = new View();
+            this.options = Options.Defaults();
+            this.types = Options.Types();
+            this.filters = Options.Filters();
             this.values = new Dictionary<string, TextBox>();
 
-            var help = DeepEnds.Console.Options.Help();
+            var help = Options.Help();
             int row = 0;
 
-            var ordered = DeepEnds.Console.Options.Ordered();
+            var ordered = Options.Ordered();
             foreach (var key in ordered)
             {
                 ++row;
@@ -98,7 +99,7 @@ namespace DeepEnds.GUI
                     value.TextWrapping = TextWrapping.Wrap;
                 }
 
-                if (this.filters.ContainsKey(key))
+                if (this.types.ContainsKey(key))
                 {
                     var browse = new Button();
                     browse.Name = key;
@@ -124,7 +125,7 @@ namespace DeepEnds.GUI
             var name = ((System.Windows.Controls.Button)e.Source).Name;
 
             var type = this.types[name];
-            if (type == "fileOut")
+            if (type == Options.Browse.fileOut)
             {
                 // Configure save file dialog box
                 var dlg = new System.Windows.Forms.SaveFileDialog();
@@ -135,7 +136,7 @@ namespace DeepEnds.GUI
                     this.values[name].Text = dlg.FileName;
                 }
             }
-            else if (type == "fileIn")
+            else if (type == Options.Browse.fileIn)
             {
                 // Configure save file dialog box
                 var dlg = new System.Windows.Forms.OpenFileDialog();
@@ -153,7 +154,7 @@ namespace DeepEnds.GUI
                     this.values[name].Text = selection;
                 }
             }
-            else if (type == "directoryIn")
+            else if (type == Options.Browse.directoryIn)
             {
                 var dlg = new System.Windows.Forms.FolderBrowserDialog();
                 var result = dlg.ShowDialog();
@@ -173,25 +174,32 @@ namespace DeepEnds.GUI
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
+            string filePath;
+            System.IO.StreamWriter logFile;
+            this.OpenLog(out filePath, out logFile);
+
             try
             {
-                this.view.Read(this.options, this.options["filenames"].Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
-                this.view.Write(this.options);
+                this.view.Read(logFile, this.options, this.options["filenames"].Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+                this.view.Write(logFile, this.options);
             }
             catch (System.Exception excep)
             {
                 MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            this.ShowMessage(this.view.Messages.ToString());
+            this.CloseLog(filePath, logFile);
         }
 
-        private void ShowMessage(string message)
+        private void OpenLog(out string filePath, out System.IO.StreamWriter file)
         {
             var path = System.IO.Path.GetTempPath();
-            var filePath = System.IO.Path.Combine(path, "deepends.txt");
-            var file = new System.IO.StreamWriter(filePath);
-            file.Write(message);
+            filePath = System.IO.Path.Combine(path, "deepends.txt");
+            file = new System.IO.StreamWriter(filePath);
+        }
+
+        private void CloseLog(string filePath, System.IO.StreamWriter file)
+        {
             file.Close();
 
             var p = new System.Diagnostics.Process();
@@ -211,14 +219,24 @@ namespace DeepEnds.GUI
         {
             try
             {
-                var message = System.Reflection.Assembly.GetAssembly(typeof(DeepEnds.Console.View)).Location;
+                string filePath;
+                System.IO.StreamWriter file;
+                this.OpenLog(out filePath, out file);
+
+                var message = System.Reflection.Assembly.GetAssembly(typeof(View)).Location;
                 if (message.Contains(" "))
                 {
-                    message = string.Format("\"{0}\"", message);
+                    file.Write("\"");
+                    file.Write(message);
+                    file.Write("\"");
+                }
+                else
+                {
+                    file.Write(message);
                 }
 
-                var defaults = DeepEnds.Console.Options.Defaults();
-                var ordered = DeepEnds.Console.Options.Ordered();
+                var defaults = Options.Defaults();
+                var ordered = Options.Ordered();
                 foreach (var key in this.options.Keys)
                 {
                     if (!ordered.Contains(key) || key == "filenames")
@@ -232,16 +250,26 @@ namespace DeepEnds.GUI
                         continue;
                     }
 
+                    file.Write(" ");
+                    file.Write(key);
+                    file.Write("=");
+
                     if (val.Contains(" "))
                     {
-                        val = string.Format("\"{0}\"", val);
+                        file.Write("\"");
+                        file.Write(val);
+                        file.Write("\"");
                     }
-
-                    message = string.Format("{0} {1}={2}", message, key, val);
+                    else
+                    {
+                        file.Write(val);
+                    }
                 }
 
-                message = string.Format("{0} {1}", message, this.options["filenames"].Replace('\n', ' '));
-                this.ShowMessage(message);
+                file.Write(" ");
+                file.WriteLine(this.options["filenames"].Replace('\n', ' '));
+
+                this.CloseLog(filePath, file);
             }
             catch (System.Exception excep)
             {

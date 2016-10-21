@@ -37,7 +37,7 @@ namespace DeepEnds.Core
             }
         }
 
-        public static void ReadProject(string project, Dictionary<string, string> files, System.Text.StringBuilder messages)
+        public static void ReadProject(string project, Dictionary<string, string> files, System.IO.TextWriter logger)
         {
             var direc = System.IO.Path.GetDirectoryName(project);
             foreach (var line in DeepEnds.Core.Utilities.ReadFile(project).Split('\n'))
@@ -59,11 +59,13 @@ namespace DeepEnds.Core
                 var file = System.IO.Path.Combine(direc, trimmed);
                 if (!System.IO.File.Exists(file))
                 {
-                    messages.AppendFormat("! Cannot find {0}\n", file);
+                    logger.Write("! Cannot find ");
+                    logger.WriteLine(file);
                     continue;
                 }
 
-                messages.AppendFormat("  Appended {0}\n", file);
+                logger.Write("  Appended ");
+                logger.WriteLine(file);
                 files[file] = project;
             }
         }

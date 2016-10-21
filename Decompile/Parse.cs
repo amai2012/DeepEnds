@@ -131,7 +131,7 @@ namespace DeepEnds.Decompile
             this.Process(leaf, type);
         }
 
-        public void Read(string filename, System.Text.StringBuilder messages)
+        public void Read(string filename, System.IO.TextWriter logger)
         {
             try
             {
@@ -158,7 +158,8 @@ namespace DeepEnds.Decompile
             }
             catch
             {
-                messages.AppendFormat("! Cannot read file, is it actually a .NET assembly? {0}\n", filename);
+                logger.Write("! Cannot read file, is it actually a .NET assembly? ");
+                logger.WriteLine(filename);
             }
         }
     }

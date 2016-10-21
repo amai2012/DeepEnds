@@ -39,9 +39,9 @@ namespace DeepEnds.CSharp
             this.csfiles = new Dictionary<string, string>();
         }
 
-        public void ReadProject(string project, System.Text.StringBuilder messages)
+        public void ReadProject(string project, System.IO.TextWriter logger)
         {
-            DeepEnds.Core.Utilities.ReadProject(project, this.csfiles, messages);
+            DeepEnds.Core.Utilities.ReadProject(project, this.csfiles, logger);
         }
 
         public void Finalise(List<string> dlls)

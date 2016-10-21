@@ -35,23 +35,21 @@ namespace DeepEnds.Console
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
         private Sources sources;
 
-        public System.Text.StringBuilder Messages { get; set; }
-
         public View()
         {
             this.dependencies = new Dependencies();
             this.sets = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
             this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
             this.sources = new Sources();
-            this.Messages = new System.Text.StringBuilder();
         }
 
-        private void Files(string fileName, string direc, List<KeyValuePair<string, string>> fileNames, List<string> extensions, System.Text.StringBuilder messages)
+        private void Files(System.IO.TextWriter logger, string fileName, string direc, List<KeyValuePair<string, string>> fileNames, List<string> extensions)
         {
             var ext = System.IO.Path.GetExtension(fileName);
             if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll")
             {
-                messages.AppendFormat("  Appended for reading {0}\n", fileName);
+                logger.Write("  Appended for reading ");
+                logger.WriteLine(fileName);
                 if (!extensions.Contains(ext))
                 {
                     extensions.Add(ext);
@@ -61,36 +59,40 @@ namespace DeepEnds.Console
             }
             else if (ext == ".sln")
             {
-                messages.AppendFormat(" Reading projects from {0}\n", fileName);
+                logger.Write(" Reading projects from ");
+                logger.WriteLine(fileName);
                 direc = System.IO.Path.GetDirectoryName(fileName);
                 foreach (var name in DeepEnds.Core.Utilities.ReadVisualStudioSolution(fileName))
                 {
-                    this.Files(name, direc, fileNames, extensions, messages);
+                    this.Files(logger, name, direc, fileNames, extensions);
                 }
             }
             else if (ext == ".xml")
             {
                 direc = System.IO.Path.GetDirectoryName(fileName);
+                logger.Write(" Reading xml from ");
+                logger.WriteLine(direc);
                 fileNames.Add(new KeyValuePair<string, string>(fileName, direc));
             }
         }
 
-        public bool Read(Dictionary<string, string> options, string[] lines)
+        public bool Read(System.IO.TextWriter logger, Dictionary<string, string> options, string[] lines)
         {
-            this.Messages = new System.Text.StringBuilder("Reading\n");
+            logger.WriteLine("Reading");
             var fileNames = new List<KeyValuePair<string, string>>();
             var extensions = new List<string>();
             foreach (var fileName in lines)
             {
-                this.Files(fileName, string.Empty, fileNames, extensions, this.Messages);
+                this.Files(logger, fileName, string.Empty, fileNames, extensions);
             }
 
             if (extensions.Count != 1 && extensions.Contains(".vcxproj"))
             {
-                this.Messages.Append("Cannot mix vcxproj and others, have :");
+                logger.Write("Cannot mix vcxproj and others, have :");
                 foreach (var ext in extensions)
                 {
-                    this.Messages.AppendFormat(" {0}", ext);
+                    logger.Write(" ");
+                    logger.Write(ext);
                 }
 
                 return false;
@@ -119,23 +121,23 @@ namespace DeepEnds.Console
                 if (ext == ".dll" || ext == ".exe")
                 {
                     dlls.Add(pair.Key);
-                    dotnet.Read(pair.Key, this.Messages);
+                    dotnet.Read(pair.Key, logger);
                 }
                 else if (ext == ".csproj")
                 {
-                    csharp.ReadProject(pair.Key, this.Messages);
+                    csharp.ReadProject(pair.Key, logger);
                 }
                 else if (ext == ".vbproj")
                 {
-                    vbasic.ReadProject(pair.Key, this.Messages);
+                    vbasic.ReadProject(pair.Key, logger);
                 }
                 else if (ext == ".vcxproj")
                 {
-                    cpp.Read(pair.Key, pair.Value, this.Messages);
+                    cpp.Read(pair.Key, pair.Value, logger);
                 }
                 else if (ext == ".xml")
                 {
-                    xml.Read(pair.Value, this.Messages);
+                    xml.Read(pair.Value, logger);
                 }
             }
 
@@ -147,28 +149,36 @@ namespace DeepEnds.Console
             return true;
         }
 
-        public void Write(Dictionary<string, string> options)
+        public void Write(System.IO.TextWriter logger, Dictionary<string, string> options)
         {
             if (options["report"] != string.Empty)
             {
+                logger.Write("Writing ");
+                logger.WriteLine(options["report"]);
                 var report = new DeepEnds.Core.Report(options);
                 report.Write(this.dependencies);
             }
 
             if (options["doxygen"] != string.Empty)
             {
+                logger.Write("Writing ");
+                logger.WriteLine(options["doxygen"]);
                 var report = new DeepEnds.Core.Doxygen(options);
                 report.Write(this.dependencies);
             }
 
             if (options["csv"] != string.Empty)
             {
+                logger.Write("Writing ");
+                logger.WriteLine(options["csv"]);
                 var report = new DeepEnds.Core.CSV(options);
                 report.Write(this.dependencies);
             }
 
             if (options["graph"] != string.Empty)
             {
+                logger.Write("Writing ");
+                logger.WriteLine(options["graph"]);
                 var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
                 assemble.Save();
             }

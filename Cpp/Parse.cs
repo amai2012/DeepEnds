@@ -34,11 +34,12 @@ namespace DeepEnds.Cpp
             this.parser = parser;
         }
 
-        protected void AddFile(string project, string filePath, string filter, List<DeepEnds.Core.Dependent.Dependency> nodes, System.Text.StringBuilder messages)
+        protected void AddFile(string project, string filePath, string filter, List<DeepEnds.Core.Dependent.Dependency> nodes, System.IO.TextWriter logger)
         {
             if (!System.IO.File.Exists(filePath))
             {
-                messages.AppendFormat("! Cannot find {0}\n", filePath);
+                logger.Write("! Cannot find ");
+                logger.WriteLine(filePath);
                 return;
             }
 

@@ -27,11 +27,13 @@ namespace DeepEnds.Console
 
     static public class Options
     {
+        /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
             return new string[] { "report", "csv", "doxygen", "graph", "source", "filenames" };
         }
 
+        /// <returns>Default values for the arguments</returns>
         static public Dictionary<string, string> Defaults()
         {
             var options = new Dictionary<string, string>();
@@ -45,11 +47,12 @@ namespace DeepEnds.Console
             return options;
         }
 
+        /// <returns>Help for the arguments</returns>
         static public Dictionary<string, string> Help()
         {
             var options = new Dictionary<string, string>();
             options["csv"] = "Write a csv file containing the main table from the statistics";
-            options["doxygen"] = "Write the statistics to a source file for Doxygen to process, create dot files in the same directory";
+            options["doxygen"] = "Write the statistics to a source file for Doxygen to process";
             options["filenames"] = "a list of xml, sln, csproj, vcxproj, vbproj, dll and exe files.\n  For parsing Doxygen XML output supply one xml file and set source if DGML required";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
@@ -57,18 +60,30 @@ namespace DeepEnds.Console
             return options;
         }
 
-        static public Dictionary<string, string> Types()
+        /// <summary>
+        /// Action on pressing a browse button
+        /// </summary>
+        public enum Browse
         {
-            var options = new Dictionary<string, string>();
-            options["csv"] = "fileOut";
-            options["doxygen"] = "fileOut";
-            options["filenames"] = "fileIn";
-            options["graph"] = "fileOut";
-            options["report"] = "fileOut";
-            options["source"] = "directoryIn";
+            fileOut,
+            fileIn,
+            directoryIn
+        }
+
+        /// <returns>Type of action to occur when browse button is pressed</returns>
+        static public Dictionary<string, Browse> Types()
+        {
+            var options = new Dictionary<string, Browse>();
+            options["csv"] = Browse.fileOut;
+            options["doxygen"] = Browse.fileOut;
+            options["filenames"] = Browse.fileIn;
+            options["graph"] = Browse.fileOut;
+            options["report"] = Browse.fileOut;
+            options["source"] = Browse.directoryIn;
             return options;
         }
 
+        /// <returns>File filters for browse button</returns>
         static public Dictionary<string, string> Filters()
         {
             var options = new Dictionary<string, string>();

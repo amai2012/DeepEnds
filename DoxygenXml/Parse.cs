@@ -148,7 +148,7 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        private void ReadFile(string fileName, System.Text.StringBuilder messages)
+        private void ReadFile(string fileName, System.IO.TextWriter logger)
         {
             var doc = new System.Xml.XmlDocument();
             doc.Load(fileName);
@@ -169,7 +169,8 @@ namespace DeepEnds.DoxygenXml
                 {
                     if (kind == "class")
                     {
-                        messages.AppendLine(string.Format("Reading {0}", fileName));
+                        logger.Write("  Reading ");
+                        logger.WriteLine(fileName);
                         hasRead = true;
                     }
                 }
@@ -195,7 +196,7 @@ namespace DeepEnds.DoxygenXml
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }
 
-        public void Read(string directory, System.Text.StringBuilder messages)
+        public void Read(string directory, System.IO.TextWriter logger)
         {
             var files = System.IO.Directory.GetFiles(directory);
             foreach (var fileName in files)
@@ -206,7 +207,7 @@ namespace DeepEnds.DoxygenXml
                     continue;
                 }
 
-                this.ReadFile(fileName, messages);
+                this.ReadFile(fileName, logger);
             }
         }
 
