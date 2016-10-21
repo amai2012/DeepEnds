@@ -111,6 +111,11 @@ namespace DeepEnds.Core
             this.TableRowEnd = string.Empty;
         }
 
+        public void Write(string value)
+        {
+            this.file.Write(string.Format("{0}{1}", this.LineBegin, value));
+        }
+
         public void WriteLine(string line)
         {
             this.file.WriteLine(string.Format("{0}{1}", this.LineBegin, line));
@@ -118,108 +123,75 @@ namespace DeepEnds.Core
 
         public void TableTopText(int topIndex)
         {
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SectionBegin, "Top", "Summary of graph complexity"));
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
+            this.Write(string.Format(this.SectionBegin, "Top", "Summary of graph complexity"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("The larger the value of (E + P) / N then the more complex the directed graph is, where\n");
+            this.WriteLine("The larger the value of (E + P) / N then the more complex the directed graph is, where");
             this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.LineBegin + '\n');
+            this.WriteLine(string.Empty);
             this.file.Write(this.ListBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.ListItem, "E: Number of edges"));
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.ListItem, "P: Number of parts"));
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.ListItem, "N: Number of nodes"));
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.ListEnd);
+            this.Write(string.Format(this.ListItem, "E: Number of edges"));
+            this.Write(string.Format(this.ListItem, "P: Number of parts"));
+            this.Write(string.Format(this.ListItem, "N: Number of nodes"));
+            this.Write(this.ListEnd);
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("The value of (E + P - N) / N varies between 0 and N. A strictly layered architecture will have a value of 0.\n");
+            this.WriteLine("The value of (E + P - N) / N varies between 0 and N. A strictly layered architecture will have a value of 0.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.\n");
+            this.WriteLine("The sum refers to the sum of the value to its left plus all the values at its child nodes, recursively.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "Externals", "Externals"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Externals", "Externals"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("Externals refers to the number of dependencies which aren't children.\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("The following max refers to the maximum of that value and the value at any child nodes.\n");
+            this.WriteLine("Externals refers to the number of dependencies which aren't children.");
+            this.WriteLine("The following max refers to the maximum of that value and the value at any child nodes.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "SLOC", "SLOC"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "SLOC", "SLOC"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("the log-normal distribution to data which has then been used to calculate \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("the expected value, this is expected to only make sense high up in the hierarchy. \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("The following max refers to the maximum of that value and the value at any child nodes as long as there is more than\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("one item to fit so as to avoid domination of the statistic by boilerplate. These two values are bracketed by the lower \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("and upper limits of the 90% confidence interval is the upper limit is less than the maximal value of SLOC on a leaf,\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("otherwise it is left blank.\n");
+            this.WriteLine("SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or");
+            this.WriteLine("comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit ");
+            this.WriteLine("the log-normal distribution to data which has then been used to calculate ");
+            this.WriteLine("the expected value, this is expected to only make sense high up in the hierarchy. ");
+            this.WriteLine("The following max refers to the maximum of that value and the value at any child nodes as long as there is more than");
+            this.WriteLine("one item to fit so as to avoid domination of the statistic by boilerplate. These two values are bracketed by the lower ");
+            this.WriteLine("and upper limits of the 90% confidence interval is the upper limit is less than the maximal value of SLOC on a leaf,");
+            this.WriteLine("otherwise it is left blank.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("is left blank.\n");
+            this.WriteLine("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it ");
+            this.WriteLine("is left blank.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("The node label of the graph (with the obvious exception of \"Top level\") with a hyperlink to it.\n");
+            this.WriteLine("The node label of the graph (with the obvious exception of \"Top level\") with a hyperlink to it.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
-            this.file.Write(this.LineBegin + "\n");
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format("Skip to {0}\n", string.Format(this.Link, topIndex, "Top level")));
+            this.WriteLine(string.Format("Skip to {0}", string.Format(this.Link, topIndex, "Top level")));
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write("The following table is sorted on its first column, subsequent instances of this table type are sorted on \n");
-            this.file.Write(this.LineBegin);
-            this.file.Write("the final column. Hover over the table headers to make tool tips appear.\n");
+            this.WriteLine("The following table is sorted on its first column, subsequent instances of this table type are sorted on ");
+            this.WriteLine("the final column. Hover over the table headers to make tool tips appear.");
             this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
         }
 
         private void TableTop(bool forceVisible)
         {
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableBegin, " id=\"main\""));
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableHeadBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            this.Write(string.Format(this.TableBegin, " id=\"main\""));
+            this.Write(this.TableHeadBegin);
+            this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
 
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"3\" title=\"Cyclomatic number normalised by the number of nodes\"", "(E + P - N) / N"));
             if (forceVisible)
@@ -260,8 +232,7 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
             this.file.Write(this.TableRowEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             if (forceVisible)
             {
                 this.file.Write(this.TableHeadBegin);
@@ -291,10 +262,8 @@ namespace DeepEnds.Core
             }
 
             this.file.Write(this.TableRowEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableHeadEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyBegin);
+            this.Write(this.TableHeadEnd);
+            this.Write(this.TableBodyBegin);
         }
 
         private void TableRow(Complexity row, int index, bool forceVisible)
@@ -307,8 +276,7 @@ namespace DeepEnds.Core
 
             var branch = row.Branch;
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.Value * 0.0001)));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.MaxInTree * 0.0001)));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.SumOverTree * 0.0001)));
@@ -359,12 +327,10 @@ namespace DeepEnds.Core
 
         private void TableBottom()
         {
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableEnd);
+            this.Write(this.TableBodyEnd);
+            this.Write(this.TableEnd);
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
         }
 
@@ -376,8 +342,7 @@ namespace DeepEnds.Core
                 name = "Top level";
             }
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.SectionBegin,  index, name));
+            this.Write(string.Format(this.SectionBegin,  index, name));
 
             if (branch.Parent == null)
             {
@@ -391,10 +356,9 @@ namespace DeepEnds.Core
                 name = "Top level";
             }
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format("Up to {0}\n", string.Format(this.Link, index, name)));
+            this.WriteLine(string.Format("Up to {0}", string.Format(this.Link, index, name)));
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
         }
 
@@ -413,34 +377,26 @@ namespace DeepEnds.Core
 
             if (locs.Count > 0)
             {
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableBegin, string.Empty));
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableHeadBegin);
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf of this node\""));
+                this.Write(string.Format(this.TableBegin, string.Empty));
+                this.Write(this.TableHeadBegin);
+                this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf of this node\""));
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Dependency"));
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, " title=\"Number of lines of source code\"", "SLOC"));
                 this.file.Write(this.TableRowEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableHeadEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableBodyBegin);
+                this.Write(this.TableHeadEnd);
+                this.Write(this.TableBodyBegin);
                 foreach (var pair in locs.OrderByDescending(o => o.Value))
                 {
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+                    this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                     this.file.Write(string.Format(this.TableBodyItem, string.Empty, pair.Key));
                     this.file.Write(string.Format(this.TableBodyItem, " align=\"right\"", pair.Value));
                     this.file.Write(this.TableRowEnd);
                 }
 
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableBodyEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableEnd);
+                this.Write(this.TableBodyEnd);
+                this.Write(this.TableEnd);
                 this.file.Write(this.ParagraphBegin);
-                this.file.Write(this.LineBegin + "\n");
+                this.WriteLine(string.Empty);
                 this.file.Write(this.ParagraphEnd);
             }
         }
@@ -449,32 +405,24 @@ namespace DeepEnds.Core
         {
             if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
             {
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableBegin, string.Empty));
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableHeadBegin);
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf nodes not contained by this node that are depended upon\""));
+                this.Write(string.Format(this.TableBegin, string.Empty));
+                this.Write(this.TableHeadBegin);
+                this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf nodes not contained by this node that are depended upon\""));
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "External dependencies"));
                 this.file.Write(this.TableRowEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableHeadEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableBodyBegin);
+                this.Write(this.TableHeadEnd);
+                this.Write(this.TableBodyBegin);
                 foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.options["sep"])))
                 {
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+                    this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                     this.file.Write(string.Format(this.TableBodyItem, string.Empty, dep.Path(this.options["sep"])));
                     this.file.Write(this.TableRowEnd);
                 }
 
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableBodyEnd);
-                this.file.Write(this.LineBegin);
-                this.file.Write(this.TableEnd);
+                this.Write(this.TableBodyEnd);
+                this.Write(this.TableEnd);
                 this.file.Write(this.ParagraphBegin);
-                this.file.Write(this.LineBegin + "\n");
+                this.WriteLine(string.Empty);
                 this.file.Write(this.ParagraphEnd);
             }
         }
@@ -507,40 +455,31 @@ namespace DeepEnds.Core
             var list = set.ToList();
             list.Sort();
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableBegin, string.Empty));
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableHeadBegin);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause the edges of the graph to be formed\""));
+            this.Write(string.Format(this.TableBegin, string.Empty));
+            this.Write(this.TableHeadBegin);
+            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause the edges of the graph to be formed\""));
             this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Internal Dependencies"));
             this.file.Write(this.TableRowEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableHeadEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyBegin);
+            this.Write(this.TableHeadEnd);
+            this.Write(this.TableBodyBegin);
             foreach (var item in list)
             {
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+                this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                 this.file.Write(string.Format(this.TableBodyItem, string.Empty, item));
                 this.file.Write(this.TableRowEnd);
             }
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableEnd);
+            this.Write(this.TableBodyEnd);
+            this.Write(this.TableEnd);
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
         }
 
         private void LinksTable(Dependency branch, Dictionary<Dependency, int> mapping)
         {
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableBegin, string.Empty));
+            this.Write(string.Format(this.TableBegin, string.Empty));
             foreach (var child in branch.Children)
             {
                 foreach (var dep in this.dependencies.Assembled.Linkings[child].Interlinks)
@@ -557,18 +496,14 @@ namespace DeepEnds.Core
                         second = string.Format(string.Format(this.Link, mapping[dep], second));
                     }
 
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(this.TableHeadBegin);
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause this edge of the graph to be formed\""));
+                    this.Write(this.TableHeadBegin);
+                    this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause this edge of the graph to be formed\""));
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, first));
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, this.RightArrow));
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, second));
                     this.file.Write(this.TableRowEnd);
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(this.TableHeadEnd);
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(this.TableBodyBegin);
+                    this.Write(this.TableHeadEnd);
+                    this.Write(this.TableBodyBegin);
                     var found = FindLinks.Get(child, dep, this.options["sep"]);
                     if (found.Count == 0)
                     {
@@ -577,23 +512,19 @@ namespace DeepEnds.Core
 
                     foreach (var link in FindLinks.Get(child, dep, this.options["sep"]))
                     {
-                        this.file.Write(this.LineBegin);
-                        this.file.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+                        this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                         this.file.Write(string.Format(this.TableBodyItem, string.Empty, link.Key));
                         this.file.Write(string.Format(this.TableBodyItem, string.Empty, this.RightArrow));
                         this.file.Write(string.Format(this.TableBodyItem, string.Empty, link.Value));
                         this.file.Write(this.TableRowEnd);
                     }
 
-                    this.file.Write(this.LineBegin);
-                    this.file.Write(this.TableBodyEnd);
+                    this.Write(this.TableBodyEnd);
                 }
             }
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableEnd);
+            this.Write(this.TableBodyEnd);
+            this.Write(this.TableEnd);
         }
 
         private void Matrix(Dependency branch)
@@ -606,16 +537,13 @@ namespace DeepEnds.Core
             }
 
             this.file.Write(this.ParagraphBegin);
-            this.file.Write(this.LineBegin + "\n");
+            this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(string.Format(this.TableBegin, string.Empty));
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyBegin);
+            this.Write(string.Format(this.TableBegin, string.Empty));
+            this.Write(this.TableBodyBegin);
             foreach (var item in list)
             {
-                this.file.Write(this.LineBegin);
-                this.file.Write(string.Format(this.TableRowBegin, string.Empty, " style=\"height: 8px\" title=\"Node of the graph followed by dependencies (structure matrix)\""));
+                this.Write(string.Format(this.TableRowBegin, string.Empty, " style=\"height: 8px\" title=\"Node of the graph followed by dependencies (structure matrix)\""));
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, item.Key));
                 foreach (var c in item.Value)
                 {
@@ -625,10 +553,8 @@ namespace DeepEnds.Core
                 this.file.Write(this.TableRowEnd);
             }
 
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableBodyEnd);
-            this.file.Write(this.LineBegin);
-            this.file.Write(this.TableEnd);
+            this.Write(this.TableBodyEnd);
+            this.Write(this.TableEnd);
         }
 
         private void DotFile(Dependency branch, Dictionary<Dependency, int> mapping)
