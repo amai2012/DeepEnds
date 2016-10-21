@@ -47,9 +47,12 @@ namespace DeepEnds.Core
 <head>
 <title>Summary of graph complexity</title>
 <style>
-table, tr#main, th#main, td#main {
+table, tr#main, th#main, td#main, td#alert {
     border: 1px solid black;
     border-collapse: collapse;
+}
+th#main {
+    text-align: center;
 }
 th {
     font-weight: normal;
@@ -57,8 +60,6 @@ th {
     text-align: left;
 }
 td#alert {
-    border: 1px solid black;
-    border-collapse: collapse;
     color:white;
     background-color:red;
 }

@@ -154,14 +154,21 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "SLOC", "SLOC"));
             this.file.Write(this.ParagraphBegin);
-            this.WriteLine("SLOC stands for source lines of code; whilst reading the source an attempt has been made not to count blank or");
-            this.WriteLine("comment lines. The sum is sum over the child nodes recursively down to the leaf nodes. An attempt has been made to fit ");
-            this.WriteLine("the log-normal distribution to data which has then been used to calculate ");
-            this.WriteLine("the expected value, this is expected to only make sense high up in the hierarchy. ");
-            this.WriteLine("The following max refers to the maximum of that value and the value at any child nodes as long as there is more than");
-            this.WriteLine("one item to fit so as to avoid domination of the statistic by boilerplate. These two values are bracketed by the lower ");
-            this.WriteLine("and upper limits of the 90% confidence interval is the upper limit is less than the maximal value of SLOC on a leaf,");
-            this.WriteLine("otherwise it is left blank.");
+            this.WriteLine("SLOC stands for source lines of code; whilst reading the source an attempt may have ");
+            this.WriteLine("been made not to count blank or comment lines. The max and sum are calculated over ");
+            this.WriteLine("the child nodes recursively down to the leaf nodes.");
+            this.file.Write(this.ParagraphEnd);
+            this.file.Write(this.SubsectionEnd);
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Probability", "Probability of SLOC"));
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("An attempt has been made to fit the log-normal distribution to SLOC which has then ");
+            this.WriteLine("been used to calculate the expected file size, this is not displayed if there is only ");
+            this.WriteLine("one value to fit (so as to avoid domination of the statistic by boilerplate). This ");
+            this.WriteLine("value is bracketed by the lower and upper limits of the 90% confidence interval if ");
+            this.WriteLine("the upper limit is less than the maximal value of SLOC on a leaf, otherwise it is ");
+            this.WriteLine("left blank. The following max refers to the maximum of the expected value and the ");
+            this.WriteLine("value at any child nodes.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
@@ -223,10 +230,15 @@ namespace DeepEnds.Core
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"5\" title=\"Source lines of code\"", "SLOC"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"2\" title=\"Source lines of code\"", "SLOC"));
             if (forceVisible)
             {
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+            }
+
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"4\" title=\"Log-normal distribution\"", "Probability of SLOC"));
+            if (forceVisible)
+            {
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
@@ -252,11 +264,12 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Count"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the node and child nodes recursively\"", "Max"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Sum of node value and child node values recursively\"", "Sum"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Lower bound of the 90% confidence interval for leaf size\"", "Lower"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Expected leaf size given a log-normal distribution\"", "Exp"));
-            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Upper bound of the 90% confidence interval for leaf size\"", "Upper"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
 
             if (forceVisible)
             {
@@ -293,28 +306,41 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
 
             var sloc = this.dependencies.Assembled.SLOCs[branch];
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.MaxInTree));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.SumOverTree));
 
             var lower = string.Empty;
             var upper = string.Empty;
             var expected = string.Empty;
             var expectedMax = string.Empty;
-            if (sloc.Expected > 0 || forceVisible)
+            if (sloc.Expected > 0)
             {
-                if ((sloc.MaxInTree > sloc.Upper) || forceVisible)
+                if (sloc.MaxInTree > sloc.Upper)
                 {
                     lower = sloc.Lower.ToString();
                     upper = sloc.Upper.ToString();
+                }
+                else if (forceVisible)
+                {
+                    lower = "0";
+                    upper = sloc.MaxInTree.ToString();
                 }
 
                 expected = sloc.Expected.ToString();
                 expectedMax = sloc.ExpectedMax.ToString();
             }
+            else if (forceVisible)
+            {
+                expected = sloc.MaxInTree.ToString();
+                expectedMax = expected;
+                lower = expected;
+                upper = expected;
+            }
 
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.SumOverTree));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", lower));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expected));
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expectedMax));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", upper));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expectedMax));
             if (this.dependencies.Assembled.Structures[branch].HasCycle)
             {
                 this.file.Write(string.Format(this.TableBodyItem, " id=\"alert\"", "Cycle"));
