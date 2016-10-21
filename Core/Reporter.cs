@@ -127,6 +127,19 @@ namespace DeepEnds.Core
         {
             this.Write(string.Format(this.SectionBegin, "Top", "Summary of graph complexity"));
             this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("The node label of the graph (with the obvious exception of \"Top level\") with a hyperlink to it.");
+            this.file.Write(this.ParagraphEnd);
+            this.file.Write(this.SubsectionEnd);
+            this.WriteLine(string.Empty);
+            this.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it ");
+            this.WriteLine("is left blank.");
+            this.file.Write(this.ParagraphEnd);
+            this.file.Write(this.SubsectionEnd);
+            this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The larger the value of (E + P) / N then the more complex the directed graph is, where");
@@ -172,19 +185,6 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
-            this.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
-            this.file.Write(this.ParagraphBegin);
-            this.WriteLine("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it ");
-            this.WriteLine("is left blank.");
-            this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.SubsectionEnd);
-            this.WriteLine(string.Empty);
-            this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
-            this.file.Write(this.ParagraphBegin);
-            this.WriteLine("The node label of the graph (with the obvious exception of \"Top level\") with a hyperlink to it.");
-            this.file.Write(this.ParagraphEnd);
-            this.file.Write(this.SubsectionEnd);
-            this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
             this.file.Write(this.ParagraphBegin);
             this.Write("Skip to ");
@@ -202,6 +202,9 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.TableBegin, " id=\"main\""));
             this.Write(this.TableHeadBegin);
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
 
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " colspan=\"3\" title=\"Cyclomatic number normalised by the number of nodes\"", "(E + P - N) / N"));
             if (forceVisible)
@@ -244,13 +247,17 @@ namespace DeepEnds.Core
                 this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
-            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Whether a cycle occurs\"", "Cycle"));
-            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"The label of the graph node\"", "Section"));
             this.file.Write(this.TableRowEnd);
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             if (forceVisible)
             {
                 this.file.Write(this.TableHeadBegin);
+            }
+
+            if (forceVisible)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
             }
 
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Value at the node\"", "Val"));
@@ -271,12 +278,6 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Upper bound of the 90% confidence interval for leaf size\"", "Upper"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Maximum value of the expected leaf size at the node and child nodes recursively\"", "Max"));
 
-            if (forceVisible)
-            {
-                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
-                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Empty, string.Empty));
-            }
-
             this.file.Write(this.TableRowEnd);
             this.Write(this.TableHeadEnd);
             this.Write(this.TableBodyBegin);
@@ -293,6 +294,16 @@ namespace DeepEnds.Core
             var branch = row.Branch;
 
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format(this.Link, index, name)));
+            if (this.dependencies.Assembled.Structures[branch].HasCycle)
+            {
+                this.file.Write(string.Format(this.TableBodyItem, " id=\"alert\"", "Cycle"));
+            }
+            else
+            {
+                this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Empty));
+            }
+
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.Value * 0.0001)));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.MaxInTree * 0.0001)));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format("{0:0.00}", row.EPNNs.SumOverTree * 0.0001)));
@@ -341,16 +352,7 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expected));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", upper));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", expectedMax));
-            if (this.dependencies.Assembled.Structures[branch].HasCycle)
-            {
-                this.file.Write(string.Format(this.TableBodyItem, " id=\"alert\"", "Cycle"));
-            }
-            else
-            {
-                this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Empty));
-            }
 
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format(this.Link, index, name)));
             this.file.Write(this.TableRowEnd);
         }
 
