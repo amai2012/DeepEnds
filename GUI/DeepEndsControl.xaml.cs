@@ -78,7 +78,6 @@ namespace DeepEnds.GUI
                 label.Text = key;
                 label.Margin = new Thickness(10.0);
                 label.HorizontalAlignment = HorizontalAlignment.Left;
-                label.Width = 50.0;
                 Grid.SetColumn(label, 0);
                 Grid.SetRow(label, row);
                 this.grid.Children.Add(label);

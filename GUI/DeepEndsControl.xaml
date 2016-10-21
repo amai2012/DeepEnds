@@ -8,16 +8,18 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
-    <Grid x:Name="grid">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="70" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="50" />
-        </Grid.ColumnDefinitions>
-        <Button Grid.Row="0" Grid.Column="0" Content="Command" Click="Command_Click" Name="CommandButton" ToolTip="Display the batch file command"/>
-        <Button Grid.Row="0" Grid.Column="1" Content="Execute" Click="Execute_Click" Name="ExecuteButton" ToolTip="Execute the batch file command"/>
-    </Grid>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Grid x:Name="grid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="50" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="Command" Click="Command_Click" Name="CommandButton" ToolTip="Display the batch file command"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="Execute" Click="Execute_Click" Name="ExecuteButton" ToolTip="Execute the batch file command"/>
+        </Grid>
+    </ScrollViewer>
 </UserControl>
