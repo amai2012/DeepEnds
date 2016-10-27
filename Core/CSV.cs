@@ -46,7 +46,7 @@ namespace DeepEnds.Core
             this.file = new System.IO.StreamWriter(fileName);
 
             var reporter = new Reporter(this.file, this.options, dependencies);
-            reporter.Link = "{1}";
+            reporter.Link = "\"{1}\"";
             reporter.TableBodyItem = "{1},";
             reporter.TableHeadBegin = "# ";
             reporter.TableHeadItem = "{2},";

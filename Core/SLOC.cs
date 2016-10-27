@@ -65,7 +65,11 @@ namespace DeepEnds.Core
             {
                 var mean = this.SumLog / this.NumFiles;
                 var variance = (this.SumLog2 - this.SumLog * mean) / (this.NumFiles - 1.0);
-                var sd = System.Math.Sqrt(variance);
+                double sd = 0.0;
+                if (variance > 0.0)
+                {
+                    sd = System.Math.Sqrt(variance);
+                }
 
                 this.Lower = System.Convert.ToInt32(System.Math.Pow(10, mean - 1.645 * sd));
                 this.Upper = System.Convert.ToInt32(System.Math.Pow(10, mean + 1.645 * sd));
@@ -81,6 +85,10 @@ namespace DeepEnds.Core
         private void Append(int loc)
         {
             if (loc == 0)
+            {
+                return;
+            }
+            else if (loc < 0)
             {
                 return;
             }

@@ -119,6 +119,11 @@ namespace DeepEnds.DoxygenXml
                 var bodystart = element.GetAttribute("bodystart");
                 var bodyend = element.GetAttribute("bodyend");
                 fileName = element.GetAttribute("bodyfile");
+                if (bodyend == "-1")
+                {
+                    continue;
+                }
+
                 loc += 1 + System.Convert.ToInt32(bodyend) - System.Convert.ToInt32(bodystart);
             }
 
