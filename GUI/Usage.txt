@@ -1,5 +1,5 @@
-DeepEnds version 2.0
-====================
+DeepEnds version 2.0.1
+======================
 
 * To launch within Visual Studio go to View >> Other Windows >> DeepEnds.
 * Select either 
