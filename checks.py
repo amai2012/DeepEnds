@@ -31,7 +31,7 @@ def PrintLine(filename, lineno):
 
 for root, dirs, files in os.walk("."):
 	for  name in files:
-		if name != "AssemblyInfo.cs":
+		if 0 == ["AssemblyInfo.cs", "SharedAssemblyInfo.cs"].count(name):
 			continue
 		filename = os.path.join(root, name)
 		print(filename)
