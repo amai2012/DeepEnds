@@ -119,7 +119,7 @@ namespace DeepEnds.DoxygenXml
                 var bodystart = element.GetAttribute("bodystart");
                 var bodyend = element.GetAttribute("bodyend");
                 fileName = element.GetAttribute("bodyfile");
-                if (bodyend == "-1")
+                if (bodyend == "-1" || bodyend == string.Empty || bodystart == string.Empty)
                 {
                     continue;
                 }
