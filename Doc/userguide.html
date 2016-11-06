@@ -12,7 +12,7 @@
 
 <h2>Introduction</h2>
 
-<p>Some time ago, I wrote an&nbsp;<a href="http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture">article for CodeProject</a>&nbsp;on performing dependency analysis.&nbsp;I gradually extended the Python code and examples and placed them on&nbsp;<a href="https://github.com/zebmason/itdepends">GitHub</a>. Subsequently, I agreed to talk about architecture for a local&nbsp;<a href="https://www.meetup.com/dotnetsheff/events/227922322/">.NET meetup</a>&nbsp;so, for greater relevance, I wrote a tool to&nbsp;<a href="https://github.com/zebmason/netdepends">decompile .NET assemblies</a>&nbsp;with&nbsp;<a href="https://github.com/jbevain/cecil">Mono.Cecil</a>. I've since recorded most of the Python into C# to create the Visual Studio extension&nbsp;<a href="https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc">DeepEnds</a>&nbsp;that is available via the Visual Studio Gallery. One advantage is that it uses&nbsp;<a href="https://github.com/dotnet/roslyn">Roslyn</a>&nbsp;to parse the individual C# and VB files.</p>
+<p>This was originally written as an article for <a href="http://www.codeproject.com/Articles/Zebedee-Mason">CodeProject</a>.</p>
 
 <p>Visual Studio Enterprise 2015&nbsp;<a href="https://msdn.microsoft.com/en-us/library/57b85fsc.aspx">includes a number of architecture tools</a>&nbsp;whose results can be visualized within the&nbsp;<a href="https://www.visualstudio.com/products/compare-visual-studio-2015-products-vs">Community and Professional</a>&nbsp;editions. Of particular interest is the&nbsp;<a href="https://msdn.microsoft.com/en-us/library/ee842619.aspx">DGML file format</a>&nbsp;for describing directed graphs (used to visualize dependencies) as these files can be viewed in Community. I believe the DGML viewer uses the&nbsp;<a href="https://github.com/Microsoft/automatic-graph-layout">Microsoft Automatic Graph Layout</a>&nbsp;library to do the actual drawing, thus it should be possible to create a standalone viewer.</p>
 
@@ -22,25 +22,32 @@
 
 <p>DeepEnds allows you to dive into your architecture without having to dive deeply into your pocket... i.e. It has been developed for Visual Studio Community 2015 and is distributed gratis. It uses the same concepts for visualizing dependencies and calculating associated metrics as described in "<a href="http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture">As-Is Software Architecture</a>" and "<a href="http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number">Why Favour the Cyclomatic Number?</a>", so they won't be repeated here.</p>
 
-<p>To launch the tool from the menu bar choose View &rarr; Other Windows &rarr; DeepEnds; the tool window is very simple. The first text box is multi-line and takes a set of input files, one-per-line, that can be appended to by using the associated browse button. Once the required files are determined the read button needs to be pressed. The second text box is single line and specifies the creation of either a DGML file or the associated HTML report once the write button is pressed.</p>
+<p>To launch the tool from the menu bar choose View &rarr; Other Windows &rarr; DeepEnds; the tool window is very simple. 
+At the top left is the Command button which, once pressed, displays the batch file command that is effectively run when the 
+Execute button next to it is pressed. In the final column there are a series of Browse button for selecting files and directories to read and write.
+Each row has a tooltip associated with it so it can be hovered over for an explanation.</p>
 
-<p><img alt="The tool window" src="deepends.png" style="height: 195px; width: 640px"></p>
+<p><img alt="The tool window" src="deepends.png"></p>
 
-<p>There are some limitations on the input: Cannot mix C++ and .NET. The decompilation of assemblies will not produce as good a result as parsing the C# or VB source code.</p>
+<p>There are some limitations on the input: Cannot mix Visual C++, .NET and Doxygen XML. The decompilation of .NET assemblies will not produce as good a result as parsing the C# or VB source code.</p>
 
-<p>As mentioned, the main form of output is a DGML file which happens to be a collapsible hierarchical graph format which supports hyperlinks to code as can be seen by the underlining of the text of the leaf node (<code>FEA.cpp</code>) in the following diagram. The hierarchy is defined by the namespace for .NET and by the filter for Visual C++.&nbsp;Note that it is possible for the user to edit this diagram interactively.</p>
+<p>As mentioned, the main form of output is a DGML file (specified on the row labelled <code>graph</code>) which happens to be a collapsible hierarchical graph format which supports hyperlinks to code as can be seen by the underlining of the text of the leaf node (<code>FEA.cpp</code>) in the following diagram. The hierarchy is defined by the namespace for .NET and by the filter for Visual C++.&nbsp;Note that it is possible for the user to edit this diagram interactively.</p>
 
 <p><img alt="The DGML window" src="dgml.png" style="height: 639px; width: 640px"></p>
 
-<p>The second form of output is an HTML report that starts with a table of complexities ordered so that the worst is first. The sum columns refer to the formula to their left that is evaluated for the current and all child nodes, recursively. Thus it is possible to get one value for the project and to track that over the course of development.</p>
+<p>The second form of output are the tables - mainly an HTML report (specified on the row labelled <code>report</code>), although the main table can be output as a CSV file (row labelled <code>csv</code>) or as Doxygen comments (row labelled <code>doxygen</code>). For example, from a HTML report,</p>
+
+<p><img alt="HTML output" src="table2.png"></p>
+
+<p>
+This starts with the label of the graph nodes followed by whether a cycle exists in the graph. 
+Then a table of complexities ordered so that the worst is first. The sum columns refer to the formula to their left that is evaluated for the current and all child nodes, recursively. Thus it is possible to get one value for the project and to track that over the course of development.</p>
 
 <p>The externals column refers to the number of unique dependencies that aren't contained by the current node. Thus the Top Level node will always have a value of zero. The maximum on the node and all its children is tracked for completeness. This measure is equivalent to Class Coupling in <a href="https://msdn.microsoft.com/en-gb/library/bb385914.aspx">Microsoft Code Metrics</a>.</p>
 
-<p>For instances other than decompiled code, the number of lines of code in a leaf node are counted. Thus comments (but not C style comments) are ignored along with braces in C++ and C#. The sum and maximum calculated over the current and child nodes are reported along with the arithmetic mean.</p>
-
-<p>Finally, whether a cycle exists within the graph is reported.</p>
-
-<p><img alt="HTML output" src="table2.png" style="height: 102px; width: 619px"></p>
+<p>For instances other than decompiled code, the number of lines of code in a leaf node are counted. Thus comments (but not C style comments) are ignored along with braces in C++ and C#. The sum and maximum calculated over the current and child nodes are reported.
+Next the results of fitting a log-normal probability distribution to the lines of code in a leaf are reported where applicable, otherwise a blank is left.
+</p>
 
 <p>This table hyperlinks to sections that detail the underlying dependencies that cause the links to be displayed in the graph. For example,&nbsp;<code>FEA\Core </code>should not be dependent on anything so it is useful to see what is creating the circular dependency (so that it can be broken) by looking at the appropriate section.</p>
 
@@ -65,6 +72,7 @@
 	<li>2016/08/24: Push source to <a href="https://github.com/zebmason/DeepEnds">GitHub</a></li>
 	<li>2016/09/14: Update with new statistics</li>
 	<li>2016/09/27: Move from CodeProject</li>
+	<li>2016/11/06: Update for version 2</li>
 </ul>
 
 
