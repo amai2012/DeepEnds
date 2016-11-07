@@ -39,6 +39,8 @@ namespace DeepEnds.DoxygenXml
 
         private List<string> memberTypes;
 
+        private bool memberHide;
+
         static private List<string> SplitCSV(string option)
         {
             var list = new List<string>();
@@ -90,6 +92,12 @@ namespace DeepEnds.DoxygenXml
                         }
 
                         var name = node as System.Xml.XmlElement;
+                        if (this.memberHide)
+                        {
+                            this.lookup[id] = leaf;
+                            continue;
+                        }
+
                         var child = new Core.Dependent.Dependency(name.InnerText, leaf);
                         leaf.AddChild(child);
                         this.lookup[id] = child;
@@ -162,6 +170,7 @@ namespace DeepEnds.DoxygenXml
             var list = new List<System.Xml.XmlElement>();
             this.SelectNodes(root, "basecompoundref", list);
             this.SelectNodes(root, "ref", list);
+            this.SelectNodes(root, "references", list);
 
             var links = new List<string>();
             this.links[leaf] = links;
@@ -232,6 +241,11 @@ namespace DeepEnds.DoxygenXml
             this.memberTypes = Parse.SplitCSV(options["membertype"]);
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
             this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
+            this.memberHide = false;
+            if (options["memberhide"] != "false")
+            {
+                this.memberHide = true;
+            }
         }
 
         public void Read(string directory, System.IO.TextWriter logger)
