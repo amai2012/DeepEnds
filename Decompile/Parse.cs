@@ -38,7 +38,7 @@ namespace DeepEnds.Decompile
         private void Add(DeepEnds.Core.Dependent.Dependency leaf, TypeReference type)
         {
             var a = type.ToString();
-            a = a.Replace("<", ",").Replace(">", ",").Replace("`", ",").Replace("[]", string.Empty).Replace("&", string.Empty).Replace("/", string.Empty);
+            a = a.Replace("<", ",").Replace(">", ",").Replace("`", ",").Replace("[]", string.Empty).Replace("&", string.Empty).Replace("/", ".");
             foreach (var bit in a.Split(','))
             {
                 int i;
@@ -74,6 +74,14 @@ namespace DeepEnds.Decompile
             foreach (var attr in type.CustomAttributes)
             {
                 this.Add(leaf, attr.Constructor.DeclaringType);
+                foreach (var arg in attr.ConstructorArguments)
+                {
+                    var attrType = arg.Value as TypeDefinition;
+                    if (attrType != null)
+                    {
+                        this.Add(leaf, arg.Value as TypeDefinition);
+                    }
+                }
             }
 
             foreach (var method in type.Methods)
@@ -120,7 +128,26 @@ namespace DeepEnds.Decompile
                         this.Add(leaf, property.DeclaringType);
                         this.Add(leaf, property.PropertyType);
                     }
+
+                    var methodDef = instruction.Operand as MethodDefinition;
+                    if (methodDef != null)
+                    {
+                        this.Add(leaf, methodDef.DeclaringType);
+                    }
+
+                    var typeDef = instruction.Operand as TypeDefinition;
+                    if (typeDef != null)
+                    {
+                        this.Add(leaf, typeDef);
+                    }
                 }
+            }
+
+            foreach (var nest in type.NestedTypes)
+            {
+                var fullName = nest.FullName.Replace("/", ".");
+                var nested = this.parser.Create(nest.Name, fullName, leaf);
+                this.Process(nested, nest);
             }
         }
 
