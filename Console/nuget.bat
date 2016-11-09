@@ -1,0 +1,1 @@
+nuget pack Console.csproj -IncludeReferencedProjects -properties Configuration=Release
