@@ -8,7 +8,7 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/zebmason/DeepEnds/raw/master/LICENSE</licenseUrl>
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc</projectUrl>
-    <iconUrl>https://github.com/zebmason/DeepEnds/raw/master/Console/packageIcon.png</iconUrl>
+    <iconUrl>https://github.com/zebmason/DeepEnds/raw/master/Console/Resources/packageIcon.png</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <summary>Perform dependency analysis on code in a hierarchical manner to produce graphs and metrics.</summary>
     <description>DeepEnds is a tool written by Zeb Mason to perform dependency analysis on code in a hierarchical manner.
