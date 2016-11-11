@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dependency analysis with Doxygen</title>
+<style>
+table, tr#main, th#main, td#main {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th {
+    font-weight: normal;
+    background-color: LightGray;
+    text-align: left;
+}
+td#alert {
+    border: 1px solid black;
+    border-collapse: collapse;
+    color:white;
+    background-color:red;
+}
+</style>
+</head>
+<body>
+<h2>Introduction</h2>
+
+<p><a href="http://www.doxygen.org/">Doxygen</a> is a system for generating documentation from source code (API specifications, class diagrams, caller and callee graphs, etc.) that utilizes special comments. For input, many languages are natively supported (C/C++, C#, D, Fortran, IDL, Java, Objective-C, PHP, Python, TCL, VHDL) with others available by extension (Perl, JavaScript, Object Pascal, Visual Basic, MatLab, Pro*C, Assembly, Lua, GLSL Shader, Qt QML, GOB-doc, Prolog, CAPL). The generated output is available in a number of formats, of specific interest to this article are HTML and XML.</p>
+
+<p>When developing a piece of software, the existence of circular dependencies between classes, etc. makes the code fragile to modification and, if they are at the level where it is between binaries, causes build issues. Trawling through the source code to find and fix these issues can be time consuming so this article analyses some project code with the open source tool <a href="https://github.com/zebmason/DeepEnds">DeepEnds</a> (<a href="https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc">Visual Studio extension</a>, <a href="https://www.nuget.org/packages/DeepEnds.Console/">NuGet package</a>). Among the options available for DeepEnds are reading Doxygen XML and writing a source file with Doxygen comments, in this article both will be illustrated.</p>
+
+<p>The specific example used for the rest of the article happens to be C++ code.</p>
+
+<h2>Setting Up the Problem</h2>
+
+<p>The documentation is generated from a batch file that runs Doxygen to produce XML output which is then fed into DeepEnds to produce a source file containing comments for Doxygen to process.</p>
+
+<pre lang="bat">
+rmdir /s /q doxygen\xml
+doxygen.exe Doxyxml
+DeepEnds.Console.exe doxygen=Dot\arch.cpp doxygen\xml\dummy.xml
+rmdir /s /q doxygen\html
+doxygen.exe Doxyfile
+</pre>
+
+<p>The Doxygen runs use different files, the first one sets:</p>
+
+<pre lang="text">
+OUTPUT_DIRECTORY       = doxygen
+REFERENCES_RELATION    = YES
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+</pre>
+
+<p>The DeepEnds run creates the source file <em>Dot\arch.cpp</em> from the XML files in the directory <em>doxygen\xml</em>, the file <em>dummy.xml</em> does not actually exist. It uses the default values of the parameters associated with parsing Doxygen XML, these are fine for C++ but may need to be altered for other languages.</p>
+
+<p>The second Doxygen run then creates HTML output by re-parsing the source code and including the output from DeepEnds that was written to <em>Dot\arch.cpp</em>.</p>
+
+<h2>A Page of the Doxygen HTML Report</h2>
+
+<p>Firstly, a graph showing the dependencies between the namespaces and classes (though there are no classes displayed here) as generated using Dot.</p>
+
+<p><img src="dot_inline_dotgraph_12.png"/></p>
+
+<p>Then a table with the main statistics calculated from the graph and its subgraphs. The first column contains the name of the namespace or class, and the second whether there is a cycle. The next nine columns have formulae&nbsp;based on the number of edges (<code>E</code>), parts (<code>P</code>) and nodes (<code>N</code>), these are discussed in <a href="http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number">Why Favour the Cyclomatic Number?</a> Specifically, the value at that level in the tree and the sum and maximum over the tree of the three formulas <code>(E+P-N)/N</code>, <code>E+P-N</code> and <code>N</code>. The next two columns are the count of the number of externals that corresponds to the dependencies which form the edges and its maximum value as traverse further down the tree. Then the sum of the source lines of code as the tree is traversed is given followed by the result of fitting a log-normal distribution as detailed in <a href="http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code">Counting Lines of Code</a>, followed by the maximum in the tree.</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr>
+			<th rowspan="2" title="The label of the graph node">Section</th>
+			<th rowspan="2" title="Whether a cycle occurs">Cycle</th>
+			<th colspan="3" title="Cyclomatic number normalised by the number of nodes">(E + P - N) / N</th>
+			<th colspan="3" title="Cyclomatic number">E + P - N</th>
+			<th colspan="3" title="Number of nodes">N</th>
+			<th colspan="2" title="Number of leaf nodes not contained by this node that are depended upon">Externals</th>
+			<th colspan="2" title="Source lines of code">SLOC</th>
+			<th colspan="4" title="Log-normal distribution">Probability of SLOC</th>
+		</tr>
+		<tr>
+			<th title="Value at the node">Val</th>
+			<th title="Maximum value of the node and child nodes recursively">Max</th>
+			<th title="Sum of node value and child node values recursively">Sum</th>
+			<th title="Value at the node">Val</th>
+			<th title="Maximum value of the node and child nodes recursively">Max</th>
+			<th title="Sum of node value and child node values recursively">Sum</th>
+			<th title="Value at the node">Val</th>
+			<th title="Maximum value of the node and child nodes recursively">Max</th>
+			<th title="Sum of node value and child node values recursively">Sum</th>
+			<th title="Value at the node">Count</th>
+			<th title="Maximum value of the node and child nodes recursively">Max</th>
+			<th title="Maximum value of the node and child nodes recursively">Max</th>
+			<th title="Sum of node value and child node values recursively">Sum</th>
+			<th title="Lower bound of the 90% confidence interval for leaf size">Lower</th>
+			<th title="Expected leaf size given a log-normal distribution">Exp</th>
+			<th title="Upper bound of the 90% confidence interval for leaf size">Upper</th>
+			<th title="Maximum value of the expected leaf size at the node and child nodes recursively">Max</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.FileIO</code></td>
+			<td>&nbsp;</td>
+			<td>0.00</td>
+			<td>0.56</td>
+			<td>0.56</td>
+			<td>0</td>
+			<td>5</td>
+			<td>5</td>
+			<td>4</td>
+			<td>9</td>
+			<td>24</td>
+			<td>16</td>
+			<td>12</td>
+			<td>60</td>
+			<td>540</td>
+			<td>10</td>
+			<td>24</td>
+			<td>56</td>
+			<td>28</td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Abaqus</code></td>
+			<td>&nbsp;</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>2</td>
+			<td>2</td>
+			<td>2</td>
+			<td>10</td>
+			<td>6</td>
+			<td>28</td>
+			<td>44</td>
+			<td>&nbsp;</td>
+			<td>21</td>
+			<td>&nbsp;</td>
+			<td>21</td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Common</code></td>
+			<td>&nbsp;</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>7</td>
+			<td>7</td>
+			<td>7</td>
+			<td>12</td>
+			<td>6</td>
+			<td>40</td>
+			<td>193</td>
+			<td>&nbsp;</td>
+			<td>27</td>
+			<td>&nbsp;</td>
+			<td>27</td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Ideas</code></td>
+			<td>&nbsp;</td>
+			<td>0.56</td>
+			<td>0.56</td>
+			<td>0.56</td>
+			<td>5</td>
+			<td>5</td>
+			<td>5</td>
+			<td>9</td>
+			<td>9</td>
+			<td>9</td>
+			<td>12</td>
+			<td>12</td>
+			<td>54</td>
+			<td>230</td>
+			<td>&nbsp;</td>
+			<td>22</td>
+			<td>&nbsp;</td>
+			<td>22</td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Vtk</code></td>
+			<td>&nbsp;</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0.00</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>2</td>
+			<td>2</td>
+			<td>2</td>
+			<td>11</td>
+			<td>9</td>
+			<td>60</td>
+			<td>73</td>
+			<td>&nbsp;</td>
+			<td>28</td>
+			<td>&nbsp;</td>
+			<td>28</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>If there had been any leaf nodes (in this case classes) at this level, then the next table would have been a list of those classes versus the number of lines of code that they contain as counted by Doxygen. Unfortunately, for C++, this only appears to be the size of the class declaration.</p>
+
+<p>The next table lists the 16 classes outside the <code>FEA::FileIO</code> namespace that are used by it (as mentioned in the externals count of the previous table).</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr title="Leaf nodes not contained by this node that are depended upon">
+			<th>External dependencies</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.ElementFactory</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Elements.ElementDefinition</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.ElementSet.ElementVisitor</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.ElementSet.Mesh</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.ElementSet.SetOfElements</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.Base</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.Elemental</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.ElementalFieldVisitor</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.FieldVisitor</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.Nodal</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.NodesElements</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.Types</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Field.Varying</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Set.System</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Surface</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.Topology.ElementHandler</code></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Followed by a table of classes within the <code>FEA::FileIO</code> namespace that are used by it and thus form the destinations of the directed edges in the graph.</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr title="Dependencies that cause the edges of the graph to be formed">
+			<th>Internal Dependencies</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.FileIO.Common.FileReader</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Common.FileWriter</code></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Then a sequence of tables expanding on the previous table to show the underlying class dependencies which form the edges of the graph.</p>
+
+<table class="ArticleTable">
+	<thead>
+		<tr title="Dependencies that cause this edge of the graph to be formed">
+			<th>FEA.FileIO.Abaqus</th>
+			<th>→</th>
+			<th>FEA.FileIO.Common</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.FileIO.Abaqus.ReadAbaqusInp</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileReader</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Abaqus.WriteAbaqusInp</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileWriter</code></td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr title="Dependencies that cause this edge of the graph to be formed">
+			<th>FEA.FileIO.Ideas</th>
+			<th>→</th>
+			<th>FEA.FileIO.Common</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.FileIO.Ideas.ReadIdeas</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileReader</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Ideas.WriteIdeas</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileWriter</code></td>
+		</tr>
+	</tbody>
+	<thead>
+		<tr title="Dependencies that cause this edge of the graph to be formed">
+			<th>FEA.FileIO.Vtk</th>
+			<th>→</th>
+			<th>FEA.FileIO.Common</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><code>FEA.FileIO.Vtk.ReadVtk</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileReader</code></td>
+		</tr>
+		<tr>
+			<td><code>FEA.FileIO.Vtk.WriteVtk</code></td>
+			<td>→</td>
+			<td><code>FEA.FileIO.Common.FileWriter</code></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>Finally (and redundantly), the graph is reported as a structure matrix.</p>
+
+<table class="ArticleTable">
+	<tbody>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th>Common</th>
+			<td style="width: 8px">\</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">&nbsp;</td>
+		</tr>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th>Abaqus</th>
+			<td style="width: 8px">1</td>
+			<td style="width: 8px">\</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">&nbsp;</td>
+		</tr>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th>Ideas</th>
+			<td style="width: 8px">1</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">\</td>
+			<td style="width: 8px">&nbsp;</td>
+		</tr>
+		<tr style="height: 8px" title="Node of the graph followed by dependencies (structure matrix)">
+			<th>Vtk</th>
+			<td style="width: 8px">1</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">&nbsp;</td>
+			<td style="width: 8px">\</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2>Discussion</h2>
+
+<p>Although the source analysed for this article is C++, the technique is not limited to object code, however there is the issue of the construction of a hierarchy which in the example was formed from the namespaces. An alternative hierarchy may be formed from folder structure, although this is not currently supported by DeepEnds.</p>
+
+<p>It is possible that the long list of languages supported by Doxygen doesn't include the one of interest - perhaps the case is not even language based. For such a problem, it is possible for the user to generate XML using the Doxygen schema (or, more simply, create the XML elements of interest) and then for DeepEnds to generate the report. Writing a bespoke parser also has the advantage of overcoming any limitations of the parsers within Doxygen such as the count of the lines of C++ code that was mentioned above.</p>
+
+<p>It was noted in the introduction that Doxygen natively supports C# and that there is an extension for Visual Basic. DeepEnds itself has Roslyn based parsers for C# and Visual Basic and will decompile .NET assemblies using Mono.Cecil so it is recommended to use those rather than Doxygen for parsing the source code.</p>
+
+<p>Given that the output from DeepEnds can be sufficiently complicated to cause a Doxygen run to hang it can be better to produce a standalone HTML report by supplying an alternative argument to <em>doxygen=Dot\arch.cpp</em> such as <em>report=report.html</em>. This HTML report doesn't have the pictures of the graphs, it is possible to view the graphs in Visual Studio by producing some alternative output using another argument such as <em>graph=graph.dgml</em>.</p>
+
+<h2>History</h2>
+
+<ul>
+	<li>2016/11/12: First release</li>
+</ul>
+</body>
+</html>
