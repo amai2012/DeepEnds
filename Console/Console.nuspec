@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/zebmason/DeepEnds/raw/master/LICENSE</licenseUrl>
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc</projectUrl>
     <iconUrl>https://github.com/zebmason/DeepEnds/raw/master/Console/Resources/packageIcon.png</iconUrl>
-    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>Perform dependency analysis on code in a hierarchical manner to produce graphs and metrics.</summary>
     <description>DeepEnds is a tool written by Zeb Mason to perform dependency analysis on code in a hierarchical manner.
     It produces DGML files for visualisation of graphs within Visual Studio and computes various metrics which can be placed in a CSV file or a HTML report. 
@@ -47,5 +47,8 @@
     <file src="bin\Release\Mono.Cecil.dll" target="lib\net452"/>
     <file src="bin\Release\System.Collections.Immutable.dll" target="lib\net452"/>
     <file src="bin\Release\System.Reflection.Metadata.dll" target="lib\net452"/>
+    <file src="..\GUI\RelNotes.txt" target=""/>
+    <file src="..\GUI\License.txt" target=""/>
+    <file src="..\GUI\Usage.txt" target=""/>
   </files>
 </package>
