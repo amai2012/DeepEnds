@@ -43,7 +43,7 @@ namespace DeepEnds.Console
             this.sources = new Sources();
         }
 
-        private void Files(System.IO.TextWriter logger, string fileName, string direc, List<KeyValuePair<string, string>> fileNames, List<string> extensions)
+        private void Files(System.IO.TextWriter logger, Dictionary<string, string> options, string fileName, string direc, List<KeyValuePair<string, string>> fileNames, List<string> extensions)
         {
             var ext = System.IO.Path.GetExtension(fileName);
             if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll")
@@ -64,7 +64,12 @@ namespace DeepEnds.Console
                 direc = System.IO.Path.GetDirectoryName(fileName);
                 foreach (var name in DeepEnds.Core.Utilities.ReadVisualStudioSolution(fileName))
                 {
-                    this.Files(logger, name, direc, fileNames, extensions);
+                    this.Files(logger, options, name, direc, fileNames, extensions);
+                }
+
+                if (options["source"].Length == 0)
+                {
+                    options["source"] = direc;
                 }
             }
             else if (ext == ".xml")
@@ -83,7 +88,7 @@ namespace DeepEnds.Console
             var extensions = new List<string>();
             foreach (var fileName in lines)
             {
-                this.Files(logger, fileName, string.Empty, fileNames, extensions);
+                this.Files(logger, options, fileName, string.Empty, fileNames, extensions);
             }
 
             if (extensions.Count != 1 && extensions.Contains(".vcxproj"))

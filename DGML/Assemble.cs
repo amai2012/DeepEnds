@@ -43,6 +43,8 @@ namespace DeepEnds.DGML
 
         private Dictionary<string, string> options;
 
+        private string sourcePath;
+
         internal Assemble(Dictionary<string, string> options, Dictionary<Dependency, Links> links, Sources sources, bool descend)
         {
             this.options = options;
@@ -57,6 +59,13 @@ namespace DeepEnds.DGML
             this.size = properties.AddNewProperty("Size", typeof(string));
             this.group = properties.AddNewProperty("Group", typeof(string));
             this.reference = properties.AddNewProperty("Reference", typeof(string));
+
+            this.sourcePath = options["source"];
+            var length = this.sourcePath.Length;
+            if (length > 0 && this.sourcePath[length - 1] == System.IO.Path.DirectorySeparatorChar)
+            {
+                this.sourcePath = this.sourcePath.Substring(0, length - 2);
+            }
         }
 
         public GraphNode Node(Dependency dependency, string grouped)
@@ -75,6 +84,7 @@ namespace DeepEnds.DGML
                 var path = this.sources.AssociatedFilePath(dependency);
                 if (path != string.Empty)
                 {
+                    path = path.Replace(this.sourcePath, "$(Source)");
                     node[this.reference] = path;
                 }
             }
@@ -120,12 +130,32 @@ namespace DeepEnds.DGML
 
         public void Save()
         {
-#if false
-            var paths = new GraphPathSerializationDictionary();
-            paths.Add(new KeyValuePair<string, string>("RelPath", ""));
-            Microsoft.VisualStudio.GraphModel.GraphPathSerializer s = new GraphPathSerializer(paths);
-#endif
-            this.graph.Save(this.options["graph"]);
+            var path = System.IO.Path.GetTempPath();
+            var filePath = System.IO.Path.Combine(path, "deepends.dgml");
+            this.graph.Save(filePath);
+
+            bool found = false;
+            var reader = new System.IO.StreamReader(filePath);
+            var writer = new System.IO.StreamWriter(this.options["graph"]);
+            while (reader.Peek() >= 0)
+            {
+                var line = reader.ReadLine();
+                if (!found)
+                {
+                    if (line.Contains("<Nodes>"))
+                    {
+                        found = true;
+                        writer.WriteLine("  <Paths>");
+                        writer.WriteLine(string.Format("    <Path Id=\"Source\" Value=\"{0}\"/>", this.sourcePath));
+                        writer.WriteLine("  </Paths>");
+                    }
+                }
+
+                writer.WriteLine(line);
+            }
+
+            writer.Close();
+            reader.Close();
         }
 
         public static Assemble Factory(Dictionary<string, string> options, Dependency root, Dictionary<Dependency, Links> links, Sources sources, bool descend)

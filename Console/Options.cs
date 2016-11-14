@@ -62,7 +62,7 @@ namespace DeepEnds.Console
             options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
             options["memberhide"] = "Whether to produce a leaf for a Doxygen XML memberdef element. Values are true and false";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
-            options["source"] = "The directory containing the source (used by Doxygen XML input for DGML)";
+            options["source"] = "The directory containing the source (used for DGML)";
             return options;
         }
 
