@@ -1,3 +1,8 @@
+DeepEnds version 2.2
+========================
+* Add relative paths to DGML
+* Make the .NET decompiler output more equivalent to the Roslyn parser
+
 DeepEnds version 2.1
 ========================
 * Add an extra option to hide members

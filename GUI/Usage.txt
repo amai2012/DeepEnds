@@ -1,10 +1,10 @@
-DeepEnds version 2.1
+DeepEnds version 2.2
 ======================
 
 * To launch within Visual Studio go to View >> Other Windows >> DeepEnds.
 * Select either 
 ** a mix of .NET assemblies, C# and VB projects to load.
-** C++ projects to load.
+** Visual C++ projects to load.
 ** one example Doxygen XML output file
 * Create either 
 ** a DGML file to view within Visual Studio
@@ -13,5 +13,7 @@ DeepEnds version 2.1
 ** or the main table from the HTML file saved out as a CSV file
    See http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture for further details of the concepts.
        https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html for further details of usage.
-	   http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number for details of the Cyclomatic number
-	   http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code for fitting a probability distribution to the SLOC
+       http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number for details of the Cyclomatic number
+       http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code for fitting a probability distribution to the SLOC
+       http://www.codeproject.com/Articles/1155619/Dependency-Analysis-with-Doxygen for using Doxygen input
+       http://www.codeproject.com/Articles/1137021/Dependency-Analysis-in-Visual-Cplusplus for using Visual C++ input
