@@ -433,6 +433,83 @@ namespace DeepEnds.Core
             }
         }
 
+        private void UsageTable(Dependency branch)
+        {
+            var leaves = new List<Dependency>();
+            foreach (var child in branch.Children)
+            {
+                if (child.Children.Count != 0)
+                {
+                    continue;
+                }
+
+                leaves.Add(child);
+            }
+
+            if (leaves.Count == 0)
+            {
+                return;
+            }
+
+            var levels = new List<Dependency>();
+            var level = branch;
+            while (level != null)
+            {
+                levels.Add(level);
+                level = level.Parent;
+            }
+
+            this.Write(string.Format(this.TableBegin, string.Empty));
+            this.Write(this.TableHeadBegin);
+            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Empty));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Leaf of this node\"", "Dependency"));
+            this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Format(" colspan=\"{0}\" title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", levels.Count), "Sum at this level"));
+            this.file.Write(this.TableRowEnd);
+            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Empty));
+            foreach (var item in levels)
+            {
+                var name = item.Name;
+                if (item.Parent == null)
+                {
+                    name = "Top Level";
+                }
+
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", name));
+            }
+
+            this.file.Write(this.TableRowEnd);
+            this.Write(this.TableHeadEnd);
+            this.Write(this.TableBodyBegin);
+            foreach (var leaf in leaves.OrderBy(o => o.Name))
+            {
+                this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+                this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", leaf.Name));
+                var counts = CalculateUsage.Get(this.dependencies.Root, leaf, levels);
+                var max = counts[levels.Count - 1];
+                var found = false;
+                foreach (var count in counts)
+                {
+                    if (found)
+                    {
+                        this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Empty));
+                    }
+                    else
+                    {
+                        found = count == max;
+                        this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", count));
+                    }
+                }
+
+                this.file.Write(this.TableRowEnd);
+            }
+
+            this.Write(this.TableBodyEnd);
+            this.Write(this.TableEnd);
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine(string.Empty);
+            this.file.Write(this.ParagraphEnd);
+        }
+
         private void ExternalsTable(Dependency branch)
         {
             if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
@@ -700,6 +777,8 @@ namespace DeepEnds.Core
                 this.TableBottom();
 
                 this.DependencyTable(branch);
+
+                this.UsageTable(branch);
 
                 this.ExternalsTable(branch);
 

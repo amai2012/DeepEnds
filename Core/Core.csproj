@@ -59,6 +59,7 @@
     <Compile Include="Doxygen.cs" />
     <Compile Include="Externals.cs" />
     <Compile Include="FindLinks.cs" />
+    <Compile Include="CalculateUsage.cs" />
     <Compile Include="Links.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
