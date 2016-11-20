@@ -25,51 +25,84 @@ namespace DeepEnds.Core.Dependent
 {
     using System.Collections.Generic;
 
-    internal class CalculateUsage : DependencyWalker
+    internal class CalculateUsage
     {
-        private Dependency leaf;
+        private Dependency root;
 
-        public Dictionary<Dependency, int> Counts { get; }
+        public Dictionary<Dependency, int[]> Usages { get; }
 
-        internal CalculateUsage(Dependency leaf)
+        public Dictionary<Dependency, List<Dependency>> Interfaces { get; }
+
+        public CalculateUsage(Dependency root, Dictionary<Dependency, int[]> usages, Dictionary<Dependency, List<Dependency>> interfaces)
         {
-            this.leaf = leaf;
-            this.Counts = new Dictionary<Dependency, int>();
+            this.root = root;
+            this.Usages = usages;
+            this.Interfaces = interfaces;
         }
 
-        public override void Visit(Dependency dependency)
+        public int Count(Dependency dependency, Dependency leaf, List<Dependency> levels, int[] counts)
         {
-            base.Visit(dependency);
-
             int count = 0;
             foreach (var child in dependency.Children)
             {
-                if (child.Dependencies.Contains(this.leaf))
+                if (child.Dependencies.Contains(leaf))
                 {
                     ++count;
                 }
 
-                if (this.Counts.ContainsKey(child))
+                count += this.Count(child, leaf, levels, counts);
+            }
+
+            if (levels.Contains(dependency))
+            {
+                counts[levels.IndexOf(dependency)] = count;
+            }
+
+            return count;
+        }
+
+        public void Calculate(Dependency dependency)
+        {
+            if (dependency.Children.Count == 0)
+            {
+                var levels = CalculateUsage.Levels(dependency.Parent);
+
+                var counts = new int[levels.Count];
+                var walker = this.Count(this.root, dependency, levels, counts);
+                this.Usages[dependency] = counts;
+
+                var max = counts[levels.Count - 1];
+                for (int i = 0; i < levels.Count; ++i)
                 {
-                    count += this.Counts[child];
+                    if (counts[i] == max)
+                    {
+                        if (!this.Interfaces.ContainsKey(levels[i]))
+                        {
+                            this.Interfaces[levels[i]] = new List<Dependency>();
+                        }
+
+                        this.Interfaces[levels[i]].Add(dependency);
+                        break;
+                    }
                 }
             }
 
-            this.Counts[dependency] = count;
+            foreach (var child in dependency.Children)
+            {
+                this.Calculate(child);
+            }
         }
 
-        public static int[] Get(Dependency root, Dependency leaf, List<Dependency> levels)
+        public static List<Dependency> Levels(Dependency branch)
         {
-            var walker = new CalculateUsage(leaf);
-            walker.Visit(root);
-
-            var counts = new int[levels.Count];
-            for (int i = 0; i < levels.Count; ++i)
+            var levels = new List<Dependency>();
+            while (branch != null)
             {
-                counts[i] = walker.Counts[levels[i]];
+                levels.Add(branch);
+                branch = branch.Parent;
             }
 
-            return counts;
+            return levels;
         }
     }
 }

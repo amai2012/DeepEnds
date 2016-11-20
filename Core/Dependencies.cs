@@ -92,6 +92,7 @@ namespace DeepEnds.Core.Linked
         {
             this.Assembled = new Assemble();
             this.Assembled.Visit(this.Root);
+            this.Assembled.Usage(this.Root);
         }
 
         public void Poach(Dependency branch, Dependency[] branches)

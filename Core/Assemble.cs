@@ -36,12 +36,18 @@ namespace DeepEnds.Core.Linked
 
         public Dictionary<Dependency, Structure> Structures { get; }
 
+        public Dictionary<Dependency, int[]> Usages { get; }
+
+        public Dictionary<Dependency, List<Dependency>> Interfaces { get; }
+
         public Assemble()
         {
             this.Linkings = new Dictionary<Dependency, Links>();
             this.ExternalDependencies = new Dictionary<Dependency, Externals>();
             this.SLOCs = new Dictionary<Dependency, SLOC>();
             this.Structures = new Dictionary<Dependency, Structure>();
+            this.Usages = new Dictionary<Dependency, int[]>();
+            this.Interfaces = new Dictionary<Dependency, List<Dependency>>();
         }
 
         public override void Visit(Dependency dependency)
@@ -55,6 +61,12 @@ namespace DeepEnds.Core.Linked
             SLOC.Assemble(dependency, this.SLOCs);
 
             Structure.Assemble(dependency, this.Linkings, this.Structures);
+        }
+
+        public void Usage(Dependency root)
+        {
+            var usages = new CalculateUsage(root, this.Usages, this.Interfaces);
+            usages.Calculate(root);
         }
     }
 }

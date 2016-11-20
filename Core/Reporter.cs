@@ -433,7 +433,7 @@ namespace DeepEnds.Core
             }
         }
 
-        private void UsageTable(Dependency branch)
+        private void UsageTable(Dependency branch, Dictionary<Dependency, int> mapping)
         {
             var leaves = new List<Dependency>();
             foreach (var child in branch.Children)
@@ -451,13 +451,7 @@ namespace DeepEnds.Core
                 return;
             }
 
-            var levels = new List<Dependency>();
-            var level = branch;
-            while (level != null)
-            {
-                levels.Add(level);
-                level = level.Parent;
-            }
+            var levels = CalculateUsage.Levels(branch);
 
             this.Write(string.Format(this.TableBegin, string.Empty));
             this.Write(this.TableHeadBegin);
@@ -474,7 +468,8 @@ namespace DeepEnds.Core
                     name = "Top Level";
                 }
 
-                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", name));
+                var index = mapping[item];
+                this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", string.Format(this.Link, index, name)));
             }
 
             this.file.Write(this.TableRowEnd);
@@ -484,7 +479,7 @@ namespace DeepEnds.Core
             {
                 this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                 this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", leaf.Name));
-                var counts = CalculateUsage.Get(this.dependencies.Root, leaf, levels);
+                var counts = this.dependencies.Assembled.Usages[leaf];
                 var max = counts[levels.Count - 1];
                 var found = false;
                 foreach (var count in counts)
@@ -510,29 +505,33 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
         }
 
+        private void InterfaceTable(Dependency branch, Dictionary<Dependency, int> mapping)
+        {
+            if (!this.dependencies.Assembled.Interfaces.ContainsKey(branch))
+            {
+                return;
+            }
+
+            var list = new List<string>();
+            foreach (var dep in this.dependencies.Assembled.Interfaces[branch])
+            {
+                list.Add(dep.Path(this.options["sep"]));
+            }
+
+            this.Listing(list, "Leaf nodes contained by this node that are depended upon at no higher level", "Dependencies not used at a higher level");
+        }
+
         private void ExternalsTable(Dependency branch)
         {
             if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
             {
-                this.Write(string.Format(this.TableBegin, string.Empty));
-                this.Write(this.TableHeadBegin);
-                this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Leaf nodes not contained by this node that are depended upon\""));
-                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "External dependencies"));
-                this.file.Write(this.TableRowEnd);
-                this.Write(this.TableHeadEnd);
-                this.Write(this.TableBodyBegin);
-                foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged.OrderBy(o => o.Path(this.options["sep"])))
+                var list = new List<string>();
+                foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged)
                 {
-                    this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
-                    this.file.Write(string.Format(this.TableBodyItem, string.Empty, dep.Path(this.options["sep"])));
-                    this.file.Write(this.TableRowEnd);
+                    list.Add(dep.Path(this.options["sep"]));
                 }
 
-                this.Write(this.TableBodyEnd);
-                this.Write(this.TableEnd);
-                this.file.Write(this.ParagraphBegin);
-                this.WriteLine(string.Empty);
-                this.file.Write(this.ParagraphEnd);
+                this.Listing(list, "Leaf nodes not contained by this node that are depended upon", "External Dependencies");
             }
         }
 
@@ -562,12 +561,17 @@ namespace DeepEnds.Core
             }
 
             var list = set.ToList();
+            this.Listing(list, "Dependencies that cause the edges of the graph to be formed", "Internal Dependencies");
+        }
+
+        private void Listing(List<string> list, string title, string heading)
+        {
             list.Sort();
 
             this.Write(string.Format(this.TableBegin, string.Empty));
             this.Write(this.TableHeadBegin);
-            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause the edges of the graph to be formed\""));
-            this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Internal Dependencies"));
+            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Format(" title=\"{0}\"", title)));
+            this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, heading));
             this.file.Write(this.TableRowEnd);
             this.Write(this.TableHeadEnd);
             this.Write(this.TableBodyBegin);
@@ -778,7 +782,9 @@ namespace DeepEnds.Core
 
                 this.DependencyTable(branch);
 
-                this.UsageTable(branch);
+                this.UsageTable(branch, mapping);
+
+                this.InterfaceTable(branch, mapping);
 
                 this.ExternalsTable(branch);
 
