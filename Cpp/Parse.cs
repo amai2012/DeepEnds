@@ -25,29 +25,35 @@ namespace DeepEnds.Cpp
 {
     using System.Collections.Generic;
 
-    public class Parse
+    public class Parse : IParse
     {
         private DeepEnds.Core.Parser parser;
 
-        public Parse(DeepEnds.Core.Parser parser)
+        private System.IO.TextWriter logger;
+
+        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> nodes;
+
+        public Parse(DeepEnds.Core.Parser parser, System.IO.TextWriter logger)
         {
             this.parser = parser;
+            this.logger = logger;
+            this.nodes = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
         }
 
-        protected void AddFile(string project, string filePath, string filter, List<DeepEnds.Core.Dependent.Dependency> nodes, System.IO.TextWriter logger)
+        public void AddFile(string filePath, string filter)
         {
             if (!System.IO.File.Exists(filePath))
             {
-                logger.Write("! Cannot find ");
-                logger.WriteLine(filePath);
+                this.logger.Write("! Cannot find ");
+                this.logger.WriteLine(filePath);
                 return;
             }
 
             var branch = this.parser.Dependencies.GetPath(filter, "\\");
             var fileName = System.IO.Path.GetFileName(filePath);
             var leaf = this.parser.Create(fileName, filePath, branch);
-            this.parser.Sources.Create(leaf, new SourceProvider(leaf, project, filePath));
-            nodes.Add(leaf);
+            this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, filePath));
+            this.nodes[filePath] = leaf;
         }
 
         protected string Node(string direc, string fileName, List<string> includes)
@@ -85,9 +91,14 @@ namespace DeepEnds.Cpp
             return line != string.Empty;
         }
 
-        protected void ReadFile(DeepEnds.Core.Dependent.Dependency node, List<string> includes)
+        public void ReadFile(string filePath, List<string> includes)
         {
-            var filePath = this.parser.Sources.AssociatedFilePath(node);
+            if (!this.nodes.ContainsKey(filePath))
+            {
+                return;
+            }
+
+            DeepEnds.Core.Dependent.Dependency node = this.nodes[filePath];
             var direc = System.IO.Path.GetDirectoryName(filePath);
             int loc = 0;
             foreach (var line in DeepEnds.Core.Utilities.ReadFile(filePath).Split('\n'))

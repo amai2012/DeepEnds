@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="SourceProvider.cs" company="Zebedee Mason">
+// <copyright file="IParse.cs" company="Zebedee Mason">
 //     Copyright (c) 2016 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
@@ -23,19 +23,12 @@
 
 namespace DeepEnds.Cpp
 {
-    public class SourceProvider : DeepEnds.Core.SourceProvider
+    using System.Collections.Generic;
+
+    public interface IParse
     {
-        private string project;
+        void AddFile(string filePath, string filter);
 
-        public SourceProvider(DeepEnds.Core.Dependent.Dependency node, string project, string filePath)
-            : base(node, filePath)
-        {
-            this.project = project;
-        }
-
-        public override bool Move(DeepEnds.Core.Dependent.Dependency branch)
-        {
-            return true;
-        }
+        void ReadFile(string fullName, List<string> includes);
     }
 }

@@ -27,28 +27,32 @@ namespace DeepEnds.Cpp
     using System.IO;
     using System.Xml;
 
-    public class ParseVS : Parse
+    public class ParseVS
     {
-        private Dictionary<string, List<DeepEnds.Core.Dependent.Dependency>> projects;
+        private System.IO.TextWriter logger;
+        private Dictionary<string, List<string>> projects;
 
-        public ParseVS(DeepEnds.Core.Parser parser)
-            : base(parser)
+        private IParse parse;
+
+        public ParseVS(DeepEnds.Core.Parser parser, System.IO.TextWriter logger)
         {
-            this.projects = new Dictionary<string, List<DeepEnds.Core.Dependent.Dependency>>();
+            this.logger = logger;
+            this.projects = new Dictionary<string, List<string>>();
+            this.parse = new Parse(parser, logger);
         }
 
-        private void ReadProject(string project, System.IO.TextWriter logger)
+        private void ReadProject(string project)
         {
             if (!File.Exists(project + ".filters"))
             {
-                logger.Write("! Cannot find associated filter file of");
-                logger.WriteLine(project);
+                this.logger.Write("! Cannot find associated filter file of");
+                this.logger.WriteLine(project);
                 return;
             }
 
-            logger.Write(" Parsing");
-            logger.WriteLine(project);
-            this.projects[project] = new List<DeepEnds.Core.Dependent.Dependency>();
+            this.logger.Write(" Parsing");
+            this.logger.WriteLine(project);
+            this.projects[project] = new List<string>();
             var direc = System.IO.Path.GetDirectoryName(project);
             foreach (var type in new string[] { "ClInclude", "ClCompile" })
             {
@@ -64,9 +68,11 @@ namespace DeepEnds.Cpp
                             filter = reader.ReadElementContentAsString();
                         }
 
-                        logger.Write("  Appended ");
-                        logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
-                        this.AddFile(project, DeepEnds.Core.Utilities.Combine(direc, filename), filter, this.projects[project], logger);
+                        this.logger.Write("  Appended ");
+                        this.logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
+                        var fullName = DeepEnds.Core.Utilities.Combine(direc, filename);
+                        this.parse.AddFile(fullName, filter);
+                        this.projects[project].Add(fullName);
                     }
                 }
             }
@@ -111,13 +117,13 @@ namespace DeepEnds.Cpp
             return includes;
         }
 
-        public void Read(string project, string solutionDirec, System.IO.TextWriter logger)
+        public void Read(string project, string solutionDirec)
         {
-            this.ReadProject(project, logger);
+            this.ReadProject(project);
             var includes = this.Includes(project, solutionDirec);
-            foreach (var node in this.projects[project])
+            foreach (var fullName in this.projects[project])
             {
-                this.ReadFile(node, includes);
+                this.parse.ReadFile(fullName, includes);
             }
         }
     }
