@@ -21,7 +21,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Cpp
+namespace DeepEnds.Cpp.Include
 {
     using System.Collections.Generic;
 
@@ -152,6 +152,10 @@ namespace DeepEnds.Cpp
             }
 
             node.LOC = loc;
+        }
+
+        public void Finalise()
+        {
         }
     }
 }

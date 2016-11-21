@@ -30,5 +30,7 @@ namespace DeepEnds.Cpp
         void AddFile(string filePath, string filter);
 
         void ReadFile(string fullName, List<string> includes);
+
+        void Finalise();
     }
 }

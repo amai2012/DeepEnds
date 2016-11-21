@@ -21,11 +21,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Cpp
+namespace DeepEnds.Cpp.Clang
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using DeepEnds.Core.Dependent;
     using ClangSharp;
 
@@ -35,18 +36,80 @@ namespace DeepEnds.Cpp
 
         private TextWriter logger;
 
+        private CXIndex createIndex;
+
+        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
+
+        private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
+
         public ParseClang(DeepEnds.Core.Parser parser, TextWriter logger)
         {
             this.parser = parser;
             this.logger = logger;
+            this.createIndex = clang.createIndex(0, 0);
+            this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
+            this.links = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
         }
 
         public void AddFile(string filePath, string filter)
         {
         }
 
-        public void ReadFile(string fullName, List<string> includes)
+        public void ReadFile(string filePath, List<string> includes)
         {
+            this.logger.Write("  Parsing ");
+            this.logger.WriteLine(filePath);
+
+            string[] arr = { "-x", "c++" };
+            arr = arr.Concat(includes.Select(x => "-I" + x)).ToArray();
+
+            CXTranslationUnit translationUnit;
+            CXUnsavedFile unsavedFile;
+            var translationUnitError = clang.parseTranslationUnit2(this.createIndex, filePath, arr, arr.Length, out unsavedFile, 0, 0, out translationUnit);
+
+            if (translationUnitError != CXErrorCode.CXError_Success)
+            {
+                this.logger.WriteLine("Error: " + translationUnitError);
+                var numDiagnostics = clang.getNumDiagnostics(translationUnit);
+
+                for (uint i = 0; i < numDiagnostics; ++i)
+                {
+                    var diagnostic = clang.getDiagnostic(translationUnit, i);
+                    this.logger.WriteLine(clang.getDiagnosticSpelling(diagnostic).ToString());
+                    clang.disposeDiagnostic(diagnostic);
+                }
+            }
+
+            var structVisitor = new FileVisitor(this.parser, this.leaves, this.links, filePath, this.logger);
+            clang.visitChildren(clang.getTranslationUnitCursor(translationUnit), structVisitor.VisitFile, new CXClientData(IntPtr.Zero));
+
+            clang.disposeTranslationUnit(translationUnit);
+        }
+
+        public void Finalise()
+        {
+            HashSet<string> missing = new HashSet<string>();
+            foreach (var key in this.links.Keys)
+            {
+                foreach (var link in this.links[key])
+                {
+                    if (!this.leaves.ContainsKey(link))
+                    {
+                        if (!missing.Contains(link))
+                        {
+                            missing.Add(link);
+                            this.logger.Write("  Cannot link ");
+                            this.logger.WriteLine(link);
+                        }
+
+                        continue;
+                    }
+
+                    key.AddDependency(link, this.leaves[link]);
+                }
+            }
+
+            clang.disposeIndex(this.createIndex);
         }
     }
 }

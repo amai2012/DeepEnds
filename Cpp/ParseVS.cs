@@ -38,7 +38,7 @@ namespace DeepEnds.Cpp
         {
             this.logger = logger;
             this.projects = new Dictionary<string, List<string>>();
-            this.parse = new Parse(parser, logger);
+            this.parse = new Include.Parse(parser, logger);
         }
 
         private void ReadProject(string project)
@@ -125,6 +125,11 @@ namespace DeepEnds.Cpp
             {
                 this.parse.ReadFile(fullName, includes);
             }
+        }
+
+        public void Finalise()
+        {
+            this.parse.Finalise();
         }
     }
 }
