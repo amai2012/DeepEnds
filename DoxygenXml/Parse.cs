@@ -250,6 +250,13 @@ namespace DeepEnds.DoxygenXml
 
         public void Read(string directory, System.IO.TextWriter logger)
         {
+            if (!System.IO.Directory.Exists(directory))
+            {
+                logger.Write("Cannot find directory ");
+                logger.WriteLine(directory);
+                return;
+            }
+
             var files = System.IO.Directory.GetFiles(directory);
             foreach (var fileName in files)
             {
