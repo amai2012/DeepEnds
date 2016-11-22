@@ -34,6 +34,8 @@ namespace DeepEnds.Cpp.Clang
 
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
 
+        private Dictionary<string, string> fullToName;
+
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
 
         private HashSet<string> visited;
@@ -46,10 +48,11 @@ namespace DeepEnds.Cpp.Clang
 
         private DeepEnds.Core.Dependent.Dependency current;
 
-        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, string filePath, TextWriter logger)
+        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<string, string> fullToName, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, string filePath, TextWriter logger)
         {
             this.parser = parser;
             this.leaves = leaves;
+            this.fullToName = fullToName;
             this.links = links;
             this.visited = new HashSet<string>();
             this.filePath = filePath;
@@ -95,31 +98,6 @@ namespace DeepEnds.Cpp.Clang
             return CXChildVisitResult.CXChildVisit_Recurse;
         }
 
-        public CXChildVisitResult FindCurrent(CXCursor cursor, CXCursor parent, IntPtr data)
-        {
-            CXCursorKind curKind = clang.getCursorKind(cursor);
-
-            if (curKind == CXCursorKind.CXCursor_TypeRef)
-            {
-                var displayName = clang.getCursorDisplayName(cursor).ToString();
-                displayName = displayName.Replace("class ", string.Empty).Replace("enum ", string.Empty).Replace("struct ", string.Empty).Replace("union ", string.Empty).Replace("::", ".");
-                if (this.leaves.ContainsKey(displayName))
-                {
-                    this.current = this.leaves[displayName];
-                }
-                else
-                {
-                    this.current = null;
-                    this.logger.Write("Couldn't find current class, etc. : ");
-                    this.logger.WriteLine(displayName);
-                }
-
-                return CXChildVisitResult.CXChildVisit_Break;
-            }
-
-            return CXChildVisitResult.CXChildVisit_Continue;
-        }
-
         public CXChildVisitResult VisitFile(CXCursor cursor, CXCursor parent, IntPtr data)
         {
             var location = clang.getCursorLocation(cursor);
@@ -128,7 +106,8 @@ namespace DeepEnds.Cpp.Clang
                 return CXChildVisitResult.CXChildVisit_Continue;
             }
 
-            if (true)
+#if false
+            if (false)
             {
                 CXFile file;
                 uint i, j, k;
@@ -142,6 +121,7 @@ namespace DeepEnds.Cpp.Clang
 
                 this.visited.Add(fileName);
             }
+#endif
 
             CXCursorKind curKind = clang.getCursorKind(cursor);
 
@@ -172,6 +152,7 @@ namespace DeepEnds.Cpp.Clang
                     var leaf = this.parser.Create(name, fullName, branch);
                     this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, this.filePath));
                     this.leaves[fullName] = leaf;
+                    this.fullToName[fullName] = name;
 
                     this.current = leaf;
                     this.links[this.current] = new HashSet<string>();
@@ -181,13 +162,35 @@ namespace DeepEnds.Cpp.Clang
             }
             else if (curKind == CXCursorKind.CXCursor_CXXMethod || curKind == CXCursorKind.CXCursor_Constructor || curKind == CXCursorKind.CXCursor_Destructor)
             {
-                clang.visitChildren(cursor, this.FindCurrent, new CXClientData(IntPtr.Zero));
-                if (this.current != null)
+                this.current = null;
+
+                var className = FileVisitor.GetClass(cursor);
+
+                var list = new List<string>();
+                foreach (var item in this.fullToName)
                 {
-                    clang.visitChildren(cursor, this.VisitClass, new CXClientData(IntPtr.Zero));
+                    if (item.Value == className)
+                    {
+                        list.Add(item.Key);
+                    }
                 }
 
-                this.current = null;
+                if (list.Count == 1)
+                {
+                    this.current = this.leaves[list[0]];
+                    clang.visitChildren(cursor, this.VisitClass, new CXClientData(IntPtr.Zero));
+                    this.current = null;
+                }
+                else if (list.Count == 0)
+                {
+                    this.logger.Write("Cannot find class ");
+                    this.logger.WriteLine(className);
+                }
+                else
+                {
+                    this.logger.Write("Too many options for class ");
+                    this.logger.WriteLine(className);
+                }
             }
             else if (curKind != CXCursorKind.CXCursor_UsingDirective && curKind != CXCursorKind.CXCursor_VarDecl)
             {
@@ -245,6 +248,52 @@ namespace DeepEnds.Cpp.Clang
             clang.getSpellingLocation(endLocation, out file, out endLine, out endColumn, out offset);
 
             return 1 + (int)endLine - (int)startLine;
+        }
+
+        private static string GetClass(CXCursor cursor)
+        {
+            CXSourceRange extent = clang.getCursorExtent(cursor);
+            CXSourceLocation startLocation = clang.getRangeStart(extent);
+            CXSourceLocation endLocation = clang.getRangeEnd(extent);
+
+            uint startLine = 0, startColumn = 0, offset;
+
+            CXFile file;
+            clang.getSpellingLocation(startLocation, out file, out startLine, out startColumn, out offset);
+
+            var fp = new System.IO.StreamReader(clang.getFileName(file).ToString());
+            var line = string.Empty;
+            for (var i = 0; i < startLine; ++i)
+            {
+                line = fp.ReadLine();
+            }
+
+            fp.Close();
+
+            int index;
+            line = line.Substring(0, line.LastIndexOf('('));
+            line = line.Substring(0, line.LastIndexOf(':') - 1);
+            index = line.LastIndexOf(' ');
+            if (index != -1)
+            {
+                line = line.Substring(index + 1);
+            }
+
+            index = line.LastIndexOf('\t');
+            if (index != -1)
+            {
+                line = line.Substring(index + 1);
+            }
+
+            index = line.LastIndexOf(':');
+            if (index != -1)
+            {
+                line = line.Substring(index + 1);
+            }
+
+            line = line.Trim();
+
+            return line;
         }
     }
 }

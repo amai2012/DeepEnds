@@ -40,6 +40,8 @@ namespace DeepEnds.Cpp.Clang
 
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
 
+        private Dictionary<string, string> fullToName;
+
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
 
         public ParseClang(DeepEnds.Core.Parser parser, TextWriter logger)
@@ -48,6 +50,7 @@ namespace DeepEnds.Cpp.Clang
             this.logger = logger;
             this.createIndex = clang.createIndex(0, 0);
             this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
+            this.fullToName = new Dictionary<string, string>();
             this.links = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
         }
 
@@ -57,6 +60,11 @@ namespace DeepEnds.Cpp.Clang
 
         public void ReadFile(string filePath, List<string> includes)
         {
+            if (filePath != @"D:\Projects\HexaPlast\FEA\Mesh.cpp")
+            {
+                // return;
+            }
+
             this.logger.Write("  Parsing ");
             this.logger.WriteLine(filePath);
 
@@ -80,7 +88,7 @@ namespace DeepEnds.Cpp.Clang
                 }
             }
 
-            var structVisitor = new FileVisitor(this.parser, this.leaves, this.links, filePath, this.logger);
+            var structVisitor = new FileVisitor(this.parser, this.leaves, this.fullToName, this.links, filePath, this.logger);
             clang.visitChildren(clang.getTranslationUnitCursor(translationUnit), structVisitor.VisitFile, new CXClientData(IntPtr.Zero));
 
             clang.disposeTranslationUnit(translationUnit);
