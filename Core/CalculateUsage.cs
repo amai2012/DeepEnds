@@ -63,7 +63,7 @@ namespace DeepEnds.Core.Dependent
 
         public void Calculate(Dependency dependency)
         {
-            if (dependency.Children.Count == 0)
+            if (dependency.Children.Count == 0 && dependency.Parent != null)
             {
                 var levels = CalculateUsage.Levels(dependency.Parent);
 
