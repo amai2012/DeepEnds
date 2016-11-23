@@ -114,7 +114,7 @@ namespace DeepEnds.Console
 
             var csharp = new CSharp.Parse(parser);
             var vbasic = new VBasic.Parse(parser);
-            var cpp = new Cpp.ParseVS(parser, logger);
+            var cpp = new Cpp.ParseVS(parser, options, logger);
             var dotnet = new Decompile.Parse(parser);
             var xml = new DoxygenXml.Parse(parser, options);
 

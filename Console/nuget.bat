@@ -1,1 +1,1 @@
-nuget pack Console.csproj -IncludeReferencedProjects -properties Configuration=Release
+"C:\Program Files (x86)\NuGet\nuget.exe" pack Console.csproj -IncludeReferencedProjects -properties Configuration=Release

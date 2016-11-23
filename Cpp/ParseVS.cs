@@ -34,11 +34,18 @@ namespace DeepEnds.Cpp
 
         private IParse parse;
 
-        public ParseVS(DeepEnds.Core.Parser parser, System.IO.TextWriter logger)
+        public ParseVS(DeepEnds.Core.Parser parser, Dictionary<string, string> options, System.IO.TextWriter logger)
         {
             this.logger = logger;
             this.projects = new Dictionary<string, List<string>>();
-            this.parse = new Include.Parse(parser, logger);
+            if (options["parser"] == "libclang")
+            {
+                this.parse = new Clang.ParseClang(parser, logger);
+            }
+            else
+            {
+                this.parse = new Include.Parse(parser, logger);
+            }
         }
 
         private void ReadProject(string project)

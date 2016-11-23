@@ -28,6 +28,8 @@
       <dependency id="Mono.Cecil" version="0.9.6.1" />
     </dependencies>
     <references>
+      <reference file="ClangSharp.dll" />
+      <reference file="libclang.dll" />
       <reference file="Microsoft.CodeAnalysis.CSharp.dll" />
       <reference file="Microsoft.CodeAnalysis.dll" />
       <reference file="Microsoft.CodeAnalysis.VisualBasic.dll" />
@@ -39,6 +41,8 @@
     </references>
   </metadata>
   <files>
+    <file src="bin\Release\ClangSharp.dll" target="lib\net452"/>
+    <file src="bin\Release\libclang.dll" target="lib\net452"/>
     <file src="bin\Release\Microsoft.CodeAnalysis.CSharp.dll" target="lib\net452"/>
     <file src="bin\Release\Microsoft.CodeAnalysis.dll" target="lib\net452"/>
     <file src="bin\Release\Microsoft.CodeAnalysis.VisualBasic.dll" target="lib\net452"/>

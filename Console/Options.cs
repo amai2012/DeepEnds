@@ -30,7 +30,7 @@ namespace DeepEnds.Console
         /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
-            return new string[] { "report", "csv", "doxygen", "graph", "compoundtype", "membertype", "memberhide", "source", "filenames" };
+            return new string[] { "report", "csv", "doxygen", "graph", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
         }
 
         /// <returns>Default values for the arguments</returns>
@@ -44,6 +44,7 @@ namespace DeepEnds.Console
             options["graph"] = string.Empty;
             options["membertype"] = "enum,function,enumvalue";
             options["memberhide"] = "true";
+            options["parser"] = "default";
             options["report"] = string.Empty;
             options["sep"] = ".";
             options["source"] = string.Empty;
@@ -61,6 +62,7 @@ namespace DeepEnds.Console
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
             options["memberhide"] = "Whether to produce a leaf for a Doxygen XML memberdef element. Values are true and false";
+            options["parser"] = "Optional parser. For Visual C++ the option is \"libclang\"";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
             options["source"] = "The directory containing the source (used for DGML)";
             return options;
