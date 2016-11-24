@@ -74,7 +74,7 @@ namespace DeepEnds.DGML
             this.index++;
             node.Label = dependency.Name;
             node[this.size] = "10";
-            if (grouped != string.Empty)
+            if (grouped.Length > 0)
             {
                 node[this.group] = grouped;
             }
@@ -82,9 +82,9 @@ namespace DeepEnds.DGML
             if (this.sources != null)
             {
                 var path = this.sources.AssociatedFilePath(dependency);
-                if (path != string.Empty)
+                if (path.Length > 0)
                 {
-                    if (this.sourcePath != string.Empty)
+                    if (this.sourcePath.Length > 0)
                     {
                         path = path.Replace(this.sourcePath, "$(Source)");
                     }

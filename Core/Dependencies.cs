@@ -70,7 +70,7 @@ namespace DeepEnds.Core.Linked
             var parent = this.Root;
 
             var bits = Dependencies.SplitPath(path, sep);
-            if (bits.Item1 != string.Empty)
+            if (bits.Item1.Length > 0)
             {
                 parent = this.GetPath(bits.Item1, sep);
                 name = bits.Item2;

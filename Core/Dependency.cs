@@ -91,7 +91,7 @@ namespace DeepEnds.Core.Dependent
             {
                 if (child.Name == name)
                 {
-                    if (path == string.Empty)
+                    if (path.Length == 0)
                     {
                         return child;
                     }
@@ -129,7 +129,7 @@ namespace DeepEnds.Core.Dependent
             }
 
             var path = this.Parent.Path(sep);
-            if (path == string.Empty)
+            if (path.Length == 0)
             {
                 return this.Name;
             }

@@ -264,7 +264,7 @@ namespace DeepEnds.Cpp.Clang
                 foreach (var bit in bits)
                 {
                     var reference = bit.Trim();
-                    if (reference == string.Empty)
+                    if (reference.Length == 0)
                     {
                         continue;
                     }

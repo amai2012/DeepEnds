@@ -88,7 +88,7 @@ namespace DeepEnds.Cpp.Include
             line = line.Replace('}', ' ');
             line = line.TrimStart();
 
-            return line != string.Empty;
+            return line.Length > 0;
         }
 
         public void ReadFile(string filePath, List<string> includes)
@@ -136,7 +136,7 @@ namespace DeepEnds.Cpp.Include
                         foreach (var inc in includes)
                         {
                             dep = this.Node(inc, fileName, includes);
-                            if (dep != string.Empty)
+                            if (dep.Length > 0)
                             {
                                 break;
                             }

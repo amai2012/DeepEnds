@@ -78,7 +78,7 @@ namespace DeepEnds.CSharp
                 }
 
                 var fullPath = basetype.Identifier.ToString();
-                if (path != string.Empty)
+                if (path.Length > 0)
                 {
                     fullPath = path + "." + fullPath;
                 }
@@ -117,7 +117,7 @@ namespace DeepEnds.CSharp
             public bool Visit(NamespaceDeclarationSyntax space, string path)
             {
                 var fullPath = space.Name.ToString();
-                if (path != string.Empty)
+                if (path.Length > 0)
                 {
                     fullPath = path + "." + fullPath;
                 }
@@ -196,7 +196,7 @@ namespace DeepEnds.CSharp
                 line = line.Replace('}', ' ');
                 line = line.TrimStart();
 
-                return line != string.Empty;
+                return line.Length > 0;
             }
 
             private static int Count(string lines)

@@ -163,7 +163,7 @@ namespace DeepEnds.Console
                 return;
             }
 
-            if (options["report"] != string.Empty)
+            if (options["report"].Length > 0)
             {
                 logger.Write("Writing ");
                 logger.WriteLine(options["report"]);
@@ -171,7 +171,7 @@ namespace DeepEnds.Console
                 report.Write(this.dependencies);
             }
 
-            if (options["doxygen"] != string.Empty)
+            if (options["doxygen"].Length > 0)
             {
                 logger.Write("Writing ");
                 logger.WriteLine(options["doxygen"]);
@@ -179,7 +179,7 @@ namespace DeepEnds.Console
                 report.Write(this.dependencies);
             }
 
-            if (options["csv"] != string.Empty)
+            if (options["csv"].Length > 0)
             {
                 logger.Write("Writing ");
                 logger.WriteLine(options["csv"]);
@@ -187,7 +187,7 @@ namespace DeepEnds.Console
                 report.Write(this.dependencies);
             }
 
-            if (options["graph"] != string.Empty)
+            if (options["graph"].Length > 0)
             {
                 logger.Write("Writing ");
                 logger.WriteLine(options["graph"]);

@@ -286,7 +286,7 @@ namespace DeepEnds.Core
         private void TableRow(Complexity row, int index, bool forceVisible)
         {
             var name = row.Branch.Path(this.options["sep"]);
-            if (name == string.Empty)
+            if (name.Length == 0)
             {
                 name = "Top level";
             }
@@ -368,7 +368,7 @@ namespace DeepEnds.Core
         private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping)
         {
             var name = branch.Path(this.options["sep"]);
-            if (name == string.Empty)
+            if (name.Length == 0)
             {
                 name = "Top level";
             }
@@ -382,7 +382,7 @@ namespace DeepEnds.Core
 
             index = mapping[branch.Parent];
             name = branch.Parent.Path(this.options["sep"]);
-            if (name == string.Empty)
+            if (name.Length == 0)
             {
                 name = "Top level";
             }

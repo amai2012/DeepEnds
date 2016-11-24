@@ -78,7 +78,7 @@ namespace DeepEnds.VBasic
                 }
 
                 var fullPath = basetype.BlockStatement.Identifier.ToString();
-                if (path != string.Empty)
+                if (path.Length > 0)
                 {
                     fullPath = path + "." + fullPath;
                 }
@@ -131,7 +131,7 @@ namespace DeepEnds.VBasic
             public bool Visit(NamespaceBlockSyntax space, string path)
             {
                 var fullPath = space.NamespaceStatement.Name.ToString();
-                if (path != string.Empty)
+                if (path.Length > 0)
                 {
                     fullPath = path + "." + fullPath;
                 }
@@ -208,7 +208,7 @@ namespace DeepEnds.VBasic
 
                 line = line.TrimStart();
 
-                return line != string.Empty;
+                return line.Length > 0;
             }
 
             private static int Count(string lines)
