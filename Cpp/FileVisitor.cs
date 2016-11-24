@@ -38,9 +38,9 @@ namespace DeepEnds.Cpp.Clang
 
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
 
+#if false
         private HashSet<string> visited;
-
-        private string filePath;
+#endif
 
         private readonly TextWriter logger;
 
@@ -48,14 +48,17 @@ namespace DeepEnds.Cpp.Clang
 
         private DeepEnds.Core.Dependent.Dependency current;
 
-        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<string, string> fullToName, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, string filePath, TextWriter logger)
+        private bool hasChildren;
+
+        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<string, string> fullToName, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, TextWriter logger)
         {
             this.parser = parser;
             this.leaves = leaves;
             this.fullToName = fullToName;
             this.links = links;
+#if false
             this.visited = new HashSet<string>();
-            this.filePath = filePath;
+#endif
             this.logger = logger;
             this.namespaces = string.Empty;
             this.current = null;
@@ -76,10 +79,10 @@ namespace DeepEnds.Cpp.Clang
                     this.current.LOC += lines;
                 }
             }
-            else if (curKind == CXCursorKind.CXCursor_TypeRef || curKind == CXCursorKind.CXCursor_CXXBaseSpecifier || curKind == CXCursorKind.CXCursor_TemplateRef)
+            else if (curKind == CXCursorKind.CXCursor_TypeRef || curKind == CXCursorKind.CXCursor_VarDecl || curKind == CXCursorKind.CXCursor_CXXBaseSpecifier || curKind == CXCursorKind.CXCursor_TemplateRef || curKind == CXCursorKind.CXCursor_DeclRefExpr)
             {
-                displayName = displayName.Replace("class ", string.Empty).Replace("enum ", string.Empty).Replace("struct ", string.Empty).Replace("union ", string.Empty);
-                this.References(displayName);
+                var typeOf = clang.getCursorType(cursor).ToString();
+                this.References(typeOf);
             }
             else if (curKind == CXCursorKind.CXCursor_ClassTemplate)
             {
@@ -125,8 +128,8 @@ namespace DeepEnds.Cpp.Clang
 
             CXCursorKind curKind = clang.getCursorKind(cursor);
 
-            var displayName2 = clang.getCursorDisplayName(cursor).ToString();
-            var name2 = clang.getCursorSpelling(cursor).ToString();
+            var displayName = clang.getCursorDisplayName(cursor).ToString();
+            var name = clang.getCursorSpelling(cursor).ToString();
 
             if (curKind == CXCursorKind.CXCursor_Namespace)
             {
@@ -136,8 +139,6 @@ namespace DeepEnds.Cpp.Clang
             }
             else if (curKind == CXCursorKind.CXCursor_ClassDecl || curKind == CXCursorKind.CXCursor_StructDecl || curKind == CXCursorKind.CXCursor_UnionDecl)
             {
-                var name = clang.getCursorSpelling(cursor).ToString();
-
                 var filter = this.namespaces;
                 if (filter.Length > 0)
                 {
@@ -148,17 +149,28 @@ namespace DeepEnds.Cpp.Clang
                 if (!this.leaves.ContainsKey(fullName))
                 {
                     var branch = this.parser.Dependencies.GetPath(filter, ".");
-                    var fileName = System.IO.Path.GetFileName(this.filePath);
                     var leaf = this.parser.Create(name, fullName, branch);
-                    this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, this.filePath));
+                    this.SetSourceProvider(leaf, cursor);
                     this.leaves[fullName] = leaf;
                     this.fullToName[fullName] = name;
 
                     this.current = leaf;
                     this.links[this.current] = new HashSet<string>();
-                    clang.visitChildren(cursor, this.VisitClass, new CXClientData(IntPtr.Zero));
-                    this.current = null;
                 }
+                else
+                {
+                    var leaf = this.leaves[fullName];
+                    this.current = leaf;
+                    this.hasChildren = false;
+                    clang.visitChildren(cursor, this.VisitChildren, new CXClientData(IntPtr.Zero));
+                    if (this.hasChildren)
+                    {
+                        this.SetSourceProvider(leaf, cursor);
+                    }
+                }
+
+                clang.visitChildren(cursor, this.VisitClass, new CXClientData(IntPtr.Zero));
+                this.current = null;
             }
             else if (curKind == CXCursorKind.CXCursor_CXXMethod || curKind == CXCursorKind.CXCursor_Constructor || curKind == CXCursorKind.CXCursor_Destructor)
             {
@@ -199,6 +211,34 @@ namespace DeepEnds.Cpp.Clang
             }
 
             return CXChildVisitResult.CXChildVisit_Continue;
+        }
+
+        private void SetSourceProvider(Core.Dependent.Dependency leaf, CXCursor cursor)
+        {
+            CXSourceRange extent = clang.getCursorExtent(cursor);
+            CXSourceLocation startLocation = clang.getRangeStart(extent);
+
+            uint startLine = 0, startColumn = 0, offset;
+
+            CXFile file;
+            clang.getSpellingLocation(startLocation, out file, out startLine, out startColumn, out offset);
+
+            this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, clang.getFileName(file).ToString()));
+        }
+
+        private CXChildVisitResult VisitChildren(CXCursor cursor, CXCursor parent, IntPtr client_data)
+        {
+            CXCursorKind curKind = clang.getCursorKind(cursor);
+            if (curKind == CXCursorKind.CXCursor_CXXAccessSpecifier)
+            {
+                return CXChildVisitResult.CXChildVisit_Continue;
+            }
+
+            var displayName2 = clang.getCursorDisplayName(cursor).ToString();
+            var name2 = clang.getCursorSpelling(cursor).ToString();
+
+            this.hasChildren = true;
+            return CXChildVisitResult.CXChildVisit_Break;
         }
 
         private void References(CXCursor cursor)

@@ -60,11 +60,6 @@ namespace DeepEnds.Cpp.Clang
 
         public void ReadFile(string filePath, List<string> includes)
         {
-            if (filePath != @"D:\Projects\HexaPlast\FEA\Mesh.cpp")
-            {
-                // return;
-            }
-
             this.logger.Write("  Parsing ");
             this.logger.WriteLine(filePath);
 
@@ -88,7 +83,7 @@ namespace DeepEnds.Cpp.Clang
                 }
             }
 
-            var structVisitor = new FileVisitor(this.parser, this.leaves, this.fullToName, this.links, filePath, this.logger);
+            var structVisitor = new FileVisitor(this.parser, this.leaves, this.fullToName, this.links, this.logger);
             clang.visitChildren(clang.getTranslationUnitCursor(translationUnit), structVisitor.VisitFile, new CXClientData(IntPtr.Zero));
 
             clang.disposeTranslationUnit(translationUnit);

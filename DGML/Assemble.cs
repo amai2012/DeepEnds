@@ -84,7 +84,11 @@ namespace DeepEnds.DGML
                 var path = this.sources.AssociatedFilePath(dependency);
                 if (path != string.Empty)
                 {
-                    path = path.Replace(this.sourcePath, "$(Source)");
+                    if (this.sourcePath != string.Empty)
+                    {
+                        path = path.Replace(this.sourcePath, "$(Source)");
+                    }
+
                     node[this.reference] = path;
                 }
             }
