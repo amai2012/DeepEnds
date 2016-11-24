@@ -34,8 +34,6 @@ namespace DeepEnds.Cpp.Clang
 
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
 
-        private Dictionary<string, string> fullToName;
-
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
 
 #if false
@@ -50,11 +48,10 @@ namespace DeepEnds.Cpp.Clang
 
         private bool hasChildren;
 
-        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<string, string> fullToName, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, TextWriter logger)
+        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, TextWriter logger)
         {
             this.parser = parser;
             this.leaves = leaves;
-            this.fullToName = fullToName;
             this.links = links;
 #if false
             this.visited = new HashSet<string>();
@@ -68,9 +65,6 @@ namespace DeepEnds.Cpp.Clang
         {
             CXCursorKind curKind = clang.getCursorKind(cursor);
 
-            var displayName = clang.getCursorDisplayName(cursor).ToString();
-            var spelling = clang.getCursorSpelling(cursor).ToString();
-
             if (curKind == CXCursorKind.CXCursor_CXXMethod || curKind == CXCursorKind.CXCursor_Constructor || curKind == CXCursorKind.CXCursor_Destructor)
             {
                 if (this.current != null)
@@ -79,26 +73,24 @@ namespace DeepEnds.Cpp.Clang
                     this.current.LOC += lines;
                 }
             }
-            else if (curKind == CXCursorKind.CXCursor_TypeRef || curKind == CXCursorKind.CXCursor_VarDecl || curKind == CXCursorKind.CXCursor_CXXBaseSpecifier || curKind == CXCursorKind.CXCursor_TemplateRef || curKind == CXCursorKind.CXCursor_DeclRefExpr)
+            else if (curKind == CXCursorKind.CXCursor_TypeRef || curKind == CXCursorKind.CXCursor_VarDecl || curKind == CXCursorKind.CXCursor_CXXBaseSpecifier || curKind == CXCursorKind.CXCursor_TemplateRef || curKind == CXCursorKind.CXCursor_DeclRefExpr || curKind == CXCursorKind.CXCursor_ClassTemplate)
             {
-                var typeOf = clang.getCursorType(cursor).ToString();
-                this.References(typeOf);
-            }
-            else if (curKind == CXCursorKind.CXCursor_ClassTemplate)
-            {
-                spelling = spelling.Replace("class ", string.Empty).Replace("enum ", string.Empty).Replace("struct ", string.Empty).Replace("union ", string.Empty);
-                this.References(spelling);
+                this.References(FullName(cursor));
             }
             else if (curKind == CXCursorKind.CXCursor_EnumDecl)
             {
                 if (this.current != null)
                 {
-                    var fullName = this.current.Path(".") + "." + spelling;
-                    this.leaves[fullName] = this.current;
+                    this.leaves[FullName(cursor)] = this.current;
                 }
             }
 
             return CXChildVisitResult.CXChildVisit_Recurse;
+        }
+
+        private static string FullName(CXCursor cursor)
+        {
+            return clang.getCursorType(cursor).ToString().Replace("::", ".");
         }
 
         public CXChildVisitResult VisitFile(CXCursor cursor, CXCursor parent, IntPtr data)
@@ -128,9 +120,6 @@ namespace DeepEnds.Cpp.Clang
 
             CXCursorKind curKind = clang.getCursorKind(cursor);
 
-            var displayName = clang.getCursorDisplayName(cursor).ToString();
-            var name = clang.getCursorSpelling(cursor).ToString();
-
             if (curKind == CXCursorKind.CXCursor_Namespace)
             {
                 this.namespaces += "." + clang.getCursorSpelling(cursor).ToString();
@@ -139,20 +128,23 @@ namespace DeepEnds.Cpp.Clang
             }
             else if (curKind == CXCursorKind.CXCursor_ClassDecl || curKind == CXCursorKind.CXCursor_StructDecl || curKind == CXCursorKind.CXCursor_UnionDecl)
             {
-                var filter = this.namespaces;
-                if (filter.Length > 0)
-                {
-                    filter = filter.Substring(1);
-                }
+                var fullName = FullName(cursor);
 
-                var fullName = filter + "." + name;
                 if (!this.leaves.ContainsKey(fullName))
                 {
+                    var filter = string.Empty;
+                    var name = fullName;
+                    var i = fullName.LastIndexOf(".");
+                    if (i != -1)
+                    {
+                        name = fullName.Substring(i + 1);
+                        filter = fullName.Substring(0, i);
+                    }
+
                     var branch = this.parser.Dependencies.GetPath(filter, ".");
                     var leaf = this.parser.Create(name, fullName, branch);
                     this.SetSourceProvider(leaf, cursor);
                     this.leaves[fullName] = leaf;
-                    this.fullToName[fullName] = name;
 
                     this.current = leaf;
                     this.links[this.current] = new HashSet<string>();
@@ -176,32 +168,22 @@ namespace DeepEnds.Cpp.Clang
             {
                 this.current = null;
 
-                var className = FileVisitor.GetClass(cursor);
-
-                var list = new List<string>();
-                foreach (var item in this.fullToName)
+                var fullName = FileVisitor.GetClass(cursor);
+                if (this.namespaces.Length > 0)
                 {
-                    if (item.Value == className)
-                    {
-                        list.Add(item.Key);
-                    }
+                    fullName = this.namespaces.Substring(1) + "." + fullName;
                 }
 
-                if (list.Count == 1)
+                if (this.leaves.ContainsKey(fullName))
                 {
-                    this.current = this.leaves[list[0]];
+                    this.current = this.leaves[fullName];
                     clang.visitChildren(cursor, this.VisitClass, new CXClientData(IntPtr.Zero));
                     this.current = null;
                 }
-                else if (list.Count == 0)
-                {
-                    this.logger.Write("Cannot find class ");
-                    this.logger.WriteLine(className);
-                }
                 else
                 {
-                    this.logger.Write("Too many options for class ");
-                    this.logger.WriteLine(className);
+                    this.logger.Write("Cannot find class ");
+                    this.logger.WriteLine(fullName);
                 }
             }
             else if (curKind != CXCursorKind.CXCursor_UsingDirective && curKind != CXCursorKind.CXCursor_VarDecl)
@@ -234,19 +216,8 @@ namespace DeepEnds.Cpp.Clang
                 return CXChildVisitResult.CXChildVisit_Continue;
             }
 
-            var displayName2 = clang.getCursorDisplayName(cursor).ToString();
-            var name2 = clang.getCursorSpelling(cursor).ToString();
-
             this.hasChildren = true;
             return CXChildVisitResult.CXChildVisit_Break;
-        }
-
-        private void References(CXCursor cursor)
-        {
-            var displayName = clang.getCursorDisplayName(cursor).ToString();
-            displayName = displayName.Substring(1 + displayName.IndexOf('('));
-            displayName = displayName.Substring(0, displayName.LastIndexOf(')'));
-            this.References(displayName);
         }
 
         private void References(string dependencies)
@@ -325,15 +296,9 @@ namespace DeepEnds.Cpp.Clang
                 line = line.Substring(index + 1);
             }
 
-            index = line.LastIndexOf(':');
-            if (index != -1)
-            {
-                line = line.Substring(index + 1);
-            }
-
             line = line.Trim();
 
-            return line;
+            return line.Replace("::", ".");
         }
     }
 }
