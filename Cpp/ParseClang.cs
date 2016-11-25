@@ -88,24 +88,60 @@ namespace DeepEnds.Cpp.Clang
 
         public void Finalise()
         {
-            HashSet<string> missing = new HashSet<string>();
+            var missing = new HashSet<string>();
             foreach (var key in this.links.Keys)
             {
                 foreach (var link in this.links[key])
                 {
-                    if (!this.leaves.ContainsKey(link))
+                    if (this.leaves.ContainsKey(link))
                     {
-                        if (!missing.Contains(link))
-                        {
-                            missing.Add(link);
-                            this.logger.Write("  Cannot link ");
-                            this.logger.WriteLine(link);
-                        }
-
+                        key.AddDependency(link, this.leaves[link]);
                         continue;
                     }
 
-                    key.AddDependency(link, this.leaves[link]);
+                    if (missing.Contains(link))
+                    {
+                        continue;
+                    }
+
+                    var options = new List<string>();
+                    foreach (var leaf in this.leaves.Keys)
+                    {
+                        var i = leaf.LastIndexOf(link);
+                        if (i == -1)
+                        {
+                            continue;
+                        }
+
+                        if (i + link.Length != leaf.Length)
+                        {
+                            continue;
+                        }
+
+                        if (leaf[i - 1] != '.')
+                        {
+                            continue;
+                        }
+
+                        options.Add(leaf);
+                    }
+
+                    if (options.Count == 1)
+                    {
+                        var dep = this.leaves[options[0]];
+                        this.leaves[link] = dep;
+                        key.AddDependency(link, dep);
+                        this.logger.Write("  Linking ");
+                        this.logger.Write(link);
+                        this.logger.Write(" as ");
+                        this.logger.WriteLine(options[0]);
+                    }
+                    else
+                    {
+                        missing.Add(link);
+                        this.logger.Write("  Cannot link ");
+                        this.logger.WriteLine(link);
+                    }
                 }
             }
 

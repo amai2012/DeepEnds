@@ -228,9 +228,18 @@ namespace DeepEnds.Cpp.Clang
             }
 
             var dependency = this.links[this.current];
-            dependencies = dependencies.Replace("const ", string.Empty).Replace("&", string.Empty).Replace("*", string.Empty).Replace("::", ".").Replace("<", ",").Replace(">", ",").Trim();
+            dependencies = dependencies.Replace("const ", string.Empty).Replace("&", string.Empty).Replace("*", string.Empty);
+            dependencies = dependencies.Replace("<", ",").Replace(">", ",");
+            dependencies = dependencies.Replace("(", ",").Replace(")", ",");
+            dependencies = dependencies.Replace("::", ".").Trim();
             if (dependencies.Length > 0)
             {
+                var i = dependencies.IndexOf('[');
+                if (i != -1)
+                {
+                    dependencies = dependencies.Substring(0, i).Trim();
+                }
+
                 var bits = dependencies.Split(',');
                 foreach (var bit in bits)
                 {
