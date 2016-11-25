@@ -254,7 +254,9 @@
   <Import Project="..\packages\Microsoft.VSSDK.BuildTools.14.3.25407\build\Microsoft.VSSDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.VSSDK.BuildTools.14.3.25407\build\Microsoft.VSSDK.BuildTools.targets')" />
   <Import Project="..\StyleCop.Targets" Condition=" '$(StyleCopDirec)'!='' " />
   <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)packages\ClangSharp.3.8.0\content\x86\libclang.dll $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>copy $(SolutionDir)packages\ClangSharp.3.8.0\content\x86\libclang.dll $(TargetDir)
+cd $(TargetDir)
+"c:\Program Files\7-Zip\7z.exe" u DeepEnds.GUI.vsix libclang.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
