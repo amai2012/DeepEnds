@@ -41,12 +41,16 @@ namespace DeepEnds.GUI
         private Dictionary<string, string> filters;
         private Dictionary<string, TextBox> values;
 
+        private OutputPane pane;
+
         /// <summary>
         /// Initialises a new instance of the <see cref="DeepEndsControl"/> class.
         /// </summary>
         public DeepEndsControl()
         {
             this.InitializeComponent();
+
+            this.pane = null;
 
             this.view = new View();
             this.options = Options.Defaults();
@@ -179,38 +183,21 @@ namespace DeepEnds.GUI
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
         private void Execute_Click(object sender, RoutedEventArgs e)
         {
-            string filePath;
-            System.IO.StreamWriter logFile;
-            this.OpenLog(out filePath, out logFile);
-
             try
             {
-                this.view.Read(logFile, this.options, this.options["filenames"].Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
-                this.view.Write(logFile, this.options);
+                if (this.pane == null)
+                {
+                    this.pane = new OutputPane();
+                }
+
+                this.pane.Show();
+                this.view.Read(this.pane, this.options, this.options["filenames"].Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries));
+                this.view.Write(this.pane, this.options);
             }
             catch (System.Exception excep)
             {
                 MessageBox.Show(excep.Message, "DeepEnds", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            this.CloseLog(filePath, logFile);
-        }
-
-        private void OpenLog(out string filePath, out System.IO.StreamWriter file)
-        {
-            var path = System.IO.Path.GetTempPath();
-            filePath = System.IO.Path.Combine(path, "deepends.txt");
-            file = new System.IO.StreamWriter(filePath);
-        }
-
-        private void CloseLog(string filePath, System.IO.StreamWriter file)
-        {
-            file.Close();
-
-            var p = new System.Diagnostics.Process();
-            var startInfo = new System.Diagnostics.ProcessStartInfo("devenv.exe", "/edit " + filePath);
-            p.StartInfo = startInfo;
-            p.Start();
         }
 
         /// <summary>
@@ -224,9 +211,13 @@ namespace DeepEnds.GUI
         {
             try
             {
-                string filePath;
-                System.IO.StreamWriter file;
-                this.OpenLog(out filePath, out file);
+                if (this.pane == null)
+                {
+                    this.pane = new OutputPane();
+                }
+
+                this.pane.Show();
+                var file = this.pane;
 
                 var message = System.Reflection.Assembly.GetAssembly(typeof(View)).Location;
                 if (message.Contains(" "))
@@ -273,8 +264,6 @@ namespace DeepEnds.GUI
 
                 file.Write(" ");
                 file.WriteLine(this.options["filenames"].Replace('\n', ' '));
-
-                this.CloseLog(filePath, file);
             }
             catch (System.Exception excep)
             {

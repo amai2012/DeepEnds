@@ -61,6 +61,7 @@
       <DependentUpon>DeepEndsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DeepEndsPackage.cs" />
+    <Compile Include="OutputPane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
