@@ -1,3 +1,8 @@
+DeepEnds version 2.3
+========================
+* Added libclang parsing option for Visual C++
+* Add extra tables to show usage of leaves as the hierarchy is ascended
+
 DeepEnds version 2.2
 ========================
 * Add relative paths to DGML
