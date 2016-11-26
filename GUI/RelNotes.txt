@@ -1,3 +1,8 @@
+DeepEnds version 2.4
+========================
+* Put VSIX output to the output pane
+* Change DGML output so that the links are at the leaves
+
 DeepEnds version 2.3
 ========================
 * Added libclang parsing option for Visual C++
