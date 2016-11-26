@@ -138,10 +138,16 @@ namespace DeepEnds.Console
                 }
                 else if (ext == ".vcxproj")
                 {
+                    logger.WriteLine("Reading Visual C++");
+                    View.Option(logger, options, "parser");
                     cpp.Read(pair.Key, pair.Value);
                 }
                 else if (ext == ".xml")
                 {
+                    logger.WriteLine("Reading XML");
+                    View.Option(logger, options, "compoundtype");
+                    View.Option(logger, options, "membertype");
+                    View.Option(logger, options, "memberhide");
                     xml.Read(pair.Value, logger);
                 }
             }
@@ -155,6 +161,20 @@ namespace DeepEnds.Console
             return true;
         }
 
+        public static void Option(System.IO.TextWriter logger, Dictionary<string, string> options, string option)
+        {
+            logger.Write("Option \"");
+            logger.Write(option);
+            logger.Write("\" set to ");
+            logger.WriteLine(options[option]);
+        }
+
+        public static void Writing(System.IO.TextWriter logger, Dictionary<string, string> options, string option)
+        {
+            logger.Write("Writing ");
+            logger.WriteLine(options[option]);
+        }
+
         public void Write(System.IO.TextWriter logger, Dictionary<string, string> options)
         {
             if (this.dependencies.Root.Children.Count == 0)
@@ -165,33 +185,30 @@ namespace DeepEnds.Console
 
             if (options["report"].Length > 0)
             {
-                logger.Write("Writing ");
-                logger.WriteLine(options["report"]);
+                View.Writing(logger, options, "report");
                 var report = new DeepEnds.Core.Report(options);
                 report.Write(this.dependencies);
             }
 
             if (options["doxygen"].Length > 0)
             {
-                logger.Write("Writing ");
-                logger.WriteLine(options["doxygen"]);
+                View.Writing(logger, options, "doxygen");
                 var report = new DeepEnds.Core.Doxygen(options);
                 report.Write(this.dependencies);
             }
 
             if (options["csv"].Length > 0)
             {
-                logger.Write("Writing ");
-                logger.WriteLine(options["csv"]);
+                View.Writing(logger, options, "csv");
                 var report = new DeepEnds.Core.CSV(options);
                 report.Write(this.dependencies);
             }
 
             if (options["graph"].Length > 0)
             {
-                logger.Write("Writing ");
-                logger.WriteLine(options["graph"]);
-                var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources, true);
+                View.Writing(logger, options, "graph");
+                View.Option(logger, options, "source");
+                var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources);
                 assemble.Save();
             }
         }

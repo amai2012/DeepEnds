@@ -39,18 +39,16 @@ namespace DeepEnds.DGML
 
         private Dictionary<Dependency, Links> links;
         private Sources sources;
-        private bool descend;
 
         private Dictionary<string, string> options;
 
         private string sourcePath;
 
-        internal Assemble(Dictionary<string, string> options, Dictionary<Dependency, Links> links, Sources sources, bool descend)
+        internal Assemble(Dictionary<string, string> options, Dictionary<Dependency, Links> links, Sources sources)
         {
             this.options = options;
             this.links = links;
             this.sources = sources;
-            this.descend = descend;
             this.graph = new Graph();
             this.nodes = new Dictionary<Dependency, GraphNode>();
 
@@ -103,7 +101,7 @@ namespace DeepEnds.DGML
             foreach (var child in dependency.Children)
             {
                 var grouped = string.Empty;
-                if (this.descend && child.Children.Count > 0)
+                if (child.Children.Count > 0)
                 {
                     grouped = "Collapsed";
                 }
@@ -114,22 +112,31 @@ namespace DeepEnds.DGML
                     this.graph.Links.GetOrCreate(parent, node, null, GraphCommonSchema.Contains);
                 }
             }
-
-            foreach (var child in dependency.Children)
-            {
-                var nodeA = this.nodes[child];
-                foreach (var dep in this.links[child].Interlinks)
-                {
-                    var nodeB = this.nodes[dep];
-                    this.graph.Links.GetOrCreate(nodeA, nodeB);
-                }
-            }
         }
 
         public override void Visit(Dependency dependency)
         {
             this.Layer(dependency);
             base.Visit(dependency);
+        }
+
+        public void Raw()
+        {
+            foreach (var pair in this.nodes)
+            {
+                var leaf = pair.Key;
+                var nodeA = pair.Value;
+                foreach (var dep in leaf.Dependencies)
+                {
+                    if (dep == leaf)
+                    {
+                        continue;
+                    }
+
+                    var nodeB = this.nodes[dep];
+                    this.graph.Links.GetOrCreate(nodeA, nodeB);
+                }
+            }
         }
 
         public void Save()
@@ -162,18 +169,12 @@ namespace DeepEnds.DGML
             reader.Close();
         }
 
-        public static Assemble Factory(Dictionary<string, string> options, Dependency root, Dictionary<Dependency, Links> links, Sources sources, bool descend)
+        public static Assemble Factory(Dictionary<string, string> options, Dependency root, Dictionary<Dependency, Links> links, Sources sources)
         {
-            var assemble = new Assemble(options, links, sources, descend);
+            var assemble = new Assemble(options, links, sources);
             assemble.Node(root, "Expanded");
-            if (descend)
-            {
-                assemble.Visit(root);
-            }
-            else
-            {
-                assemble.Layer(root);
-            }
+            assemble.Visit(root);
+            assemble.Raw();
 
             return assemble;
         }

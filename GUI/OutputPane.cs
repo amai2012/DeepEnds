@@ -60,13 +60,13 @@ namespace DeepEnds.GUI
 
         public override void Write(string value)
         {
-            pane.OutputString(value);
+            this.pane.OutputString(value);
         }
 
         public override void WriteLine(string value)
         {
-            pane.OutputString(value);
-            pane.OutputString("\n");
+            this.pane.OutputString(value);
+            this.pane.OutputString("\n");
         }
     }
 }
