@@ -66,9 +66,15 @@ Additionally each graph is written out for processing by Dot to produce an embed
 Note that for a large project it is possible for this to overwhelm Doxygen.
 
 ## Further reading
+
+### Architecture
 * [As-Is Software Architecture](http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture)
 * [Dive into Architecture with DeepEnds](http://htmlpreview.github.com/?https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html) - now withdrawn
 * [Dependency Analysis in Visual C++](http://www.codeproject.com/Articles/1137021/Dependency-Analysis-in-Visual-Cplusplus)
+* [Dependency Analysis with Doxygen](https://www.codeproject.com/Articles/1155619/Dependency-Analysis-with-Doxygen)
 * [Why Favour the Cyclomatic Number?](http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number)
 * [Counting Lines of Code](http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code)
+
+### Design of this code
+* [Generate a WPF frontend from a console application](https://www.codeproject.com/Articles/1147415/Generate-a-WPF-frontend-from-a-console-application)
 * [Releasing a Visual Studio Extension](http://www.codeproject.com/Tips/1136303/Releasing-a-Visual-Studio-Extension)
