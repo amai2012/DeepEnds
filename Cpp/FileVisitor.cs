@@ -122,9 +122,10 @@ namespace DeepEnds.Cpp.Clang
 
             if (curKind == CXCursorKind.CXCursor_Namespace)
             {
+                var previous = this.namespaces;
                 this.namespaces += "." + clang.getCursorSpelling(cursor).ToString();
                 clang.visitChildren(cursor, this.VisitFile, new CXClientData(IntPtr.Zero));
-                this.namespaces = this.namespaces.Substring(0, this.namespaces.LastIndexOf("."));
+                this.namespaces = previous;
             }
             else if (curKind == CXCursorKind.CXCursor_ClassDecl || curKind == CXCursorKind.CXCursor_StructDecl || curKind == CXCursorKind.CXCursor_UnionDecl)
             {
