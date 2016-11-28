@@ -107,7 +107,7 @@ namespace DeepEnds.Console
             this.dependencies = new Dependencies();
             var parser = new Parser(this.dependencies, this.sources);
 
-            if (extensions.Contains(".vcxproj"))
+            if (extensions.Contains(".vcxproj") && options["parser"] == "default")
             {
                 options["sep"] = "\\";
             }
