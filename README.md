@@ -73,6 +73,7 @@ Note that for a large project it is possible for this to overwhelm Doxygen.
 * [Dependency Analysis in Visual C++](http://www.codeproject.com/Articles/1137021/Dependency-Analysis-in-Visual-Cplusplus)
 * [Dependency Analysis with Doxygen](https://www.codeproject.com/Articles/1155619/Dependency-Analysis-with-Doxygen)
 * [Why Favour the Cyclomatic Number?](http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number)
+* [Big Design Up Front or Emergent Design?](https://www.codeproject.com/Tips/1158303/Big-Design-Up-Front-or-Emergent-Design)
 * [Counting Lines of Code](http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code)
 
 ### Design of this code
