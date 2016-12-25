@@ -25,6 +25,7 @@ namespace DeepEnds.Cpp
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Xml;
 
     public class ParseVS
@@ -85,43 +86,69 @@ namespace DeepEnds.Cpp
             }
         }
 
+        private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
+        {
+            foreach (var node in root.ChildNodes)
+            {
+                if (node.GetType() != typeof(System.Xml.XmlElement))
+                {
+                    continue;
+                }
+
+                var element = node as System.Xml.XmlElement;
+                if (element.Name == name)
+                {
+                    list.Add(element);
+                }
+                else
+                {
+                    this.SelectNodes(element, name, list);
+                }
+            }
+        }
+
         private List<string> Includes(string project, string slndir)
         {
-            var includes = new List<string>();
+            var includes = new HashSet<string>();
             var direc = System.IO.Path.GetDirectoryName(project);
+
+            var doc = new System.Xml.XmlDocument();
+            doc.Load(project);
+            var root = doc.DocumentElement;
+
+            var nodes = new List<System.Xml.XmlElement>();
+            this.SelectNodes(root, "AdditionalIncludeDirectories", nodes);
+            this.SelectNodes(root, "NMakeIncludeSearchPath", nodes);
+            this.SelectNodes(root, "IncludePath", nodes);
+
+            foreach (var node in nodes)
             {
-                var stream = new FileStream(project, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                using (var reader = XmlReader.Create(stream))
+                var line = node.InnerText;
+                foreach (var inc in line.Split(';'))
                 {
-                    while (reader.ReadToFollowing("AdditionalIncludeDirectories"))
+                    if (inc == "%(AdditionalIncludeDirectories)" || inc.Length == 0)
                     {
-                        var line = reader.ReadElementContentAsString();
-                        foreach (var inc in line.Split(';'))
-                        {
-                            if (inc == "%(AdditionalIncludeDirectories)")
-                            {
-                                continue;
-                            }
-
-                            var include = inc;
-                            include = include.Replace("$(ProjectDir)", direc + "\\");
-                            include = include.Replace("$(SolutionDir)", slndir + "\\");
-                            if (include.Length > 1 && include.Substring(0, 2) == "..")
-                            {
-                                include = System.IO.Path.Combine(direc, include);
-                            }
-
-                            include = System.IO.Path.GetFullPath(include);
-                            if (!includes.Contains(include))
-                            {
-                                includes.Add(include);
-                            }
-                        }
+                        continue;
                     }
+
+                    var include = inc;
+                    include = include.Replace("$(ProjectDir)", direc + "\\");
+                    if (slndir.Length > 0)
+                    {
+                        include = include.Replace("$(SolutionDir)", slndir + "\\");
+                    }
+
+                    if (include.Length > 1 && include.Substring(0, 2) == "..")
+                    {
+                        include = System.IO.Path.Combine(direc, include);
+                    }
+
+                    include = System.IO.Path.GetFullPath(include);
+                    includes.Add(include);
                 }
             }
 
-            return includes;
+            return includes.ToList();
         }
 
         public void Read(string project, string solutionDirec)
