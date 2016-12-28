@@ -123,7 +123,7 @@ namespace DeepEnds.Cpp.Include
                     {
                         index = fileName.IndexOf('"');
                     }
-                    else if (fileName[0] == '<')
+                    else if (first == '<')
                     {
                         index = fileName.IndexOf('>');
                     }
