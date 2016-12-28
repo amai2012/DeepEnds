@@ -64,7 +64,7 @@ namespace DeepEnds.Console
             options["memberhide"] = "Whether to produce a leaf for a Doxygen XML memberdef element. Values are true and false";
             options["parser"] = "Optional parser. For Visual C++ the option is \"libclang\"";
             options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
-            options["source"] = "The directory containing the source (used for DGML)";
+            options["source"] = "The directory containing the source (used for DGML and/or vcxproj.filter files)";
             return options;
         }
 

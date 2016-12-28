@@ -49,7 +49,7 @@ namespace DeepEnds.Cpp
             }
         }
 
-        private void ReadProject(string project)
+        private void ReadProject(string project, string sourceDirec)
         {
             if (!File.Exists(project + ".filters"))
             {
@@ -74,6 +74,21 @@ namespace DeepEnds.Cpp
                         if (reader.ReadToDescendant("Filter"))
                         {
                             filter = reader.ReadElementContentAsString();
+                        }
+
+                        if (filter == ".")
+                        {
+                            filter = System.IO.Path.GetDirectoryName(filename);
+                            var common = System.IO.Path.Combine(filter, sourceDirec);
+
+                            if (common.Length < filter.Length)
+                            {
+                                filter = filter.Substring(common.Length + 1);
+                            }
+                            else
+                            {
+                                filter = string.Empty;
+                            }
                         }
 
                         this.logger.Write("  Appended ");
@@ -151,9 +166,9 @@ namespace DeepEnds.Cpp
             return includes.ToList();
         }
 
-        public void Read(string project, string solutionDirec)
+        public void Read(string project, string solutionDirec, string sourceDirec)
         {
-            this.ReadProject(project);
+            this.ReadProject(project, sourceDirec);
             var includes = this.Includes(project, solutionDirec);
             foreach (var fullName in this.projects[project])
             {

@@ -140,7 +140,14 @@ namespace DeepEnds.Console
                 {
                     logger.WriteLine("Reading Visual C++");
                     View.Option(logger, options, "parser");
-                    cpp.Read(pair.Key, pair.Value);
+
+                    var sourceDirec = options["source"];
+                    if (sourceDirec.Length == 0)
+                    {
+                        sourceDirec = pair.Value;
+                    }
+
+                    cpp.Read(pair.Key, pair.Value, sourceDirec);
                 }
                 else if (ext == ".xml")
                 {
