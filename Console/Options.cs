@@ -41,7 +41,7 @@ namespace DeepEnds.Console
             options["csv"] = string.Empty;
             options["doxygen"] = string.Empty;
             options["filenames"] = string.Empty;
-            options["filter"] = string.Empty;
+            options["filter"] = "default";
             options["graph"] = string.Empty;
             options["membertype"] = "enum,function,enumvalue";
             options["memberhide"] = "true";
