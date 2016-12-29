@@ -1,3 +1,7 @@
+DeepEnds version 2.5
+========================
+* Various tweaks for parsing of Bloomberg's Basic Development Environment (BDE)
+
 DeepEnds version 2.4
 ========================
 * Put VSIX output to the output pane

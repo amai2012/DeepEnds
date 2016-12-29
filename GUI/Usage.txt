@@ -1,4 +1,4 @@
-DeepEnds version 2.4
+DeepEnds version 2.5
 ======================
 
 * To launch within Visual Studio go to View >> Other Windows >> DeepEnds.
@@ -17,3 +17,4 @@ DeepEnds version 2.4
        http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code for fitting a probability distribution to the SLOC
        http://www.codeproject.com/Articles/1155619/Dependency-Analysis-with-Doxygen for using Doxygen input
        http://www.codeproject.com/Articles/1137021/Dependency-Analysis-in-Visual-Cplusplus for using Visual C++ input
+       https://www.codeproject.com/Tips/1158303/Big-Design-Up-Front-or-Emergent-Design for a discussion on design
