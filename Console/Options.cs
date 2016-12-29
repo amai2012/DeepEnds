@@ -30,7 +30,7 @@ namespace DeepEnds.Console
         /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
-            return new string[] { "report", "csv", "doxygen", "graph", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
+            return new string[] { "report", "csv", "doxygen", "graph", "filter", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
         }
 
         /// <returns>Default values for the arguments</returns>
@@ -41,6 +41,7 @@ namespace DeepEnds.Console
             options["csv"] = string.Empty;
             options["doxygen"] = string.Empty;
             options["filenames"] = string.Empty;
+            options["filter"] = string.Empty;
             options["graph"] = string.Empty;
             options["membertype"] = "enum,function,enumvalue";
             options["memberhide"] = "true";
@@ -59,6 +60,7 @@ namespace DeepEnds.Console
             options["csv"] = "Write a csv file containing the main table from the statistics";
             options["doxygen"] = "Write the statistics to a source file for Doxygen to process";
             options["filenames"] = "A list of sln, csproj, vcxproj, vbproj, dll and exe files or one example Doxygen XML file";
+            options["filter"] = "Optional way of specifying the filter. For Visual C++ with default parser the option is \"directory\"";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
             options["memberhide"] = "Whether to produce a leaf for a Doxygen XML memberdef element. Values are true and false";

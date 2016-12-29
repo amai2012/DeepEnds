@@ -34,6 +34,7 @@ namespace DeepEnds.Cpp
         private Dictionary<string, List<string>> projects;
 
         private IParse parse;
+        private bool useFilter;
 
         public ParseVS(DeepEnds.Core.Parser parser, Dictionary<string, string> options, System.IO.TextWriter logger)
         {
@@ -42,14 +43,33 @@ namespace DeepEnds.Cpp
             if (options["parser"] == "libclang")
             {
                 this.parse = new Clang.ParseClang(parser, logger);
+                this.useFilter = false;
             }
             else
             {
                 this.parse = new Include.Parse(parser, logger);
+                this.useFilter = options["filter"] != "directory";
             }
         }
 
-        private void ReadProject(string project, string sourceDirec)
+        private string PathToFilter(string filename, string sourceDirec)
+        {
+            var filter = System.IO.Path.GetDirectoryName(filename);
+            var common = System.IO.Path.Combine(filter, sourceDirec);
+
+            if (common.Length < filter.Length)
+            {
+                filter = filter.Substring(common.Length + 1);
+            }
+            else
+            {
+                filter = string.Empty;
+            }
+
+            return filter;
+        }
+
+        private void ReadProjectFilters(string project, string sourceDirec)
         {
             if (!File.Exists(project + ".filters"))
             {
@@ -78,18 +98,46 @@ namespace DeepEnds.Cpp
 
                         if (filter == ".")
                         {
-                            filter = System.IO.Path.GetDirectoryName(filename);
-                            var common = System.IO.Path.Combine(filter, sourceDirec);
-
-                            if (common.Length < filter.Length)
-                            {
-                                filter = filter.Substring(common.Length + 1);
-                            }
-                            else
-                            {
-                                filter = string.Empty;
-                            }
+                            filter = this.PathToFilter(filename, sourceDirec);
                         }
+
+                        this.logger.Write("  Appended ");
+                        this.logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
+                        var fullName = DeepEnds.Core.Utilities.Combine(direc, filename);
+                        this.parse.AddFile(fullName, filter);
+                        this.projects[project].Add(fullName);
+                    }
+                }
+            }
+        }
+
+        private void ReadProject(string project, string sourceDirec)
+        {
+            if (!File.Exists(project))
+            {
+                this.logger.Write("! Cannot find file of");
+                this.logger.WriteLine(project);
+                return;
+            }
+
+            this.logger.Write(" Parsing");
+            this.logger.WriteLine(project);
+            this.projects[project] = new List<string>();
+            var direc = System.IO.Path.GetDirectoryName(project);
+            foreach (var type in new string[] { "ClInclude", "ClCompile" })
+            {
+                var stream = new FileStream(project, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                using (var reader = XmlReader.Create(stream))
+                {
+                    while (reader.ReadToFollowing(type))
+                    {
+                        var filename = reader.GetAttribute("Include");
+                        if (filename == null)
+                        {
+                            continue;
+                        }
+
+                        var filter = this.PathToFilter(filename, sourceDirec);
 
                         this.logger.Write("  Appended ");
                         this.logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
@@ -168,7 +216,15 @@ namespace DeepEnds.Cpp
 
         public void Read(string project, string solutionDirec, string sourceDirec)
         {
-            this.ReadProject(project, sourceDirec);
+            if (this.useFilter)
+            {
+                this.ReadProjectFilters(project, sourceDirec);
+            }
+            else
+            {
+                this.ReadProject(project, sourceDirec);
+            }
+
             var includes = this.Includes(project, solutionDirec);
             foreach (var fullName in this.projects[project])
             {

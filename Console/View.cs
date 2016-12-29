@@ -139,7 +139,9 @@ namespace DeepEnds.Console
                 else if (ext == ".vcxproj")
                 {
                     logger.WriteLine("Reading Visual C++");
+                    View.Option(logger, options, "filter");
                     View.Option(logger, options, "parser");
+                    View.Option(logger, options, "source");
 
                     var sourceDirec = options["source"];
                     if (sourceDirec.Length == 0)
