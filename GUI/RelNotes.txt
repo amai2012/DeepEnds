@@ -1,3 +1,7 @@
+DeepEnds version 2.5.1
+========================
+* Add some hyperlinks to the reporting for extra docs
+
 DeepEnds version 2.5
 ========================
 * Various tweaks for parsing of Bloomberg's Basic Development Environment (BDE)
