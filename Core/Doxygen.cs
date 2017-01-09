@@ -47,6 +47,7 @@ namespace DeepEnds.Core
 
             var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "\\ref DeepEnds{0}";
+            reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.LineBegin = "//! ";
             reporter.ListEnd = "\n";
             reporter.ListItem = "- {0}\n";

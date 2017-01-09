@@ -43,6 +43,8 @@ namespace DeepEnds.Core
 
         public string Link { get; set; }
 
+        public string LinkExt { get; set; }
+
         public string ListBegin { get; set; }
 
         public string ListEnd { get; set; }
@@ -90,6 +92,7 @@ namespace DeepEnds.Core
             this.Destination = string.Empty;
             this.LineBegin = string.Empty;
             this.Link = string.Empty;
+            this.LinkExt = string.Empty;
             this.ListBegin = string.Empty;
             this.ListEnd = string.Empty;
             this.ListItem = string.Empty;
@@ -125,6 +128,36 @@ namespace DeepEnds.Core
 
         public void TableTopText(int topIndex)
         {
+            this.Write(string.Format(this.SectionBegin, "Introduction", "Introduction"));
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("This report was written by ");
+            this.WriteLine(string.Format(this.LinkExt, "https://github.com/zebmason/deepends", "DeepEnds"));
+            this.WriteLine(" which is distributed as both a Visual Studio extension (");
+            this.WriteLine(string.Format(this.LinkExt, "https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc?redir=0", "Gallery"));
+            this.WriteLine(" and ");
+            this.WriteLine(string.Format(this.LinkExt, "https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds", "Marketplace"));
+            this.WriteLine(") and as a ");
+            this.WriteLine(string.Format(this.LinkExt, "https://www.nuget.org/packages/DeepEnds.Console/", "NuGet package."));
+            this.WriteLine("Source code is available from GitHub, there are a number of articles, available online, about its usage:");
+            this.file.WriteLine(this.ParagraphEnd);
+            this.file.Write(this.ListBegin);
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "http://htmlpreview.github.com/?https://github.com/zebmason/DeepEnds/blob/master/Doc/userguide.html", "Dive into Architecture with DeepEnds")));
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "http://www.codeproject.com/Articles/1137021/Dependency-Analysis-in-Visual-Cplusplus", "Dependency Analysis in Visual C++")));
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Articles/1155619/Dependency-Analysis-with-Doxygen", "Dependency Analysis with Doxygen")));
+            this.Write(this.ListEnd);
+            this.WriteLine(string.Empty);
+
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("There are also some articles on the motivation and theoretical foundations of the software:");
+            this.file.WriteLine(this.ParagraphEnd);
+            this.file.Write(this.ListBegin);
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "http://www.codeproject.com/Articles/1098935/As-Is-Software-Architecture", "As-Is Software Architecture")));
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Tips/1158303/Big-Design-Up-Front-or-Emergent-Design", "Big Design Up Front or Emergent Design?")));
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number", "Why Favour the Cyclomatic Number?")));
+            this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code", "Counting Lines of Code")));
+            this.WriteLine(this.ListEnd);
+            this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SectionBegin, "Top", "Summary of graph complexity"));
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
@@ -133,6 +166,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it ");
@@ -140,6 +174,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The larger the value of (E + P) / N then the more complex the directed graph is, where");
@@ -158,6 +193,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "Externals", "Externals"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("Externals refers to the number of dependencies which aren't children.");
@@ -165,6 +201,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "SLOC", "SLOC"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("SLOC stands for source lines of code; whilst reading the source an attempt may have ");
@@ -173,6 +210,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "Probability", "Probability of SLOC"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("An attempt has been made to fit the log-normal distribution to SLOC which has then ");
@@ -185,6 +223,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
+
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
             this.file.Write(this.ParagraphBegin);
             this.Write("Skip to ");

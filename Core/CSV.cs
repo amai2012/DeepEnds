@@ -47,6 +47,7 @@ namespace DeepEnds.Core
 
             var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "\"{1}\"";
+            reporter.LinkExt = "\"{1}\"";
             reporter.TableBodyItem = "{1},";
             reporter.TableHeadBegin = "# ";
             reporter.TableHeadItem = "{2},";

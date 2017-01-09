@@ -83,6 +83,7 @@ td#alert {
 
             var reporter = new Reporter(this.file, this.options, dependencies);
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
+            reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.ListBegin = "<ul>\n";
             reporter.ListEnd = "</ul>\n";
             reporter.ListItem = "<li>{0}</li>\n";
