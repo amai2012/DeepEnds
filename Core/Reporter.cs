@@ -73,6 +73,8 @@ namespace DeepEnds.Core
 
         public string TableBodyItem { get; set; }
 
+        public string TableDivItem { get; set; }
+
         public string TableHeadBegin { get; set; }
 
         public string TableHeadEnd { get; set; }
@@ -107,6 +109,7 @@ namespace DeepEnds.Core
             this.TableBodyBegin = string.Empty;
             this.TableBodyEnd = string.Empty;
             this.TableBodyItem = string.Empty;
+            this.TableDivItem = string.Empty;
             this.TableHeadBegin = string.Empty;
             this.TableHeadEnd = string.Empty;
             this.TableHeadItem = string.Empty;
@@ -126,7 +129,7 @@ namespace DeepEnds.Core
             this.file.WriteLine(line);
         }
 
-        public void TableTopText(int topIndex)
+        public void TableTopText(int topIndex, bool visibleHeader)
         {
             this.Write(string.Format(this.SectionBegin, "Introduction", "Introduction"));
             this.file.Write(this.ParagraphBegin);
@@ -162,7 +165,13 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
             this.file.Write(this.ParagraphBegin);
-            this.WriteLine("The node label of the graph (with the obvious exception of \"Top level\") with a hyperlink to it.");
+            this.Write("The node label of the graph (with the obvious exception of \"Top level\")");
+            if (!visibleHeader)
+            {
+                this.Write(" with a hyperlink to it");
+            }
+
+            this.WriteLine(".");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
@@ -225,10 +234,14 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
 
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
-            this.file.Write(this.ParagraphBegin);
-            this.Write("Skip to ");
-            this.file.WriteLine(string.Format(this.Link, topIndex, "Top level"));
-            this.file.Write(this.ParagraphEnd);
+            if (!visibleHeader)
+            {
+                this.file.Write(this.ParagraphBegin);
+                this.Write("Skip to ");
+                this.file.WriteLine(string.Format(this.Link, topIndex, "Top level"));
+                this.file.Write(this.ParagraphEnd);
+            }
+
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The following table is sorted on its first column, subsequent instances of this table type are sorted on ");
             this.WriteLine("the final column. Hover over the table headers to make tool tips appear.");
@@ -287,6 +300,7 @@ namespace DeepEnds.Core
             }
 
             this.file.Write(this.TableRowEnd);
+            this.TableHeadRowDiv(19);
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             if (forceVisible)
             {
@@ -320,6 +334,22 @@ namespace DeepEnds.Core
             this.file.Write(this.TableRowEnd);
             this.Write(this.TableHeadEnd);
             this.Write(this.TableBodyBegin);
+        }
+
+        private void TableHeadRowDiv(int columns)
+        {
+            if (this.TableDivItem.Length == 0)
+            {
+                return;
+            }
+
+            this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
+            for (int i = 0; i < columns; ++i)
+            {
+                this.file.Write(string.Format(this.TableBodyItem, string.Empty, this.TableDivItem));
+            }
+
+            this.file.Write(this.TableRowEnd);
         }
 
         private void TableRow(Complexity row, int index, bool forceVisible)
@@ -404,7 +434,7 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
         }
 
-        private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping)
+        private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping, bool visibleHeader)
         {
             var name = branch.Path(this.options["sep"]);
             if (name.Length == 0)
@@ -426,8 +456,12 @@ namespace DeepEnds.Core
                 name = "Top level";
             }
 
-            this.Write("Up to ");
-            this.file.WriteLine(string.Format(this.Link, index, name));
+            if (!visibleHeader)
+            {
+                this.Write("Up to ");
+                this.file.WriteLine(string.Format(this.Link, index, name));
+            }
+
             this.file.Write(this.ParagraphBegin);
             this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
@@ -454,6 +488,7 @@ namespace DeepEnds.Core
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Dependency"));
                 this.file.Write(string.Format(this.TableHeadItem, string.Empty, " title=\"Number of lines of source code\"", "SLOC"));
                 this.file.Write(this.TableRowEnd);
+                this.TableHeadRowDiv(2);
                 this.Write(this.TableHeadEnd);
                 this.Write(this.TableBodyBegin);
                 foreach (var pair in locs.OrderByDescending(o => o.Value))
@@ -472,7 +507,7 @@ namespace DeepEnds.Core
             }
         }
 
-        private void UsageTable(Dependency branch, Dictionary<Dependency, int> mapping)
+        private void UsageTable(Dependency branch, Dictionary<Dependency, int> mapping, bool visibleHeader)
         {
             var leaves = new List<Dependency>();
             foreach (var child in branch.Children)
@@ -497,7 +532,16 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Empty));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", " rowspan=\"2\" title=\"Leaf of this node\"", "Dependency"));
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Format(" colspan=\"{0}\" title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", levels.Count), "Sum at this level"));
+            if (visibleHeader)
+            {
+                for (int i = 2; i < levels.Count; ++i)
+                {
+                    this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, string.Empty));
+                }
+            }
+
             this.file.Write(this.TableRowEnd);
+            this.TableHeadRowDiv(levels.Count);
             this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Empty));
             foreach (var item in levels)
             {
@@ -613,6 +657,7 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, heading));
             this.file.Write(this.TableRowEnd);
             this.Write(this.TableHeadEnd);
+            this.TableHeadRowDiv(1);
             this.Write(this.TableBodyBegin);
             foreach (var item in list)
             {
@@ -629,7 +674,7 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
         }
 
-        private void LinksTable(Dependency branch, Dictionary<Dependency, int> mapping)
+        private void LinksTable(Dependency branch, Dictionary<Dependency, int> mapping, bool visibleHeader)
         {
             this.Write(string.Format(this.TableBegin, string.Empty));
             foreach (var child in branch.Children)
@@ -648,6 +693,11 @@ namespace DeepEnds.Core
                         second = string.Format(string.Format(this.Link, mapping[dep], second));
                     }
 
+                    if (visibleHeader)
+                    {
+                        this.Write(this.TableBegin);
+                    }
+
                     this.Write(this.TableHeadBegin);
                     this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Dependencies that cause this edge of the graph to be formed\""));
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, first));
@@ -655,6 +705,11 @@ namespace DeepEnds.Core
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, second));
                     this.file.Write(this.TableRowEnd);
                     this.Write(this.TableHeadEnd);
+                    if (visibleHeader)
+                    {
+                        this.TableHeadRowDiv(3);
+                    }
+
                     this.Write(this.TableBodyBegin);
                     var found = FindLinks.Get(child, dep, this.options["sep"]);
                     if (found.Count == 0)
@@ -692,6 +747,19 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
             this.file.Write(this.ParagraphEnd);
             this.Write(string.Format(this.TableBegin, string.Empty));
+
+            this.Write(this.TableHeadBegin);
+            this.Write(string.Format(this.TableRowBegin, " id=\"main\"", " title=\"Structure matrix\""));
+            this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, "Node"));
+            for (int i = 0; i < list.Count; ++i)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, string.Empty));
+            }
+
+            this.file.Write(this.TableRowEnd);
+            this.Write(this.TableHeadEnd);
+            this.TableHeadRowDiv(list.Count + 1);
+
             this.Write(this.TableBodyBegin);
             foreach (var item in list)
             {
@@ -759,12 +827,12 @@ namespace DeepEnds.Core
             return Complexities.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings);
         }
 
-        private void Table(List<Complexity> rows, bool forceVisible)
+        private void Table(List<Complexity> rows, bool visibleHeader, bool visibleValues)
         {
-            this.TableTop(forceVisible);
+            this.TableTop(visibleHeader);
             for (int i = 0; i < rows.Count; ++i)
             {
-                this.TableRow(rows[i], i, forceVisible);
+                this.TableRow(rows[i], i, visibleValues);
             }
 
             this.TableBottom();
@@ -772,13 +840,11 @@ namespace DeepEnds.Core
 
         public void TableOnly()
         {
-            this.Table(this.TableRows(), true);
+            this.Table(this.TableRows(), true, true);
         }
 
-        public void Report(bool writeDot)
+        public void Report(bool writeDot, bool visibleHeader)
         {
-            bool forceVisible = false;
-
             var rows = this.TableRows();
 
             var mapping = new Dictionary<Dependency, int>();
@@ -787,9 +853,9 @@ namespace DeepEnds.Core
                 mapping[rows[i].Branch] = i;
             }
 
-            this.TableTopText(mapping[this.dependencies.Root]);
+            this.TableTopText(mapping[this.dependencies.Root], visibleHeader);
 
-            this.Table(rows, forceVisible);
+            this.Table(rows, visibleHeader, false);
 
             this.file.Write(this.SubsectionEnd);
 
@@ -797,15 +863,15 @@ namespace DeepEnds.Core
             {
                 var branch = rows[i].Branch;
 
-                this.Section(branch, i, mapping);
+                this.Section(branch, i, mapping, visibleHeader);
 
                 if (writeDot)
                 {
                     this.DotFile(branch, mapping);
                 }
 
-                this.TableTop(forceVisible);
-                this.TableRow(rows[i], i, forceVisible);
+                this.TableTop(visibleHeader);
+                this.TableRow(rows[i], i, false);
                 foreach (var child in branch.Children.OrderBy(o => o.Name))
                 {
                     if (!mapping.ContainsKey(child))
@@ -814,14 +880,14 @@ namespace DeepEnds.Core
                     }
 
                     var index = mapping[child];
-                    this.TableRow(rows[index], index, forceVisible);
+                    this.TableRow(rows[index], index, false);
                 }
 
                 this.TableBottom();
 
                 this.DependencyTable(branch);
 
-                this.UsageTable(branch, mapping);
+                this.UsageTable(branch, mapping, visibleHeader);
 
                 this.InterfaceTable(branch, mapping);
 
@@ -829,7 +895,7 @@ namespace DeepEnds.Core
 
                 this.InternalsTable(branch, mapping);
 
-                this.LinksTable(branch, mapping);
+                this.LinksTable(branch, mapping, visibleHeader);
 
                 this.Matrix(branch);
             }

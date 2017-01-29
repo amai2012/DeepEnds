@@ -65,7 +65,7 @@ namespace DeepEnds.Console
             options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
             options["memberhide"] = "Whether to produce a leaf for a Doxygen XML memberdef element. Values are true and false";
             options["parser"] = "Optional parser. For Visual C++ the option is \"libclang\"";
-            options["report"] = "Write a HTML file (*.html|*.htm) containing various statistics";
+            options["report"] = "Write a HTML (*.html|*.htm) or markdown (*.md) file containing various statistics";
             options["source"] = "The directory containing the source (used for DGML and/or vcxproj.filter files)";
             return options;
         }
@@ -101,7 +101,7 @@ namespace DeepEnds.Console
             options["doxygen"] = "C/C++ (.dox, .txt, .doc, .c, .C, .cc, .CC, .cxx, .cpp, .c++, .ii, .ixx, .ipp, .i++, .inl, .h, .H, .hh, .HH, .hxx, .hpp, .h++, .mm)|*.dox;*.txt;*.doc;*.c;*.C;*.cc;*.CC;*.cxx;*.cpp;*.c++;*.ii;*.ixx;*.ipp;*.i++;*.inl;*.h;*.H;*.hh;*.HH;*.hxx;*.hpp;*.h++;*.mm|C# (.cs)|*.cs|D (.d)|*.d|Fortran (.f, .for, .f90, .f95, .f03, .f08)|*.f;*.for;*.f90;*.f95;*.f03;*.f08|IDL (.idl, .ddl, .odl)|*.idl;*.ddl;*.odl|Java (.java)|*.java|Objective-C (.m, .M)|*.m;*.M|PHP (.php, .php4, .php5, .inc, .phtml)|*.php;*.php4;*.php5;*.inc;*.phtml|Python (.py, .pyw)|*.py;*.pyw|TCL (.tcl)|*.tcl|VHDL (.vhd, .vhdl, .ucf, .qsf)|*.vhd;*.vhdl;*.ucf;*.qsf";
             options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml";
             options["graph"] = "Directed Graph Markup Language (.dgml)|*.dgml";
-            options["report"] = "Report (.html, .htm)|*.html;*.htm";
+            options["report"] = "HTML (.html, .htm)|*.html;*.htm|Markdown (.md)|*.md";
             return options;
         }
     }

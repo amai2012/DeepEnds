@@ -195,8 +195,16 @@ namespace DeepEnds.Console
             if (options["report"].Length > 0)
             {
                 View.Writing(logger, options, "report");
-                var report = new DeepEnds.Core.Report(options);
-                report.Write(this.dependencies);
+                if (System.IO.Path.GetExtension(options["report"]) == ".md")
+                {
+                    var report = new DeepEnds.Core.Markdown(options);
+                    report.Write(this.dependencies);
+                }
+                else
+                {
+                    var report = new DeepEnds.Core.Report(options);
+                    report.Write(this.dependencies);
+                }
             }
 
             if (options["doxygen"].Length > 0)

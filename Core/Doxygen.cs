@@ -97,7 +97,7 @@ namespace DeepEnds.Core
             {
             }
 
-            reporter.Report(true);
+            reporter.Report(true, false);
 
             this.file.Close();
         }

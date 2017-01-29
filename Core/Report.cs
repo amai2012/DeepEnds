@@ -104,7 +104,7 @@ td#alert {
             reporter.TableRowBegin = "<tr{0}{1}>\n";
             reporter.TableRowEnd = "</tr>\n";
 
-            reporter.Report(false);
+            reporter.Report(false, false);
 
             this.Bottom();
 
