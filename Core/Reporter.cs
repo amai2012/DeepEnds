@@ -691,18 +691,20 @@ namespace DeepEnds.Core
 
         private void ExternalsTable(Dependency branch, int section)
         {
+            if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count == 0)
+            {
+                return;
+            }
+
             this.Write(string.Format(this.SubsectionBegin, "Externals" + section, "Externals"));
 
-            if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count > 0)
+            var list = new List<string>();
+            foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged)
             {
-                var list = new List<string>();
-                foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged)
-                {
-                    list.Add(dep.Path(this.options["sep"]));
-                }
-
-                this.Listing(list, "Leaf nodes not contained by this node that are depended upon", "External Dependencies");
+                list.Add(dep.Path(this.options["sep"]));
             }
+
+            this.Listing(list, "Leaf nodes not contained by this node that are depended upon", "External Dependencies");
 
             this.file.Write(this.SubsectionEnd);
         }
@@ -765,8 +767,26 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
         }
 
+        private bool EdgeExists(Dependency branch)
+        {
+            foreach (var child in branch.Children)
+            {
+                foreach (var dep in this.dependencies.Assembled.Linkings[child].Interlinks)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void LinksTable(Dependency branch, Dictionary<Dependency, int> mapping, bool visibleHeader, int section)
         {
+            if (!this.EdgeExists(branch))
+            {
+                return;
+            }
+
             this.Write(string.Format(this.SubsectionBegin, "Links" + section, "Edge definitions"));
 
             this.Write(string.Format(this.TableBegin, string.Empty));
