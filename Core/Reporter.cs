@@ -460,6 +460,8 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.SubsectionBegin, "Usage", "Usage"));
             this.WriteLine("This table is an alphabetically sorted list of the leaf nodes in this level");
             this.WriteLine("versus their usage at this level and all higher levels.");
+            this.WriteLine("Once the maximal value has been achieved for a row the subsequent columns");
+            this.WriteLine("are filled with blanks.");
             this.file.Write(this.SubsectionEnd);
 
             this.Write(string.Format(this.SubsectionBegin, "Interface", "Interface"));
@@ -607,15 +609,20 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableHeadItem, " id=\"main\"", string.Format(" colspan=\"{0}\" title=\"Number of times leaf is referenced beneath or blank if the maximum has been reached\"", levels.Count), "Sum at this level"));
             if (visibleHeader)
             {
-                for (int i = 2; i < levels.Count; ++i)
+                for (int i = 1; i < levels.Count; ++i)
                 {
                     this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, string.Empty));
                 }
             }
 
             this.file.Write(this.TableRowEnd);
-            this.TableHeadRowDiv(levels.Count);
+            this.TableHeadRowDiv(levels.Count + 1);
             this.Write(string.Format(this.TableRowBegin, " id=\"main\"", string.Empty));
+            if (visibleHeader)
+            {
+                this.file.Write(string.Format(this.TableHeadItem, string.Empty, string.Empty, string.Empty));
+            }
+
             foreach (var item in levels)
             {
                 var name = item.Name;
