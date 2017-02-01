@@ -42,6 +42,11 @@ namespace DeepEnds.Core
         {
             var reporter = new Reporter(this.options["report"], this.options, dependencies);
             reporter.Link = "{1}";
+            if (this.options["split"] != "false")
+            {
+                reporter.Link = "[{1}](DeepEnds{0}.md)";
+            }
+
             reporter.LinkExt = "[{1}]({0})";
             reporter.ListItem = "* {0}\n";
             reporter.ParagraphEnd = "\n";

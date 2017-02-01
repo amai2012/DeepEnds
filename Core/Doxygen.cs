@@ -45,12 +45,11 @@ namespace DeepEnds.Core
             reporter.Link = "\\ref DeepEnds{0}";
             reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.LineBegin = "//! ";
-            reporter.ListEnd = "\n";
-            reporter.ListItem = "- {0}\n";
+            reporter.ListItem = "- {0}";
             reporter.RightArrow = "&rarr;";
-            reporter.SectionBegin = "\\page DeepEnds{0} {1}\n";
-            reporter.SubsectionBegin = "\\section DeepEnds{0} {1}\n";
-            reporter.SubSubsectionBegin = "\\subsection DeepEnds{0} {1}\n";
+            reporter.SectionBegin = "\\page DeepEnds{0} {1}";
+            reporter.SubsectionBegin = "\\section DeepEnds{0} {1}";
+            reporter.SubSubsectionBegin = "\\subsection DeepEnds{0} {1}";
             reporter.TableBegin = "<table>\n";
             reporter.TableEnd = "</table>\n";
             reporter.TableBodyBegin = "\n";
