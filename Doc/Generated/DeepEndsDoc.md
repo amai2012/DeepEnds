@@ -1,9 +1,6 @@
 # Documentation
 
 
-Skip to [summary](DeepEndsSummary.md).
-
-
 This report was written by 
 [DeepEnds](https://github.com/zebmason/deepends)
  which is distributed as both a Visual Studio extension (
