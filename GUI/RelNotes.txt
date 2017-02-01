@@ -1,3 +1,9 @@
+DeepEnds version 2.6
+========================
+* Add support for Markdown. Note tables are viewer dependent
+* Add splitting of reports
+* Re-do report documentation
+
 DeepEnds version 2.5.1
 ========================
 * Add some hyperlinks to the reporting for extra docs
