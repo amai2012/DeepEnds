@@ -76,6 +76,11 @@ td#alert {
             var reporter = new Reporter(this.options["report"], this.options, dependencies);
             this.HeaderAndFooter(reporter);
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
+            if (this.options["split"] != "false")
+            {
+                reporter.Link = string.Format("<a href=\"DeepEnds{{0}}{0}\">{{1}}</a>", System.IO.Path.GetExtension(this.options["report"]));
+            }
+
             reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.ListBegin = "<ul>\n";
             reporter.ListEnd = "</ul>\n";

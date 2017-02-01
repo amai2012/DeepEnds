@@ -196,7 +196,7 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
         }
 
-        public void TableTopText(int topIndex, bool visibleHeader)
+        public void TableTopText(bool visibleHeader)
         {
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
@@ -270,13 +270,6 @@ namespace DeepEnds.Core
             this.WriteLine(string.Empty);
 
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
-            if (!visibleHeader)
-            {
-                this.file.Write(this.ParagraphBegin);
-                this.Write("Skip to ");
-                this.file.WriteLine(string.Format(this.Link, topIndex, "Top level"));
-                this.file.Write(this.ParagraphEnd);
-            }
 
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The following table is sorted on the value of (E+P-N)/N, subsequent instances of this table type are sorted on ");
@@ -395,13 +388,8 @@ namespace DeepEnds.Core
 
         private void TableRow(Complexity row, int index, bool forceVisible)
         {
-            var name = row.Branch.Path(this.options["sep"]);
-            if (name.Length == 0)
-            {
-                name = "Top level";
-            }
-
             var branch = row.Branch;
+            var name = this.BranchName(branch);
 
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format(this.Link, index, name)));
@@ -546,18 +534,19 @@ namespace DeepEnds.Core
             return name;
         }
 
-        private void WriteUp(Dependency branch, Dictionary<Dependency, int> mapping, bool visibleHeader)
+        private void WriteUp(Dependency branch, Dictionary<Dependency, int> mapping)
         {
-            if (visibleHeader)
+            if (!this.Link.Contains("{0}"))
             {
                 return;
             }
 
-            var index = mapping[branch.Parent];
-            var name = branch.Parent.Path(this.options["sep"]);
-            if (name.Length == 0)
+            var index = "Summary";
+            var name = index;
+            if (branch.Parent != null)
             {
-                name = "Top level";
+                index = mapping[branch.Parent].ToString();
+                name = this.BranchName(branch.Parent);
             }
 
             this.file.Write(this.ParagraphBegin);
@@ -1018,8 +1007,8 @@ namespace DeepEnds.Core
             this.IntroText();
             this.PageEnd();
 
-            this.PageBegin("Top", "Summary of graph complexity");
-            this.TableTopText(mapping[this.dependencies.Root], visibleHeader);
+            this.PageBegin("Summary", "Summary of graph complexity");
+            this.TableTopText(visibleHeader);
             this.Table(rows, visibleHeader, false);
             this.file.Write(this.SubsectionEnd);
             this.PageEnd();
@@ -1031,14 +1020,10 @@ namespace DeepEnds.Core
             for (int i = 0; i < rows.Count; ++i)
             {
                 var branch = rows[i].Branch;
-                if (branch.Parent == null)
-                {
-                    continue;
-                }
 
                 this.PageBegin(i.ToString(), this.BranchName(branch));
 
-                this.WriteUp(branch, mapping, visibleHeader);
+                this.WriteUp(branch, mapping);
 
                 if (writeDot)
                 {
