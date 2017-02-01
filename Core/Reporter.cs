@@ -69,6 +69,8 @@ namespace DeepEnds.Core
 
         public string SubsectionEnd { get; set; }
 
+        public string SubSubsectionBegin { get; set; }
+
         public string TableBegin { get; set; }
 
         public string TableEnd { get; set; }
@@ -118,6 +120,7 @@ namespace DeepEnds.Core
             this.SectionBegin = string.Empty;
             this.SubsectionBegin = string.Empty;
             this.SubsectionEnd = string.Empty;
+            this.SubSubsectionBegin = string.Empty;
             this.TableBegin = string.Empty;
             this.TableEnd = string.Empty;
             this.TableBodyBegin = string.Empty;
@@ -164,8 +167,14 @@ namespace DeepEnds.Core
             }
         }
 
-        public void IntroText()
+        public void IntroText(bool visibleHeader)
         {
+            this.file.Write(this.ParagraphBegin);
+            this.Write("Skip to ");
+            this.file.Write(string.Format(this.Link, "Summary", "summary"));
+            this.Write(".");
+            this.file.WriteLine(this.ParagraphEnd);
+
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("This report was written by ");
             this.WriteLine(string.Format(this.LinkExt, "https://github.com/zebmason/deepends", "DeepEnds"));
@@ -194,12 +203,19 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code", "Counting Lines of Code")));
             this.WriteLine(this.ListEnd);
             this.WriteLine(string.Empty);
-        }
 
-        public void TableTopText(bool visibleHeader)
-        {
-            this.WriteLine(string.Empty);
-            this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
+            this.file.Write(this.ParagraphBegin);
+            this.Write("The following sections refer to the individual sections for each level.");
+            this.file.WriteLine(this.ParagraphEnd);
+
+            this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
+
+            this.file.Write(this.ParagraphBegin);
+            this.WriteLine("The table is grouped by columns. The summary table is sorted on the value of ");
+            this.WriteLine("the value of (E+P-N)/N, subsequent instances are sorted on the section name.");
+            this.file.WriteLine(this.ParagraphEnd);
+
+            this.Write(string.Format(this.SubSubsectionBegin, "Section", "Section"));
             this.file.Write(this.ParagraphBegin);
             this.Write("The node label of the graph (with the obvious exception of \"Top level\")");
             if (!visibleHeader)
@@ -212,7 +228,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
 
-            this.Write(string.Format(this.SubsectionBegin, "Cycle", "Cycle"));
+            this.Write(string.Format(this.SubSubsectionBegin, "Cycle", "Cycle"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("If a cycle in the graph (circular dependency) occurs then the word cycle will appear as the value otherwise it ");
             this.WriteLine("is left blank.");
@@ -220,7 +236,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
 
-            this.Write(string.Format(this.SubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
+            this.Write(string.Format(this.SubSubsectionBegin, "Cyclomatic", "Cyclomatic Number"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("The larger the value of (E + P) / N then the more complex the directed graph is, where");
             this.file.Write(this.ParagraphEnd);
@@ -239,7 +255,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
 
-            this.Write(string.Format(this.SubsectionBegin, "Externals", "Externals"));
+            this.Write(string.Format(this.SubSubsectionBegin, "Externals", "Externals"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("Externals refers to the number of dependencies which aren't children.");
             this.WriteLine("The following max refers to the maximum of that value and the value at any child nodes.");
@@ -247,7 +263,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
 
-            this.Write(string.Format(this.SubsectionBegin, "SLOC", "SLOC"));
+            this.Write(string.Format(this.SubSubsectionBegin, "SLOC", "SLOC"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("SLOC stands for source lines of code; whilst reading the source an attempt may have ");
             this.WriteLine("been made not to count blank or comment lines. The max and sum are calculated over ");
@@ -256,7 +272,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
             this.WriteLine(string.Empty);
 
-            this.Write(string.Format(this.SubsectionBegin, "Probability", "Probability of SLOC"));
+            this.Write(string.Format(this.SubSubsectionBegin, "Probability", "Probability of SLOC"));
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("An attempt has been made to fit the log-normal distribution to SLOC which has then ");
             this.WriteLine("been used to calculate the expected file size, this is not displayed if there is only ");
@@ -267,6 +283,18 @@ namespace DeepEnds.Core
             this.WriteLine("value at any child nodes.");
             this.file.Write(this.ParagraphEnd);
             this.file.Write(this.SubsectionEnd);
+            this.WriteLine(string.Empty);
+        }
+
+        public void TableTopText(bool visibleHeader)
+        {
+            this.Write(string.Format(this.SubsectionBegin, "Doc", "Documentation"));
+
+            this.file.Write(this.ParagraphBegin);
+            this.Write("Skip to ");
+            this.file.Write(string.Format(this.Link, "Doc", "documentation"));
+            this.Write(".");
+            this.file.WriteLine(this.ParagraphEnd);
             this.WriteLine(string.Empty);
 
             this.Write(string.Format(this.SubsectionBegin, "Table", "Table"));
@@ -1003,18 +1031,15 @@ namespace DeepEnds.Core
                 mapping[rows[i].Branch] = i;
             }
 
-            this.PageBegin("Intro", "Introduction");
-            this.IntroText();
+            this.PageBegin("Doc", "Documentation");
+            this.IntroText(visibleHeader);
+            this.OtherText(visibleHeader, writeDot);
             this.PageEnd();
 
             this.PageBegin("Summary", "Summary of graph complexity");
             this.TableTopText(visibleHeader);
             this.Table(rows, visibleHeader, false);
             this.file.Write(this.SubsectionEnd);
-            this.PageEnd();
-
-            this.PageBegin("Other", "Other reported values");
-            this.OtherText(visibleHeader, writeDot);
             this.PageEnd();
 
             for (int i = 0; i < rows.Count; ++i)

@@ -50,6 +50,7 @@ namespace DeepEnds.Core
             reporter.RightArrow = "&rarr;";
             reporter.SectionBegin = "\\page DeepEnds{0} {1}\n";
             reporter.SubsectionBegin = "\\section DeepEnds{0} {1}\n";
+            reporter.SubSubsectionBegin = "\\subsection DeepEnds{0} {1}\n";
             reporter.TableBegin = "<table>\n";
             reporter.TableEnd = "</table>\n";
             reporter.TableBodyBegin = "\n";

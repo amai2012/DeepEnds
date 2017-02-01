@@ -88,9 +88,10 @@ td#alert {
             reporter.ParagraphBegin = "<p>";
             reporter.ParagraphEnd = "</p>\n";
             reporter.RightArrow = "&rarr;";
-            reporter.SectionBegin = "<h2><a id=\"section{0}\"></a>{1}</h2>\n";
-            reporter.SubsectionBegin = "<h3>{1}</h3>\n<div>\n";
+            reporter.SectionBegin = "<h1><a id=\"section{0}\"></a>{1}</h1>\n";
+            reporter.SubsectionBegin = "<h2>{1}</h2>\n<div>\n";
             reporter.SubsectionEnd = "</div>\n\n";
+            reporter.SubSubsectionBegin = "<h3>{1}</h3>\n<div>\n";
             reporter.TableBegin = "<table{0}>\n";
             reporter.TableEnd = "</table>\n";
             reporter.TableBodyBegin = "<tbody>\n";

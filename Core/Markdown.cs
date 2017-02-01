@@ -48,6 +48,7 @@ namespace DeepEnds.Core
             reporter.SectionBegin = "# {1}\n\n";
             reporter.SubsectionBegin = "## {1}\n\n";
             reporter.SubsectionEnd = "\n";
+            reporter.SubSubsectionBegin = "### {1}\n\n";
             reporter.TableBodyItem = "{1} |";
             reporter.TableDivItem = "-";
             reporter.TableHeadItem = "{2} |";
