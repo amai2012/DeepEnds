@@ -31,8 +31,6 @@ namespace DeepEnds.Core
 
     public class CSV
     {
-        private System.IO.StreamWriter file;
-
         private Dictionary<string, string> options;
 
         public CSV(Dictionary<string, string> options)
@@ -42,10 +40,7 @@ namespace DeepEnds.Core
 
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            var fileName = this.options["csv"];
-            this.file = new System.IO.StreamWriter(fileName);
-
-            var reporter = new Reporter(this.file, this.options, dependencies);
+            var reporter = new Reporter(this.options["csv"], this.options, dependencies);
             reporter.Link = "\"{1}\"";
             reporter.LinkExt = "\"{1}\"";
             reporter.TableBodyItem = "{1},";
@@ -54,8 +49,6 @@ namespace DeepEnds.Core
             reporter.TableRowEnd = "\n";
 
             reporter.TableOnly();
-
-            this.file.Close();
         }
     }
 }

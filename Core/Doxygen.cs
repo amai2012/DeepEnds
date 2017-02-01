@@ -31,8 +31,6 @@ namespace DeepEnds.Core
 
     public class Doxygen
     {
-        private System.IO.StreamWriter file;
-
         private Dictionary<string, string> options;
 
         public Doxygen(Dictionary<string, string> options)
@@ -43,9 +41,7 @@ namespace DeepEnds.Core
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
             var fileName = this.options["doxygen"];
-            this.file = new System.IO.StreamWriter(fileName);
-
-            var reporter = new Reporter(this.file, this.options, dependencies);
+            var reporter = new Reporter(this.options["doxygen"], this.options, dependencies);
             reporter.Link = "\\ref DeepEnds{0}";
             reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.LineBegin = "//! ";
@@ -81,12 +77,12 @@ namespace DeepEnds.Core
             ext = ext.ToLower();
             if (fortran.Contains(ext))
             {
-                this.file.WriteLine("!>");
+                reporter.FileHeader = "!>\n";
                 reporter.LineBegin = "!! ";
             }
             else if (python.Contains(ext) || tcl.Contains(ext))
             {
-                this.file.WriteLine("##");
+                reporter.FileHeader = "##\n";
                 reporter.LineBegin = "# ";
             }
             else if (vhdl.Contains(ext))
@@ -98,8 +94,6 @@ namespace DeepEnds.Core
             }
 
             reporter.Report(true, false);
-
-            this.file.Close();
         }
     }
 }

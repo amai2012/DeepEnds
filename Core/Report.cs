@@ -31,8 +31,6 @@ namespace DeepEnds.Core
 
     public class Report
     {
-        private System.IO.StreamWriter file;
-
         private Dictionary<string, string> options;
 
         public Report(Dictionary<string, string> options)
@@ -40,9 +38,9 @@ namespace DeepEnds.Core
             this.options = options;
         }
 
-        private void Top()
+        private void HeaderAndFooter(Reporter reporter)
         {
-            this.file.Write(@"<!DOCTYPE html>
+            reporter.FileHeader = @"<!DOCTYPE html>
 <html>
 <head>
 <title>Summary of graph complexity</title>
@@ -66,22 +64,17 @@ td#alert {
 </style>
 </head>
 <body>
-");
-        }
+";
 
-        private void Bottom()
-        {
-            this.file.Write(@"</body>
+            reporter.FileFooter = @"</body>
 </html>
-");
+";
         }
 
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            this.file = new System.IO.StreamWriter(this.options["report"]);
-            this.Top();
-
-            var reporter = new Reporter(this.file, this.options, dependencies);
+            var reporter = new Reporter(this.options["report"], this.options, dependencies);
+            this.HeaderAndFooter(reporter);
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
             reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.ListBegin = "<ul>\n";
@@ -105,10 +98,6 @@ td#alert {
             reporter.TableRowEnd = "</tr>\n";
 
             reporter.Report(false, false);
-
-            this.Bottom();
-
-            this.file.Close();
         }
     }
 }

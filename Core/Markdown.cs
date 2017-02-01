@@ -31,8 +31,6 @@ namespace DeepEnds.Core
 
     public class Markdown
     {
-        private System.IO.StreamWriter file;
-
         private Dictionary<string, string> options;
 
         public Markdown(Dictionary<string, string> options)
@@ -42,9 +40,7 @@ namespace DeepEnds.Core
 
         public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            this.file = new System.IO.StreamWriter(this.options["report"]);
-
-            var reporter = new Reporter(this.file, this.options, dependencies);
+            var reporter = new Reporter(this.options["report"], this.options, dependencies);
             reporter.Link = "{1}";
             reporter.LinkExt = "[{1}]({0})";
             reporter.ListItem = "* {0}\n";
@@ -59,8 +55,6 @@ namespace DeepEnds.Core
             reporter.TableRowEnd = "\n";
 
             reporter.Report(false, true);
-
-            this.file.Close();
         }
     }
 }

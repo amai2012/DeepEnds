@@ -49,6 +49,7 @@ namespace DeepEnds.Console
             options["report"] = string.Empty;
             options["sep"] = ".";
             options["source"] = string.Empty;
+            options["split"] = "false";
             return options;
         }
 
@@ -67,6 +68,7 @@ namespace DeepEnds.Console
             options["parser"] = "Optional parser. For Visual C++ the option is \"libclang\"";
             options["report"] = "Write a HTML (*.html|*.htm) or markdown (*.md) file containing various statistics";
             options["source"] = "The directory containing the source (used for DGML and/or vcxproj.filter files)";
+            options["split"] = "Whether to split the report / doxygen into multiple files. Values are true and false";
             return options;
         }
 

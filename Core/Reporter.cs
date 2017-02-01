@@ -31,13 +31,19 @@ namespace DeepEnds.Core
 
     public class Reporter
     {
+        private string filePath;
+
+        private string filePathTemplate;
+
         private System.IO.StreamWriter file;
 
         private Dictionary<string, string> options;
 
         private DeepEnds.Core.Linked.Dependencies dependencies;
 
-        public string Destination { get; set; }
+        public string FileHeader { get; set; }
+
+        public string FileFooter { get; set; }
 
         public string LineBegin { get; set; }
 
@@ -85,13 +91,21 @@ namespace DeepEnds.Core
 
         public string TableRowEnd { get; set; }
 
-        public Reporter(System.IO.StreamWriter file, Dictionary<string, string> options, DeepEnds.Core.Linked.Dependencies dependencies)
+        public Reporter(string filePath, Dictionary<string, string> options, DeepEnds.Core.Linked.Dependencies dependencies)
         {
-            this.file = file;
+            this.filePath = filePath;
+            this.file = null;
             this.options = options;
             this.dependencies = dependencies;
 
-            this.Destination = string.Empty;
+            this.filePathTemplate = string.Empty;
+            if (this.options["split"] != "false")
+            {
+                this.filePathTemplate = string.Format("{0}\\DeepEnds{{0}}{1}", System.IO.Path.GetDirectoryName(this.filePath), System.IO.Path.GetExtension(this.filePath));
+            }
+
+            this.FileHeader = string.Empty;
+            this.FileFooter = string.Empty;
             this.LineBegin = string.Empty;
             this.Link = string.Empty;
             this.LinkExt = string.Empty;
@@ -129,9 +143,29 @@ namespace DeepEnds.Core
             this.file.WriteLine(line);
         }
 
-        public void TableTopText(int topIndex, bool visibleHeader)
+        public void PageBegin(string id, string label)
         {
-            this.Write(string.Format(this.SectionBegin, "Introduction", "Introduction"));
+            if (this.options["split"] != "false")
+            {
+                this.file = new System.IO.StreamWriter(string.Format(this.filePathTemplate, id));
+                this.file.Write(this.FileHeader);
+            }
+
+            this.Write(string.Format(this.SectionBegin, id, label));
+        }
+
+        public void PageEnd()
+        {
+            if (this.options["split"] != "false")
+            {
+                this.file.Write(this.FileFooter);
+                this.file.Close();
+                this.file = null;
+            }
+        }
+
+        public void IntroText()
+        {
             this.file.Write(this.ParagraphBegin);
             this.WriteLine("This report was written by ");
             this.WriteLine(string.Format(this.LinkExt, "https://github.com/zebmason/deepends", "DeepEnds"));
@@ -160,8 +194,10 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.ListItem, string.Format(this.LinkExt, "https://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code", "Counting Lines of Code")));
             this.WriteLine(this.ListEnd);
             this.WriteLine(string.Empty);
+        }
 
-            this.Write(string.Format(this.SectionBegin, "Top", "Summary of graph complexity"));
+        public void TableTopText(int topIndex, bool visibleHeader)
+        {
             this.WriteLine(string.Empty);
             this.Write(string.Format(this.SubsectionBegin, "Section", "Section"));
             this.file.Write(this.ParagraphBegin);
@@ -439,12 +475,8 @@ namespace DeepEnds.Core
             this.file.Write(this.ParagraphEnd);
         }
 
-        public void TableBottomText(bool visibleHeader, bool writeDot)
+        public void OtherText(bool visibleHeader, bool writeDot)
         {
-            this.file.Write(this.SubsectionEnd);
-
-            this.Write(string.Format(this.SectionBegin, "Other", "Other reported values"));
-
             if (writeDot)
             {
                 this.Write(string.Format(this.SubsectionBegin, "Graph", "Graph"));
@@ -503,7 +535,7 @@ namespace DeepEnds.Core
             this.file.Write(this.SubsectionEnd);
         }
 
-        private void Section(Dependency branch, int index, Dictionary<Dependency, int> mapping, bool visibleHeader)
+        private string BranchName(Dependency branch)
         {
             var name = branch.Path(this.options["sep"]);
             if (name.Length == 0)
@@ -511,28 +543,26 @@ namespace DeepEnds.Core
                 name = "Top level";
             }
 
-            this.Write(string.Format(this.SectionBegin,  index, name));
+            return name;
+        }
 
-            if (branch.Parent == null)
+        private void WriteUp(Dependency branch, Dictionary<Dependency, int> mapping, bool visibleHeader)
+        {
+            if (visibleHeader)
             {
                 return;
             }
 
-            index = mapping[branch.Parent];
-            name = branch.Parent.Path(this.options["sep"]);
+            var index = mapping[branch.Parent];
+            var name = branch.Parent.Path(this.options["sep"]);
             if (name.Length == 0)
             {
                 name = "Top level";
             }
 
-            if (!visibleHeader)
-            {
-                this.Write("Up to ");
-                this.file.WriteLine(string.Format(this.Link, index, name));
-            }
-
             this.file.Write(this.ParagraphBegin);
-            this.WriteLine(string.Empty);
+            this.Write("Up to ");
+            this.file.WriteLine(string.Format(this.Link, index, name));
             this.file.Write(this.ParagraphEnd);
         }
 
@@ -963,11 +993,19 @@ namespace DeepEnds.Core
 
         public void TableOnly()
         {
+            this.file = new System.IO.StreamWriter(this.filePath);
             this.Table(this.TableRows(), true, true);
+            this.file.Close();
         }
 
         public void Report(bool writeDot, bool visibleHeader)
         {
+            if (this.options["split"] == "false")
+            {
+                this.file = new System.IO.StreamWriter(this.filePath);
+                this.file.Write(this.FileHeader);
+            }
+
             var rows = this.TableRows();
 
             var mapping = new Dictionary<Dependency, int>();
@@ -976,17 +1014,31 @@ namespace DeepEnds.Core
                 mapping[rows[i].Branch] = i;
             }
 
+            this.PageBegin("Intro", "Introduction");
+            this.IntroText();
+            this.PageEnd();
+
+            this.PageBegin("Top", "Summary of graph complexity");
             this.TableTopText(mapping[this.dependencies.Root], visibleHeader);
-
             this.Table(rows, visibleHeader, false);
+            this.file.Write(this.SubsectionEnd);
+            this.PageEnd();
 
-            this.TableBottomText(visibleHeader, writeDot);
+            this.PageBegin("Other", "Other reported values");
+            this.OtherText(visibleHeader, writeDot);
+            this.PageEnd();
 
             for (int i = 0; i < rows.Count; ++i)
             {
                 var branch = rows[i].Branch;
+                if (branch.Parent == null)
+                {
+                    continue;
+                }
 
-                this.Section(branch, i, mapping, visibleHeader);
+                this.PageBegin(i.ToString(), this.BranchName(branch));
+
+                this.WriteUp(branch, mapping, visibleHeader);
 
                 if (writeDot)
                 {
@@ -1024,6 +1076,14 @@ namespace DeepEnds.Core
                 this.LinksTable(branch, mapping, visibleHeader, i);
 
                 this.Matrix(branch, i);
+
+                this.PageEnd();
+            }
+
+            if (this.options["split"] == "false")
+            {
+                this.file.Write(this.FileFooter);
+                this.file.Close();
             }
         }
     }
