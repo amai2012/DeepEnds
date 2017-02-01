@@ -30,7 +30,7 @@ namespace DeepEnds.Console
         /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
-            return new string[] { "report", "csv", "doxygen", "graph", "filter", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
+            return new string[] { "report", "csv", "doxygen", "graph", "split", "filter", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
         }
 
         /// <returns>Default values for the arguments</returns>
