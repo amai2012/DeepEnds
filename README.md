@@ -49,15 +49,10 @@ For each graph a series of statistics are reported:
 * The sum total number of lines of code
 * The average number of lines of code of the leaves
 
-### HTML report
+### HTML / Markdown report
 
-In addition to the table contained in the CSV file a number of other tables are displayed:
-
-* a list of leaves versus the number of lines of code
-* a list of leaves which aren't a child, grandchild, etc. of the graph
-* a list of leaves which cause the edges of the graph to form
-* a list of the dependencies which cause the edges of the graph to form
-* a structure matrix representation of the graph
+In addition to the table contained in the CSV file a number of other tables are displayed.
+These are described in the report itself and can be found in [example output](Doc/Generated/DeepEndsDoc.md).
 
 ### Doxygen comments
 
