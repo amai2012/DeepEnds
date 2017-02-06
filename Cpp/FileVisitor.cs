@@ -170,6 +170,11 @@ namespace DeepEnds.Cpp.Clang
                 this.current = null;
 
                 var fullName = FileVisitor.GetClass(cursor);
+                if (fullName.Length == 0)
+                {
+                    return CXChildVisitResult.CXChildVisit_Continue;
+                }
+
                 if (this.namespaces.Length > 0)
                 {
                     fullName = this.namespaces.Substring(1) + "." + fullName;
@@ -290,6 +295,11 @@ namespace DeepEnds.Cpp.Clang
             }
 
             fp.Close();
+
+            if (line.Contains("template"))
+            {
+                return string.Empty;
+            }
 
             int index;
             line = line.Substring(0, line.LastIndexOf('('));
