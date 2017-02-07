@@ -182,8 +182,6 @@ namespace DeepEnds.Core
             this.WriteLine("This report was written by ");
             this.WriteLine(string.Format(this.LinkExt, "https://github.com/zebmason/deepends", "DeepEnds"));
             this.WriteLine(" which is distributed as both a Visual Studio extension (");
-            this.WriteLine(string.Format(this.LinkExt, "https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc?redir=0", "Gallery"));
-            this.WriteLine(" and ");
             this.WriteLine(string.Format(this.LinkExt, "https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds", "Marketplace"));
             this.WriteLine(") and as a ");
             this.WriteLine(string.Format(this.LinkExt, "https://www.nuget.org/packages/DeepEnds.Console/", "NuGet package."));
