@@ -70,6 +70,7 @@ Note that for a large project it is possible for this to overwhelm Doxygen.
 * [Why Favour the Cyclomatic Number?](http://www.codeproject.com/Tips/1116433/Why-Favour-the-Cyclomatic-Number)
 * [Big Design Up Front or Emergent Design?](https://www.codeproject.com/Tips/1158303/Big-Design-Up-Front-or-Emergent-Design)
 * [Counting Lines of Code](http://www.codeproject.com/Tips/1136171/Counting-Lines-of-Code)
+* [Dependencies in the Gang of Four examples](https://github.com/zebmason/GoFRefactored/blob/master/README.md)
 
 ### Design of this code
 * [Generate a WPF frontend from a console application](https://www.codeproject.com/Articles/1147415/Generate-a-WPF-frontend-from-a-console-application)

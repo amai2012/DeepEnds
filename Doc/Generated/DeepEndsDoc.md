@@ -4,8 +4,6 @@
 This report was written by 
 [DeepEnds](https://github.com/zebmason/deepends)
  which is distributed as both a Visual Studio extension (
-[Gallery](https://visualstudiogallery.msdn.microsoft.com/4c9c5d41-46d2-409d-8c83-9d6d4d9e86bc?redir=0)
- and 
 [Marketplace](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
 ) and as a 
 [NuGet package.](https://www.nuget.org/packages/DeepEnds.Console/)
