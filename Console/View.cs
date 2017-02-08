@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
 // <copyright file="View.cs" company="Zebedee Mason">
-//     Copyright 2016 Zebedee Mason.
+//     Copyright 2016-2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown
@@ -79,6 +79,13 @@ namespace DeepEnds.Console
                 logger.WriteLine(direc);
                 fileNames.Add(new KeyValuePair<string, string>(fileName, direc));
             }
+            else if (ext == ".dgml")
+            {
+                direc = System.IO.Path.GetDirectoryName(fileName);
+                logger.Write(" Reading dgml from ");
+                logger.WriteLine(fileName);
+                fileNames.Add(new KeyValuePair<string, string>(fileName, direc));
+            }
         }
 
         public bool Read(System.IO.TextWriter logger, Dictionary<string, string> options, string[] lines)
@@ -117,6 +124,7 @@ namespace DeepEnds.Console
             var cpp = new Cpp.ParseVS(parser, options, logger);
             var dotnet = new Decompile.Parse(parser);
             var xml = new DoxygenXml.Parse(parser, options);
+            var dgml = new DGML.Parse(parser, options);
 
             var dlls = new List<string>();
             foreach (var pair in fileNames)
@@ -158,6 +166,11 @@ namespace DeepEnds.Console
                     View.Option(logger, options, "membertype");
                     View.Option(logger, options, "memberhide");
                     xml.Read(pair.Value, logger);
+                }
+                else if (ext == ".dgml")
+                {
+                    logger.WriteLine("Reading DGML");
+                    dgml.Read(pair.Key, logger);
                 }
             }
 

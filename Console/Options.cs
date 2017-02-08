@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
 // <copyright file="Options.cs" company="Zebedee Mason">
-//     Copyright (c) 2016 Zebedee Mason.
+//     Copyright (c) 2016-2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown
@@ -60,7 +60,7 @@ namespace DeepEnds.Console
             options["compoundtype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML compounddef element. Types include class, struct, union, interface, protocol, category, exception, file, namespace, group, page, example, dir";
             options["csv"] = "Write a csv file containing the main table from the statistics";
             options["doxygen"] = "Write the statistics to a source file for Doxygen to process";
-            options["filenames"] = "A list of sln, csproj, vcxproj, vbproj, dll and exe files or one example Doxygen XML file";
+            options["filenames"] = "A list of sln, csproj, vcxproj, vbproj, dll and exe files or one example Doxygen XML or Microsoft DGML file";
             options["filter"] = "Optional way of specifying the filter. For Visual C++ with default parser the option is \"directory\"";
             options["graph"] = "Write a DGML file (*.dgml) for Visual Studio";
             options["membertype"] = "Comma separated list of supported values for the kind attribute of a Doxygen XML memberdef element. Types include define, property, variable, typedef, enum, function, signal, prototype, friend, dcop, slot, enumvalue";
@@ -101,7 +101,7 @@ namespace DeepEnds.Console
             var options = new Dictionary<string, string>();
             options["csv"] = "comma separated variable (.csv)|*.csv";
             options["doxygen"] = "C/C++ (.dox, .txt, .doc, .c, .C, .cc, .CC, .cxx, .cpp, .c++, .ii, .ixx, .ipp, .i++, .inl, .h, .H, .hh, .HH, .hxx, .hpp, .h++, .mm)|*.dox;*.txt;*.doc;*.c;*.C;*.cc;*.CC;*.cxx;*.cpp;*.c++;*.ii;*.ixx;*.ipp;*.i++;*.inl;*.h;*.H;*.hh;*.HH;*.hxx;*.hpp;*.h++;*.mm|C# (.cs)|*.cs|D (.d)|*.d|Fortran (.f, .for, .f90, .f95, .f03, .f08)|*.f;*.for;*.f90;*.f95;*.f03;*.f08|IDL (.idl, .ddl, .odl)|*.idl;*.ddl;*.odl|Java (.java)|*.java|Objective-C (.m, .M)|*.m;*.M|PHP (.php, .php4, .php5, .inc, .phtml)|*.php;*.php4;*.php5;*.inc;*.phtml|Python (.py, .pyw)|*.py;*.pyw|TCL (.tcl)|*.tcl|VHDL (.vhd, .vhdl, .ucf, .qsf)|*.vhd;*.vhdl;*.ucf;*.qsf";
-            options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml";
+            options["filenames"] = "MS Visual Studio solution (.sln)|*.sln|C++ Project (.vcxproj)|*.vcxproj|C# Project (.csproj)|*.csproj|VB.NET Project (.vbproj)|*.vbproj|.NET assemblies (.dll)|*.dll|.NET executables (.exe)|*.exe|Doxygen XML output (.xml)|*.xml|Microsoft DGML file (.dgml)|*.dgml";
             options["graph"] = "Directed Graph Markup Language (.dgml)|*.dgml";
             options["report"] = "HTML (.html, .htm)|*.html;*.htm|Markdown (.md)|*.md";
             return options;

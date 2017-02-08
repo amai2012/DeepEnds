@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
 // <copyright file="Program.cs" company="Zebedee Mason">
-//     Copyright (c) 2016 Zebedee Mason.
+//     Copyright (c) 2016-2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown
@@ -61,7 +61,7 @@ namespace DeepEnds.Console
             foreach (var fileName in this.inputFiles)
             {
                 var ext = System.IO.Path.GetExtension(fileName);
-                if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll" || ext == ".sln" || ext == ".xml")
+                if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll" || ext == ".sln" || ext == ".xml" || ext == ".dgml")
                     continue;
                 return true;
             }
