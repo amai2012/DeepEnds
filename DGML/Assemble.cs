@@ -35,6 +35,7 @@ namespace DeepEnds.DGML
         private GraphProperty size;
         private GraphProperty group;
         private GraphProperty reference;
+        private GraphProperty loc;
         private int index = 0;
 
         private Dictionary<Dependency, Links> links;
@@ -57,6 +58,7 @@ namespace DeepEnds.DGML
             this.size = properties.AddNewProperty("Size", typeof(string));
             this.group = properties.AddNewProperty("Group", typeof(string));
             this.reference = properties.AddNewProperty("Reference", typeof(string));
+            this.loc = properties.AddNewProperty("LOC", typeof(int));
 
             this.sourcePath = options["source"];
             var length = this.sourcePath.Length;
@@ -76,6 +78,8 @@ namespace DeepEnds.DGML
             {
                 node[this.group] = grouped;
             }
+
+            node[this.loc] = dependency.LOC;
 
             if (this.sources != null)
             {
