@@ -1,3 +1,8 @@
+DeepEnds version 2.7
+========================
+* Store the LOC value in the DGML
+* Read in DGML
+
 DeepEnds version 2.6.1
 ========================
 * Fix crash when parsing C++ templates by skipping them

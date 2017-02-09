@@ -1,7 +1,7 @@
-DeepEnds version 2.6.1
+DeepEnds version 2.7
 ========================
 
-Copyright (c) 2016 Zebedee Mason
+Copyright (c) 2017 Zebedee Mason
 
  The author's copyright is expressed through the following notice, thus
  giving effective rights to copy and use this software to anyone, as shown

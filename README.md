@@ -31,6 +31,9 @@ This also allows the user to input data from their own parser where a leaf can b
 
 where `id` and `refid` are identifiers for the leaves and the hierarchy is specified in `compoundname` using `::` as a separator.
 
+### DGML
+The software will read in a DGML file which may be produced by this software or another tool
+
 ## Output
 
 ### DGML graph
