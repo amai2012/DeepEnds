@@ -2,6 +2,11 @@
 
 Dive into architecture with DeepEnds...
 
+Binaries are available as a Visual Studio extension (
+[Marketplace](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
+) and as a 
+[NuGet package.](https://www.nuget.org/packages/DeepEnds.Console/)
+
 ## Introduction
 DeepEnds analyses the dependencies between children of a node in a tree. 
 The tree hierarchy may be formed from namespace and class, file name and filter or in a bespoke manner. 
