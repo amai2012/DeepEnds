@@ -2,9 +2,8 @@
 
 Dive into architecture with DeepEnds...
 
-Binaries are available as a Visual Studio extension (
-[Marketplace](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
-) and as a 
+Binaries are available as a [Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
+and as a 
 [NuGet package.](https://www.nuget.org/packages/DeepEnds.Console/)
 
 ## Introduction

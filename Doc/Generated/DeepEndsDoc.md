@@ -3,9 +3,9 @@
 
 This report was written by 
 [DeepEnds](https://github.com/zebmason/deepends)
- which is distributed as both a Visual Studio extension (
-[Marketplace](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
-) and as a 
+ which is distributed as both a 
+[Visual Studio extension](https://marketplace.visualstudio.com/items?itemName=ZebM.DeepEnds)
+ and as a 
 [NuGet package.](https://www.nuget.org/packages/DeepEnds.Console/)
 Source code is available from GitHub, there are a number of articles, available online, about its usage:
 
