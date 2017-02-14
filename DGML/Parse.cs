@@ -103,7 +103,7 @@ namespace DeepEnds.DGML
                         reference = reference.Replace(key, this.paths[key]);
                     }
 
-                    this.parser.Sources.Create(dep, new Core.SourceProvider(dep, reference));
+                    this.parser.Sources.Create(dep, new Core.SourceProvider(reference));
                 }
             }
         }

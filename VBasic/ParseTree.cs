@@ -228,7 +228,7 @@ namespace DeepEnds.VBasic
                 var branch = this.parser.Dependencies.GetPath(path, ".");
                 var leaf = this.parser.Create(basetype.BlockStatement.Identifier.ValueText, path + "." + basetype.BlockStatement.Identifier.ValueText, branch);
                 leaf.LOC = Count(basetype.ToString());
-                this.sources.Create(leaf, new Core.SourceProvider(leaf, this.filename));
+                this.sources.Create(leaf, new Core.SourceProvider(this.filename));
                 return true;
             }
         }

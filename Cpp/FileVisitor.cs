@@ -211,7 +211,7 @@ namespace DeepEnds.Cpp.Clang
             CXFile file;
             clang.getSpellingLocation(startLocation, out file, out startLine, out startColumn, out offset);
 
-            this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, clang.getFileName(file).ToString()));
+            this.parser.Sources.Create(leaf, new Core.SourceProvider(clang.getFileName(file).ToString()));
         }
 
         private CXChildVisitResult VisitChildren(CXCursor cursor, CXCursor parent, IntPtr client_data)

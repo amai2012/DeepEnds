@@ -136,7 +136,7 @@ namespace DeepEnds.DoxygenXml
             leaf.LOC = loc;
 
             fileName = "$(Source)/" + fileName;
-            this.parser.Sources.Create(leaf, new DeepEnds.Core.SourceProvider(leaf, fileName));
+            this.parser.Sources.Create(leaf, new DeepEnds.Core.SourceProvider(fileName));
         }
 
         private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)

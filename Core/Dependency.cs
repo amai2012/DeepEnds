@@ -51,25 +51,6 @@ namespace DeepEnds.Core.Dependent
             this.Children.Add(child);
         }
 
-        public Dependency[] Matches(string[] selected)
-        {
-            var branches = new List<Dependency>();
-            foreach (var child in this.Children)
-            {
-                foreach (var name in selected)
-                {
-                    if (child.Name != name)
-                    {
-                        continue;
-                    }
-
-                    branches.Add(child);
-                }
-            }
-
-            return branches.ToArray();
-        }
-
         public Dependency Find(string path, string sep)
         {
             var name = path;
@@ -140,19 +121,6 @@ namespace DeepEnds.Core.Dependent
             }
 
             return this.Parent.FindChild(parent);
-        }
-
-        public void Branches(List<Dependency> branches)
-        {
-            if (this.Children.Count > 0)
-            {
-                branches.Add(this);
-            }
-
-            foreach (var dep in this.Children)
-            {
-                dep.Branches(branches);
-            }
         }
     }
 }

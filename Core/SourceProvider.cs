@@ -27,13 +27,10 @@ namespace DeepEnds.Core
 {
     public class SourceProvider
     {
-        public Dependency Node { get; }
-
         public string FilePath { get; }
 
-        public SourceProvider(Dependency node, string filePath)
+        public SourceProvider(string filePath)
         {
-            this.Node = node;
             this.FilePath = filePath;
         }
     }

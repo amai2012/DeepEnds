@@ -216,7 +216,7 @@ namespace DeepEnds.CSharp
                 var branch = this.parser.Dependencies.GetPath(path, ".");
                 var leaf = this.parser.Create(basetype.Identifier.ValueText, path + "." + basetype.Identifier.ValueText, branch);
                 leaf.LOC = Count(basetype.ToString());
-                this.sources.Create(leaf, new Core.SourceProvider(leaf, this.filename));
+                this.sources.Create(leaf, new Core.SourceProvider(this.filename));
                 return true;
             }
         }

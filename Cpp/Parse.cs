@@ -52,7 +52,7 @@ namespace DeepEnds.Cpp.Include
             var branch = this.parser.Dependencies.GetPath(filter, "\\");
             var fileName = System.IO.Path.GetFileName(filePath);
             var leaf = this.parser.Create(fileName, filePath, branch);
-            this.parser.Sources.Create(leaf, new Core.SourceProvider(leaf, filePath));
+            this.parser.Sources.Create(leaf, new Core.SourceProvider(filePath));
             this.nodes[filePath] = leaf;
         }
 
