@@ -52,8 +52,7 @@ namespace DeepEnds.CSharp
                 var contents = DeepEnds.Core.Utilities.ReadFile(csfile);
                 var tree = CSharpSyntaxTree.ParseText(contents, null, csfile);
                 trees.Add(tree);
-                var project = this.csfiles[csfile];
-                ParseTree.Process(this.parser, this.parser.Sources, tree, project, csfile);
+                ParseTree.Process(this.parser, this.parser.Sources, tree, csfile);
             }
 
             var libs = new PortableExecutableReference[dlls.Count + 1];

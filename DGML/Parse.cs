@@ -33,10 +33,6 @@ namespace DeepEnds.DGML
 
         private Dictionary<string, Core.Dependent.Dependency> lookup;
 
-        private Dictionary<Core.Dependent.Dependency, List<string>> links;
-
-        private Dictionary<string, string> options;
-
         private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
         {
             foreach (var node in root.ChildNodes)
@@ -146,13 +142,11 @@ namespace DeepEnds.DGML
             this.ReadLinks(root);
         }
 
-        public Parse(DeepEnds.Core.Parser parser, Dictionary<string, string> options)
+        public Parse(DeepEnds.Core.Parser parser)
         {
             this.parser = parser;
-            this.options = options;
             this.paths = new Dictionary<string, string>();
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
-            this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
         }
 
         public void Read(string fileName, System.IO.TextWriter logger)

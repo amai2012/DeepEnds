@@ -96,7 +96,6 @@
     <Compile Include="Parse.cs" />
     <Compile Include="ParseTree.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -37,8 +37,6 @@ namespace DeepEnds.Core.Dependent
 
         public int LOC { get; set; }
 
-        private List<string> missing;
-
         public Dependency(string name, Dependency parent)
         {
             this.Name = name;
@@ -46,7 +44,6 @@ namespace DeepEnds.Core.Dependent
             this.Children = new System.Collections.Generic.List<Dependency>();
             this.Dependencies = new List<Dependency>();
             this.LOC = 0;
-            this.missing = new List<string>();
         }
 
         public void AddChild(Dependency child)
@@ -105,14 +102,7 @@ namespace DeepEnds.Core.Dependent
 
         public void AddDependency(string fullName, Dependency dep)
         {
-            if (dep == null)
-            {
-                if (!this.missing.Contains(fullName))
-                {
-                    this.missing.Add(fullName);
-                }
-            }
-            else
+            if (dep != null)
             {
                 if (!this.Dependencies.Contains(dep))
                 {

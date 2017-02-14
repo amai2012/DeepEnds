@@ -38,17 +38,15 @@ namespace DeepEnds.DGML
         private GraphProperty loc;
         private int index = 0;
 
-        private Dictionary<Dependency, Links> links;
         private Sources sources;
 
         private Dictionary<string, string> options;
 
         private string sourcePath;
 
-        internal Assemble(Dictionary<string, string> options, Dictionary<Dependency, Links> links, Sources sources)
+        internal Assemble(Dictionary<string, string> options, Sources sources)
         {
             this.options = options;
-            this.links = links;
             this.sources = sources;
             this.graph = new Graph();
             this.nodes = new Dictionary<Dependency, GraphNode>();
@@ -173,9 +171,9 @@ namespace DeepEnds.DGML
             reader.Close();
         }
 
-        public static Assemble Factory(Dictionary<string, string> options, Dependency root, Dictionary<Dependency, Links> links, Sources sources)
+        public static Assemble Factory(Dictionary<string, string> options, Dependency root, Sources sources)
         {
-            var assemble = new Assemble(options, links, sources);
+            var assemble = new Assemble(options, sources);
             assemble.Node(root, "Expanded");
             assemble.Visit(root);
             assemble.Raw();

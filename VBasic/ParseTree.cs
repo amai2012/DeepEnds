@@ -187,14 +187,12 @@ namespace DeepEnds.VBasic
 
             private readonly DeepEnds.Core.Sources sources;
 
-            private readonly string project;
             private readonly string filename;
 
-            public MakeLeaves(DeepEnds.Core.Parser parser, DeepEnds.Core.Sources sources, string project, string filename)
+            public MakeLeaves(DeepEnds.Core.Parser parser, DeepEnds.Core.Sources sources, string filename)
             {
                 this.parser = parser;
                 this.sources = sources;
-                this.project = project;
                 this.filename = filename;
             }
 
@@ -230,7 +228,7 @@ namespace DeepEnds.VBasic
                 var branch = this.parser.Dependencies.GetPath(path, ".");
                 var leaf = this.parser.Create(basetype.BlockStatement.Identifier.ValueText, path + "." + basetype.BlockStatement.Identifier.ValueText, branch);
                 leaf.LOC = Count(basetype.ToString());
-                this.sources.Create(leaf, new SourceProvider(leaf, this.project, this.filename));
+                this.sources.Create(leaf, new Core.SourceProvider(leaf, this.filename));
                 return true;
             }
         }
@@ -265,9 +263,9 @@ namespace DeepEnds.VBasic
             }
         }
 
-        public static void Process(DeepEnds.Core.Parser parser, DeepEnds.Core.Sources sources, SyntaxTree tree, string project, string filename)
+        public static void Process(DeepEnds.Core.Parser parser, DeepEnds.Core.Sources sources, SyntaxTree tree, string filename)
         {
-            var make = new MakeLeaves(parser, sources, project, filename);
+            var make = new MakeLeaves(parser, sources, filename);
             make.Visit(tree);
         }
 

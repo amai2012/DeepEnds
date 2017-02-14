@@ -52,8 +52,7 @@ namespace DeepEnds.VBasic
                 var contents = DeepEnds.Core.Utilities.ReadFile(vbfile);
                 var tree = VisualBasicSyntaxTree.ParseText(contents, null, vbfile);
                 trees.Add(tree);
-                var project = this.vbfiles[vbfile];
-                ParseTree.Process(this.parser, this.parser.Sources, tree, project, vbfile);
+                ParseTree.Process(this.parser, this.parser.Sources, tree, vbfile);
             }
 
             var libs = new PortableExecutableReference[dlls.Count + 1];

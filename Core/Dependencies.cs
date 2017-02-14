@@ -81,33 +81,11 @@ namespace DeepEnds.Core.Linked
             return branch;
         }
 
-        public List<Dependency> Branches()
-        {
-            var branches = new List<Dependency>();
-            this.Root.Branches(branches);
-            return branches.OrderBy(o => o.Path(".")).ToList();
-        }
-
         public void Assemble()
         {
             this.Assembled = new Assemble();
             this.Assembled.Visit(this.Root);
             this.Assembled.Usage(this.Root);
-        }
-
-        public void Poach(Dependency branch, Dependency[] branches)
-        {
-            var clear = new ClearDependencies(this.Assembled.Linkings);
-            clear.Visit(branch);
-            foreach (var child in branches)
-            {
-                var parent = child.Parent;
-                child.Parent = branch;
-                clear.Visit(parent);
-
-                parent.Children.Remove(child);
-                branch.Children.Add(child);
-            }
         }
     }
 }

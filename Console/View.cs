@@ -124,7 +124,7 @@ namespace DeepEnds.Console
             var cpp = new Cpp.ParseVS(parser, options, logger);
             var dotnet = new Decompile.Parse(parser);
             var xml = new DoxygenXml.Parse(parser, options);
-            var dgml = new DGML.Parse(parser, options);
+            var dgml = new DGML.Parse(parser);
 
             var dlls = new List<string>();
             foreach (var pair in fileNames)
@@ -238,7 +238,7 @@ namespace DeepEnds.Console
             {
                 View.Writing(logger, options, "graph");
                 View.Option(logger, options, "source");
-                var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.dependencies.Assembled.Linkings, this.sources);
+                var assemble = DeepEnds.DGML.Assemble.Factory(options, this.dependencies.Root, this.sources);
                 assemble.Save();
             }
         }

@@ -36,10 +36,5 @@ namespace DeepEnds.Core
             this.Node = node;
             this.FilePath = filePath;
         }
-
-        public virtual bool Move(Dependency branch)
-        {
-            return true;
-        }
     }
 }

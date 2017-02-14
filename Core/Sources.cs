@@ -54,23 +54,5 @@ namespace DeepEnds.Core
 
             return string.Empty;
         }
-
-        public bool Move(Dependency branch, Dependency[] branches)
-        {
-            foreach (var node in branches)
-            {
-                if (!this.sources.Keys.Contains(node))
-                {
-                    continue;
-                }
-
-                if (!this.sources[node].Move(branch))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
     }
 }

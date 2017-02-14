@@ -33,8 +33,6 @@ namespace DeepEnds.DoxygenXml
 
         private Dictionary<Core.Dependent.Dependency, List<string>> links;
 
-        private Dictionary<string, string> options;
-
         private List<string> compoundTypes;
 
         private List<string> memberTypes;
@@ -236,7 +234,6 @@ namespace DeepEnds.DoxygenXml
         public Parse(DeepEnds.Core.Parser parser, Dictionary<string, string> options)
         {
             this.parser = parser;
-            this.options = options;
             this.compoundTypes = Parse.SplitCSV(options["compoundtype"]);
             this.memberTypes = Parse.SplitCSV(options["membertype"]);
             this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
