@@ -26,17 +26,17 @@ namespace DeepEnds.Console
     using System.Collections.Generic;
     using System.Linq;
 
-    class Program
+    public class Program
     {
         private View view;
         private List<string> inputFiles;
         private Dictionary<string, string> options;
 
-        Program()
+        public Program()
         {
             this.view = new View();
-            inputFiles = new List<string>();
-            options = Options.Defaults();
+            this.inputFiles = new List<string>();
+            this.options = Options.Defaults();
         }
 
         private void Parse(string[] args)
@@ -48,11 +48,11 @@ namespace DeepEnds.Console
                 var i = arg.IndexOf("=");
                 if (i == -1)
                 {
-                    inputFiles.Add(arg);
+                    this.inputFiles.Add(arg);
                     continue;
                 }
 
-                options[arg.Substring(0, i)] = arg.Substring(i + 1);
+                this.options[arg.Substring(0, i)] = arg.Substring(i + 1);
             }
         }
 
@@ -62,7 +62,10 @@ namespace DeepEnds.Console
             {
                 var ext = System.IO.Path.GetExtension(fileName);
                 if (ext == ".vcxproj" || ext == ".csproj" || ext == ".vbproj" || ext == ".exe" || ext == ".dll" || ext == ".sln" || ext == ".xml" || ext == ".dgml")
+                {
                     continue;
+                }
+
                 return true;
             }
 
@@ -85,7 +88,7 @@ namespace DeepEnds.Console
             this.view.Write(System.Console.Out, this.options);
         }
 
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             System.Console.WriteLine(@"    +###############################,   
   #,                                 #` 
@@ -158,6 +161,7 @@ Dive into architecture with DeepEnds
                         line.Append("] ");
                     }
                 }
+
                 splitter.WriteLine("  ", line.ToString());
                 splitter.WriteLine("  ", "where optional arguments are of the form key=value");
                 splitter.WriteLine("  ", "there now follows a list of 'key(default value): help'");

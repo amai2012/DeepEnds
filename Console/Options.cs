@@ -27,12 +27,18 @@ namespace DeepEnds.Console
 
     static public class Options
     {
+        /// <summary>
+        /// Get the order of the visible options
+        /// </summary>
         /// <returns>Array of arguments ordered for display</returns>
         static public string[] Ordered()
         {
             return new string[] { "report", "csv", "doxygen", "graph", "split", "filter", "parser", "compoundtype", "membertype", "memberhide", "source", "filenames" };
         }
 
+        /// <summary>
+        /// Get default values
+        /// </summary>
         /// <returns>Default values for the arguments</returns>
         static public Dictionary<string, string> Defaults()
         {
@@ -53,6 +59,9 @@ namespace DeepEnds.Console
             return options;
         }
 
+        /// <summary>
+        /// Get help for each option
+        /// </summary>
         /// <returns>Help for the arguments</returns>
         static public Dictionary<string, string> Help()
         {
@@ -77,11 +86,25 @@ namespace DeepEnds.Console
         /// </summary>
         public enum Browse
         {
+            /// <summary>
+            /// File save dialogue
+            /// </summary>
             fileOut,
+
+            /// <summary>
+            /// File open dialogue
+            /// </summary>
             fileIn,
+
+            /// <summary>
+            /// Directory open dialogue
+            /// </summary>
             directoryIn
         }
 
+        /// <summary>
+        /// Get button type
+        /// </summary>
         /// <returns>Type of action to occur when browse button is pressed</returns>
         static public Dictionary<string, Browse> Types()
         {
@@ -95,6 +118,9 @@ namespace DeepEnds.Console
             return options;
         }
 
+        /// <summary>
+        /// Get file filter
+        /// </summary>
         /// <returns>File filters for browse button</returns>
         static public Dictionary<string, string> Filters()
         {

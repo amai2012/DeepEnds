@@ -192,8 +192,8 @@ namespace DeepEnds.Console
             }
 
             this.assembled = new DeepEnds.Reporting.Assemble();
-            assembled.Visit(this.dependencies.Root);
-            assembled.Usage(this.dependencies.Root);
+            this.assembled.Visit(this.dependencies.Root);
+            this.assembled.Usage(this.dependencies.Root);
         }
 
         public static void Option(System.IO.TextWriter logger, Dictionary<string, string> options, string option)

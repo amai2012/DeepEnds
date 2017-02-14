@@ -90,6 +90,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\StyleCop.Targets" Condition=" '$(StyleCopDirec)'!='' " />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)packages\ClangSharp.3.8.0\content\x86\libclang.dll $(TargetDir)</PostBuildEvent>
   </PropertyGroup>

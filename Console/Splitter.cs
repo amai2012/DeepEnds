@@ -37,7 +37,7 @@ namespace DeepEnds.Console
 
         public void WriteLine(string indent, string line)
         {
-            var width = windowWidth - indent.Length;
+            var width = this.windowWidth - indent.Length;
             if (width < 10)
             {
                 width = 10;
@@ -47,21 +47,21 @@ namespace DeepEnds.Console
             {
                 if (width >= line.Length)
                 {
-                    splitter.Write(indent);
-                    splitter.WriteLine(line);
+                    this.splitter.Write(indent);
+                    this.splitter.WriteLine(line);
                     return;
                 }
 
                 var length = line.LastIndexOf(' ', width);
                 if (length == 0)
                 {
-                    splitter.Write(indent);
-                    splitter.WriteLine(line);
+                    this.splitter.Write(indent);
+                    this.splitter.WriteLine(line);
                     return;
                 }
 
-                splitter.Write(indent);
-                splitter.WriteLine(line.Substring(0, length));
+                this.splitter.Write(indent);
+                this.splitter.WriteLine(line.Substring(0, length));
                 line = line.Substring(length);
             }
         }
