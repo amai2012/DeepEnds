@@ -41,6 +41,7 @@ namespace DeepEnds.Console
             this.sets = new Dictionary<DeepEnds.Core.Dependency, HashSet<string>>();
             this.leaves = new Dictionary<string, DeepEnds.Core.Dependency>();
             this.sources = new Sources();
+            this.assembled = null;
         }
 
         private void Files(System.IO.TextWriter logger, Dictionary<string, string> options, string fileName, string direc, List<KeyValuePair<string, string>> fileNames, List<string> extensions)
@@ -180,11 +181,19 @@ namespace DeepEnds.Console
             xml.Finalise();
             parser.Finalise(options["sep"]);
 
-            this.assembled = new DeepEnds.Reporting.Assemble();
-            assembled.Visit(parser.Dependencies.Root);
-            assembled.Usage(parser.Dependencies.Root);
-
             return true;
+        }
+
+        public void Assemble()
+        {
+            if (this.assembled != null)
+            {
+                return;
+            }
+
+            this.assembled = new DeepEnds.Reporting.Assemble();
+            assembled.Visit(this.dependencies.Root);
+            assembled.Usage(this.dependencies.Root);
         }
 
         public static void Option(System.IO.TextWriter logger, Dictionary<string, string> options, string option)
@@ -211,6 +220,7 @@ namespace DeepEnds.Console
 
             if (options["report"].Length > 0)
             {
+                this.Assemble();
                 View.Writing(logger, options, "report");
                 if (System.IO.Path.GetExtension(options["report"]) == ".md")
                 {
@@ -226,6 +236,7 @@ namespace DeepEnds.Console
 
             if (options["doxygen"].Length > 0)
             {
+                this.Assemble();
                 View.Writing(logger, options, "doxygen");
                 var report = new DeepEnds.Reporting.Doxygen(options);
                 report.Write(this.dependencies, this.assembled);
@@ -233,6 +244,7 @@ namespace DeepEnds.Console
 
             if (options["csv"].Length > 0)
             {
+                this.Assemble();
                 View.Writing(logger, options, "csv");
                 var report = new DeepEnds.Reporting.CSV(options);
                 report.Write(this.dependencies, this.assembled);
