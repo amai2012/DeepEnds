@@ -68,8 +68,8 @@ namespace DeepEnds.Reporting
 
             foreach (var child in dependency.Children)
             {
-                var aChild = links[child];
-                foreach (var link in aChild.Dependencies)
+                var linked = links[child];
+                foreach (var link in linked.Dependencies)
                 {
                     var dep = link.FindChild(dependency);
                     if (dep == null || dep == child)
@@ -77,12 +77,12 @@ namespace DeepEnds.Reporting
                         continue;
                     }
 
-                    if (aChild.Interlinks.Contains(dep))
+                    if (linked.Interlinks.Contains(dep))
                     {
                         continue;
                     }
 
-                    aChild.Interlinks.Add(dep);
+                    linked.Interlinks.Add(dep);
                 }
             }
         }
