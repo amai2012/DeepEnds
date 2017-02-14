@@ -21,9 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Complex
+namespace DeepEnds.Reporting.Complex
 {
-    using Dependent;
+    using DeepEnds.Core.Dependent;
     using System.Collections.Generic;
     using System.Linq;
 

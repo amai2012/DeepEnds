@@ -21,9 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core
+namespace DeepEnds.Reporting
 {
-    using Dependent;
+    using DeepEnds.Core.Dependent;
     using System.Collections.Generic;
 
     public class Links

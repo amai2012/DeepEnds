@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="ClearDependencies.cs" company="Zebedee Mason">
-//     Copyright (c) 2016 Zebedee Mason.
+// <copyright file="AssemblyInfo.cs" company="Zebedee Mason">
+//     Copyright (c) 2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown
@@ -21,34 +21,13 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Linked
-{
-    using Dependent;
-    using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-    public class ClearDependencies : DependencyUpWalker
-    {
-        private Dictionary<Dependency, Links> links;
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("DeepEnds.Reporting")]
 
-        public ClearDependencies(Dictionary<Dependency, Links> links)
-        {
-            this.links = links;
-        }
-
-        public override void Visit(Dependency dependency)
-        {
-            foreach (var child in dependency.Children)
-            {
-                this.links[child].Interlinks.Clear();
-            }
-
-            if (this.links[dependency].Dependencies.Count == 0)
-            {
-                return;
-            }
-
-            this.links[dependency].Dependencies.Clear();
-            base.Visit(dependency);
-        }
-    }
-}
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("7db7f387-d2e3-48a7-b2fe-d4263892e36b")]

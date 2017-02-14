@@ -21,8 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Dependent
+namespace DeepEnds.Reporting
 {
+    using DeepEnds.Core.Dependent;
     using System.Collections.Generic;
 
     internal class CalculateUsage

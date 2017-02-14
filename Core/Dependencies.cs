@@ -30,8 +30,6 @@ namespace DeepEnds.Core.Linked
 
     public class Dependencies
     {
-        public Assemble Assembled { get; set; }
-
         public Dependency Root { get; }
 
         public Dependencies()
@@ -79,13 +77,6 @@ namespace DeepEnds.Core.Linked
             var branch = this.Create(name, parent);
             parent.AddChild(branch);
             return branch;
-        }
-
-        public void Assemble()
-        {
-            this.Assembled = new Assemble();
-            this.Assembled.Visit(this.Root);
-            this.Assembled.Usage(this.Root);
         }
     }
 }

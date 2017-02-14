@@ -82,8 +82,6 @@ namespace DeepEnds.Core
                     leaf.AddDependency(item, dep);
                 }
             }
-
-            this.Dependencies.Assemble();
         }
     }
 }

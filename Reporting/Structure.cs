@@ -21,7 +21,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core
+namespace DeepEnds.Reporting
 {
     using Core;
     using DeepEnds.Core.Dependent;

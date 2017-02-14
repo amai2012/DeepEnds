@@ -34,6 +34,7 @@ namespace DeepEnds.Console
         private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> sets;
         private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
         private Sources sources;
+        private DeepEnds.Reporting.Linked.Assemble assembled;
 
         public View()
         {
@@ -180,6 +181,10 @@ namespace DeepEnds.Console
             xml.Finalise();
             parser.Finalise(options["sep"]);
 
+            this.assembled = new DeepEnds.Reporting.Linked.Assemble();
+            assembled.Visit(parser.Dependencies.Root);
+            assembled.Usage(parser.Dependencies.Root);
+
             return true;
         }
 
@@ -210,28 +215,28 @@ namespace DeepEnds.Console
                 View.Writing(logger, options, "report");
                 if (System.IO.Path.GetExtension(options["report"]) == ".md")
                 {
-                    var report = new DeepEnds.Core.Markdown(options);
-                    report.Write(this.dependencies);
+                    var report = new DeepEnds.Reporting.Markdown(options);
+                    report.Write(this.dependencies, this.assembled);
                 }
                 else
                 {
-                    var report = new DeepEnds.Core.Report(options);
-                    report.Write(this.dependencies);
+                    var report = new DeepEnds.Reporting.Report(options);
+                    report.Write(this.dependencies, this.assembled);
                 }
             }
 
             if (options["doxygen"].Length > 0)
             {
                 View.Writing(logger, options, "doxygen");
-                var report = new DeepEnds.Core.Doxygen(options);
-                report.Write(this.dependencies);
+                var report = new DeepEnds.Reporting.Doxygen(options);
+                report.Write(this.dependencies, this.assembled);
             }
 
             if (options["csv"].Length > 0)
             {
                 View.Writing(logger, options, "csv");
-                var report = new DeepEnds.Core.CSV(options);
-                report.Write(this.dependencies);
+                var report = new DeepEnds.Reporting.CSV(options);
+                report.Write(this.dependencies, this.assembled);
             }
 
             if (options["graph"].Length > 0)

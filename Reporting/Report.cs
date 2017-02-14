@@ -21,10 +21,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core
+namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Complex;
-    using Dependent;
+    using DeepEnds.Reporting.Complex;
+    using DeepEnds.Core.Dependent;
 
     using System.Collections.Generic;
     using System.Linq;
@@ -71,9 +71,9 @@ td#alert {
 ";
         }
 
-        public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
+        public void Write(DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
         {
-            var reporter = new Reporter(this.options["report"], this.options, dependencies);
+            var reporter = new Reporter(this.options["report"], this.options, dependencies, assembled);
             this.HeaderAndFooter(reporter);
             reporter.Link = "<a href=\"#section{0}\">{1}</a>";
             if (this.options["split"] != "false")

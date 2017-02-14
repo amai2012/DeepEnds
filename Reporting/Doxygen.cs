@@ -21,10 +21,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core
+namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Complex;
-    using Dependent;
+    using DeepEnds.Reporting.Complex;
+    using DeepEnds.Core.Dependent;
 
     using System.Collections.Generic;
     using System.Linq;
@@ -33,15 +33,18 @@ namespace DeepEnds.Core
     {
         private Dictionary<string, string> options;
 
+        private DeepEnds.Reporting.Linked.Assemble assembled;
+
         public Doxygen(Dictionary<string, string> options)
         {
             this.options = options;
         }
 
-        public void Write(DeepEnds.Core.Linked.Dependencies dependencies)
+        public void Write(DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
         {
+            this.assembled = assembled;
             var fileName = this.options["doxygen"];
-            var reporter = new Reporter(this.options["doxygen"], this.options, dependencies);
+            var reporter = new Reporter(this.options["doxygen"], this.options, dependencies, assembled);
             reporter.Link = "\\ref DeepEnds{0}";
             reporter.LinkExt = "<a href=\"{0}\">{1}</a>";
             reporter.LineBegin = "//! ";

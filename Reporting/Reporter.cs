@@ -21,16 +21,18 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core
+namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Complex;
-    using Dependent;
+    using DeepEnds.Reporting.Complex;
+    using DeepEnds.Core.Dependent;
 
     using System.Collections.Generic;
     using System.Linq;
 
     public class Reporter
     {
+        private DeepEnds.Reporting.Linked.Assemble assembled;
+
         private string filePath;
 
         private string filePathTemplate;
@@ -93,12 +95,13 @@ namespace DeepEnds.Core
 
         public string TableRowEnd { get; set; }
 
-        public Reporter(string filePath, Dictionary<string, string> options, DeepEnds.Core.Linked.Dependencies dependencies)
+        public Reporter(string filePath, Dictionary<string, string> options, DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
         {
             this.filePath = filePath;
             this.file = null;
             this.options = options;
             this.dependencies = dependencies;
+            this.assembled = assembled;
 
             this.filePathTemplate = string.Empty;
             if (this.options["split"] != "false")
@@ -426,7 +429,7 @@ namespace DeepEnds.Core
 
             this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", string.Format(this.Link, index, name)));
-            if (this.dependencies.Assembled.Structures[branch].HasCycle)
+            if (this.assembled.Structures[branch].HasCycle)
             {
                 this.file.Write(string.Format(this.TableBodyItem, " id=\"alert\"", "Cycle"));
             }
@@ -444,10 +447,10 @@ namespace DeepEnds.Core
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", row.Ns.Value));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", row.Ns.MaxInTree));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", row.Ns.SumOverTree));
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count));
-            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.dependencies.Assembled.ExternalDependencies[branch].MaxInTree));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.assembled.ExternalDependencies[branch].Merged.Count));
+            this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", this.assembled.ExternalDependencies[branch].MaxInTree));
 
-            var sloc = this.dependencies.Assembled.SLOCs[branch];
+            var sloc = this.assembled.SLOCs[branch];
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.MaxInTree));
             this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", sloc.SumOverTree));
 
@@ -694,7 +697,7 @@ namespace DeepEnds.Core
             {
                 this.Write(string.Format(this.TableRowBegin, string.Empty, string.Empty));
                 this.file.Write(string.Format(this.TableBodyItem, " id=\"main\"", leaf.Name));
-                var counts = this.dependencies.Assembled.Usages[leaf];
+                var counts = this.assembled.Usages[leaf];
                 var max = counts[levels.Count - 1];
                 var found = false;
                 foreach (var count in counts)
@@ -724,14 +727,14 @@ namespace DeepEnds.Core
 
         private void InterfaceTable(Dependency branch, Dictionary<Dependency, int> mapping, int section)
         {
-            if (!this.dependencies.Assembled.Interfaces.ContainsKey(branch))
+            if (!this.assembled.Interfaces.ContainsKey(branch))
             {
                 return;
             }
 
             this.WriteLine(string.Format(this.SubsectionBegin, "Interface" + section, "Interface"));
             var list = new List<string>();
-            foreach (var dep in this.dependencies.Assembled.Interfaces[branch])
+            foreach (var dep in this.assembled.Interfaces[branch])
             {
                 list.Add(dep.Path(this.options["sep"]));
             }
@@ -743,7 +746,7 @@ namespace DeepEnds.Core
 
         private void ExternalsTable(Dependency branch, int section)
         {
-            if (this.dependencies.Assembled.ExternalDependencies[branch].Merged.Count == 0)
+            if (this.assembled.ExternalDependencies[branch].Merged.Count == 0)
             {
                 return;
             }
@@ -751,7 +754,7 @@ namespace DeepEnds.Core
             this.WriteLine(string.Format(this.SubsectionBegin, "Externals" + section, "Externals"));
 
             var list = new List<string>();
-            foreach (var dep in this.dependencies.Assembled.ExternalDependencies[branch].Merged)
+            foreach (var dep in this.assembled.ExternalDependencies[branch].Merged)
             {
                 list.Add(dep.Path(this.options["sep"]));
             }
@@ -766,7 +769,7 @@ namespace DeepEnds.Core
             var set = new HashSet<string>();
             foreach (var child in branch.Children)
             {
-                foreach (var dep in this.dependencies.Assembled.Linkings[child].Interlinks)
+                foreach (var dep in this.assembled.Linkings[child].Interlinks)
                 {
                     var found = FindLinks.Get(child, dep, this.options["sep"]);
                     if (found.Count == 0)
@@ -823,7 +826,7 @@ namespace DeepEnds.Core
         {
             foreach (var child in branch.Children)
             {
-                foreach (var dep in this.dependencies.Assembled.Linkings[child].Interlinks)
+                foreach (var dep in this.assembled.Linkings[child].Interlinks)
                 {
                     return true;
                 }
@@ -844,7 +847,7 @@ namespace DeepEnds.Core
             this.Write(string.Format(this.TableBegin, string.Empty));
             foreach (var child in branch.Children)
             {
-                foreach (var dep in this.dependencies.Assembled.Linkings[child].Interlinks)
+                foreach (var dep in this.assembled.Linkings[child].Interlinks)
                 {
                     var first = child.Path(this.options["sep"]);
                     if (mapping.Keys.Contains(child))
@@ -903,7 +906,7 @@ namespace DeepEnds.Core
 
         private void Matrix(Dependency branch, int section)
         {
-            var list = this.dependencies.Assembled.Structures[branch].Extract();
+            var list = this.assembled.Structures[branch].Extract();
 
             if (list.Count < 2)
             {
@@ -959,7 +962,7 @@ namespace DeepEnds.Core
             this.file.Write(branch.Name);
             this.file.WriteLine("\";");
 
-            var links = this.dependencies.Assembled.Linkings;
+            var links = this.assembled.Linkings;
             foreach (var child in branch.Children)
             {
                 var index = branch.Children.IndexOf(child);
@@ -999,7 +1002,7 @@ namespace DeepEnds.Core
 
         private List<Complexity> TableRows()
         {
-            return Complexities.Factory(this.dependencies.Root, this.dependencies.Assembled.Linkings);
+            return Complexities.Factory(this.dependencies.Root, this.assembled.Linkings);
         }
 
         private void Table(List<Complexity> rows, bool visibleHeader, bool visibleValues)

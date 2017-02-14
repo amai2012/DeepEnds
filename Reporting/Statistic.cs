@@ -1,5 +1,5 @@
 ﻿//------------------------------------------------------------------------------
-// <copyright file="Complexity.cs" company="Zebedee Mason">
+// <copyright file="Statistic.cs" company="Zebedee Mason">
 //     Copyright (c) 2016 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
@@ -21,33 +21,31 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Complex
+namespace DeepEnds.Reporting
 {
-    using Dependent;
-
-    public class Complexity
+    public class Statistic
     {
-        public Statistic Ns { get; }
+        public int MaxInTree { get; set; }
 
-        public Statistic EPNs { get; }
+        public int SumOverTree { get; set; }
 
-        public Statistic EPNNs { get; }
+        public int Value { get; set; }
 
-        public Dependency Branch { get; }
-
-        public Complexity(int n, int epn, Dependency branch)
+        public Statistic(int value)
         {
-            this.Branch = branch;
+            this.Value = value;
+            this.SumOverTree = value;
+            this.MaxInTree = value;
+        }
 
-            double epnn = 0;
-            if (n != 0)
+        public void AddChild(Statistic child)
+        {
+            this.SumOverTree += child.SumOverTree;
+
+            if (child.MaxInTree > this.MaxInTree)
             {
-                epnn = epn / (n * 0.0001);
+                this.MaxInTree = child.MaxInTree;
             }
-
-            this.Ns = new Statistic(n);
-            this.EPNs = new Statistic(epn);
-            this.EPNNs = new Statistic((int)epnn);
         }
     }
 }

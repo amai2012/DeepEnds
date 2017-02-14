@@ -80,6 +80,10 @@
       <Project>{5330eb25-e6d5-4fb9-92f8-afd0d67d354a}</Project>
       <Name>DoxygenXml</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Reporting\Reporting.csproj">
+      <Project>{7db7f387-d2e3-48a7-b2fe-d4263892e36b}</Project>
+      <Name>Reporting</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VBasic\VBasic.csproj">
       <Project>{81b48a82-3c0b-416a-95d1-1eaec5fccd95}</Project>
       <Name>VBasic</Name>
