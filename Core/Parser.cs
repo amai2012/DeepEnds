@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
 // <copyright file="Parser.cs" company="Zebedee Mason">
-//     Copyright (c) 2016 Zebedee Mason.
+//     Copyright (c) 2016-2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown

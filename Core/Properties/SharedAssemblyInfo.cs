@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------------------
 // <copyright file="SharedAssemblyInfo.cs" company="Zebedee Mason">
-//     Copyright (c) 2016 Zebedee Mason.
+//     Copyright (c) 2016-2017 Zebedee Mason.
 //
 //      The author's copyright is expressed through the following notice, thus
 //      giving effective rights to copy and use this software to anyone, as shown
@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("Zebedee Mason")]
 [assembly: AssemblyProduct("DeepEnds")]
-[assembly: AssemblyCopyright("Copyright © 2016 LGPL 2.1")]
+[assembly: AssemblyCopyright("Copyright © 2016-2017 LGPL 2.1")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
