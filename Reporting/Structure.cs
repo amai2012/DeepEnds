@@ -24,7 +24,6 @@
 namespace DeepEnds.Reporting
 {
     using Core;
-    using DeepEnds.Core.Dependent;
     using System.Collections.Generic;
 
     public class Structure

@@ -31,7 +31,7 @@ namespace DeepEnds.DGML
 
         private Dictionary<string, string> paths;
 
-        private Dictionary<string, Core.Dependent.Dependency> lookup;
+        private Dictionary<string, Core.Dependency> lookup;
 
         private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
         {
@@ -73,7 +73,7 @@ namespace DeepEnds.DGML
             this.SelectNodes(root, "Node", elements);
             foreach (var node in elements)
             {
-                DeepEnds.Core.Dependent.Dependency dep = null;
+                DeepEnds.Core.Dependency dep = null;
                 var label = node.GetAttribute("Label");
                 if (label.Length == 0)
                 {
@@ -81,7 +81,7 @@ namespace DeepEnds.DGML
                 }
                 else
                 {
-                    dep = new DeepEnds.Core.Dependent.Dependency(label, null);
+                    dep = new DeepEnds.Core.Dependency(label, null);
                 }
 
                 var id = node.GetAttribute("Id");
@@ -146,7 +146,7 @@ namespace DeepEnds.DGML
         {
             this.parser = parser;
             this.paths = new Dictionary<string, string>();
-            this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
+            this.lookup = new Dictionary<string, Core.Dependency>();
         }
 
         public void Read(string fileName, System.IO.TextWriter logger)

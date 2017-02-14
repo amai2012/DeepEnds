@@ -27,23 +27,23 @@ namespace DeepEnds.Core
 {
     public class Parser
     {
-        public DeepEnds.Core.Linked.Dependencies Dependencies { get; }
+        public DeepEnds.Core.Dependencies Dependencies { get; }
 
         public DeepEnds.Core.Sources Sources { get; }
 
-        private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> sets;
+        private Dictionary<DeepEnds.Core.Dependency, HashSet<string>> sets;
 
-        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
+        private Dictionary<string, DeepEnds.Core.Dependency> leaves;
 
-        public Parser(DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Core.Sources sources)
+        public Parser(DeepEnds.Core.Dependencies dependencies, DeepEnds.Core.Sources sources)
         {
             this.Dependencies = dependencies;
             this.Sources = sources;
-            this.sets = new Dictionary<Dependent.Dependency, HashSet<string>>();
-            this.leaves = new Dictionary<string, Dependent.Dependency>();
+            this.sets = new Dictionary<Dependency, HashSet<string>>();
+            this.leaves = new Dictionary<string, Dependency>();
         }
 
-        public DeepEnds.Core.Dependent.Dependency Create(string name, string fullName, DeepEnds.Core.Dependent.Dependency parent)
+        public DeepEnds.Core.Dependency Create(string name, string fullName, DeepEnds.Core.Dependency parent)
         {
             var leaf = this.Dependencies.Create(name, parent);
             parent.AddChild(leaf);
@@ -51,7 +51,7 @@ namespace DeepEnds.Core
             return leaf;
         }
 
-        public void AddDependency(DeepEnds.Core.Dependent.Dependency leaf, string dependency)
+        public void AddDependency(DeepEnds.Core.Dependency leaf, string dependency)
         {
             if (!this.sets.ContainsKey(leaf))
             {
@@ -73,7 +73,7 @@ namespace DeepEnds.Core
                         continue;
                     }
 
-                    DeepEnds.Core.Dependent.Dependency dep = null;
+                    DeepEnds.Core.Dependency dep = null;
                     if (this.leaves.ContainsKey(item))
                     {
                         dep = this.leaves[item];

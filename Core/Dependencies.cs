@@ -21,9 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Linked
+namespace DeepEnds.Core
 {
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
     using System;
     using System.Collections.Generic;
     using System.Linq;

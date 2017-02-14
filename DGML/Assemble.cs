@@ -23,8 +23,7 @@
 
 namespace DeepEnds.DGML
 {
-    using Core;
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
     using Microsoft.VisualStudio.GraphModel;
     using System.Collections.Generic;
 

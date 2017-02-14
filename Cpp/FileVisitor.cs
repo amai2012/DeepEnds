@@ -32,9 +32,9 @@ namespace DeepEnds.Cpp.Clang
     {
         private DeepEnds.Core.Parser parser;
 
-        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
+        private Dictionary<string, DeepEnds.Core.Dependency> leaves;
 
-        private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
+        private Dictionary<DeepEnds.Core.Dependency, HashSet<string>> links;
 
 #if false
         private HashSet<string> visited;
@@ -44,11 +44,11 @@ namespace DeepEnds.Cpp.Clang
 
         private string namespaces;
 
-        private DeepEnds.Core.Dependent.Dependency current;
+        private DeepEnds.Core.Dependency current;
 
         private bool hasChildren;
 
-        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves, Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links, TextWriter logger)
+        public FileVisitor(DeepEnds.Core.Parser parser, Dictionary<string, DeepEnds.Core.Dependency> leaves, Dictionary<DeepEnds.Core.Dependency, HashSet<string>> links, TextWriter logger)
         {
             this.parser = parser;
             this.leaves = leaves;
@@ -201,7 +201,7 @@ namespace DeepEnds.Cpp.Clang
             return CXChildVisitResult.CXChildVisit_Continue;
         }
 
-        private void SetSourceProvider(Core.Dependent.Dependency leaf, CXCursor cursor)
+        private void SetSourceProvider(Core.Dependency leaf, CXCursor cursor)
         {
             CXSourceRange extent = clang.getCursorExtent(cursor);
             CXSourceLocation startLocation = clang.getRangeStart(extent);

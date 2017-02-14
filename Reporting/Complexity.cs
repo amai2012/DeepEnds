@@ -21,9 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Reporting.Complex
+namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
 
     public class Complexity
     {

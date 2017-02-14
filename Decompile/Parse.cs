@@ -35,7 +35,7 @@ namespace DeepEnds.Decompile
             this.parser = parser;
         }
 
-        private void Add(DeepEnds.Core.Dependent.Dependency leaf, TypeReference type)
+        private void Add(DeepEnds.Core.Dependency leaf, TypeReference type)
         {
             var a = type.ToString();
             a = a.Replace("<", ",").Replace(">", ",").Replace("`", ",").Replace("[]", string.Empty).Replace("&", string.Empty).Replace("/", ".");
@@ -49,7 +49,7 @@ namespace DeepEnds.Decompile
             }
         }
 
-        private void Process(DeepEnds.Core.Dependent.Dependency leaf, TypeDefinition type)
+        private void Process(DeepEnds.Core.Dependency leaf, TypeDefinition type)
         {
             foreach (var field in type.Fields)
             {

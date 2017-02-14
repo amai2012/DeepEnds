@@ -21,7 +21,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Core.Dependent
+namespace DeepEnds.Core
 {
     public class DependencyWalker
     {

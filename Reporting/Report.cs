@@ -23,8 +23,8 @@
 
 namespace DeepEnds.Reporting
 {
-    using DeepEnds.Reporting.Complex;
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Reporting;
+    using DeepEnds.Core;
 
     using System.Collections.Generic;
     using System.Linq;
@@ -71,7 +71,7 @@ td#alert {
 ";
         }
 
-        public void Write(DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
+        public void Write(DeepEnds.Core.Dependencies dependencies, DeepEnds.Reporting.Assemble assembled)
         {
             var reporter = new Reporter(this.options["report"], this.options, dependencies, assembled);
             this.HeaderAndFooter(reporter);

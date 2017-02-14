@@ -23,15 +23,15 @@
 
 namespace DeepEnds.Reporting
 {
-    using DeepEnds.Reporting.Complex;
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Reporting;
+    using DeepEnds.Core;
 
     using System.Collections.Generic;
     using System.Linq;
 
     public class Reporter
     {
-        private DeepEnds.Reporting.Linked.Assemble assembled;
+        private DeepEnds.Reporting.Assemble assembled;
 
         private string filePath;
 
@@ -41,7 +41,7 @@ namespace DeepEnds.Reporting
 
         private Dictionary<string, string> options;
 
-        private DeepEnds.Core.Linked.Dependencies dependencies;
+        private DeepEnds.Core.Dependencies dependencies;
 
         public string FileHeader { get; set; }
 
@@ -95,7 +95,7 @@ namespace DeepEnds.Reporting
 
         public string TableRowEnd { get; set; }
 
-        public Reporter(string filePath, Dictionary<string, string> options, DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
+        public Reporter(string filePath, Dictionary<string, string> options, DeepEnds.Core.Dependencies dependencies, DeepEnds.Reporting.Assemble assembled)
         {
             this.filePath = filePath;
             this.file = null;

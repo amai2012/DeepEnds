@@ -23,8 +23,8 @@
 
 namespace DeepEnds.Reporting
 {
-    using DeepEnds.Reporting.Complex;
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Reporting;
+    using DeepEnds.Core;
 
     using System.Collections.Generic;
     using System.Linq;
@@ -33,16 +33,13 @@ namespace DeepEnds.Reporting
     {
         private Dictionary<string, string> options;
 
-        private DeepEnds.Reporting.Linked.Assemble assembled;
-
         public Markdown(Dictionary<string, string> options)
         {
             this.options = options;
         }
 
-        public void Write(DeepEnds.Core.Linked.Dependencies dependencies, DeepEnds.Reporting.Linked.Assemble assembled)
+        public void Write(DeepEnds.Core.Dependencies dependencies, DeepEnds.Reporting.Assemble assembled)
         {
-            this.assembled = assembled;
             var reporter = new Reporter(this.options["report"], this.options, dependencies, assembled);
             reporter.Link = "{1}";
             if (this.options["split"] != "false")

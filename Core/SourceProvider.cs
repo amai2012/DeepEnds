@@ -21,8 +21,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using DeepEnds.Core.Dependent;
-
 namespace DeepEnds.Core
 {
     public class SourceProvider

@@ -26,21 +26,20 @@ namespace DeepEnds.Console
     using System;
     using System.Collections.Generic;
     using DeepEnds.Core;
-    using DeepEnds.Core.Linked;
 
     public class View
     {
         private Dependencies dependencies;
-        private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> sets;
-        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
+        private Dictionary<DeepEnds.Core.Dependency, HashSet<string>> sets;
+        private Dictionary<string, DeepEnds.Core.Dependency> leaves;
         private Sources sources;
-        private DeepEnds.Reporting.Linked.Assemble assembled;
+        private DeepEnds.Reporting.Assemble assembled;
 
         public View()
         {
             this.dependencies = new Dependencies();
-            this.sets = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
-            this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
+            this.sets = new Dictionary<DeepEnds.Core.Dependency, HashSet<string>>();
+            this.leaves = new Dictionary<string, DeepEnds.Core.Dependency>();
             this.sources = new Sources();
         }
 
@@ -181,7 +180,7 @@ namespace DeepEnds.Console
             xml.Finalise();
             parser.Finalise(options["sep"]);
 
-            this.assembled = new DeepEnds.Reporting.Linked.Assemble();
+            this.assembled = new DeepEnds.Reporting.Assemble();
             assembled.Visit(parser.Dependencies.Root);
             assembled.Usage(parser.Dependencies.Root);
 

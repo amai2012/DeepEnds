@@ -23,7 +23,7 @@
 
 namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
     using System.Collections.Generic;
 
     internal class FindLinks : DependencyWalker

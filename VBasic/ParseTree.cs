@@ -32,10 +32,10 @@ namespace DeepEnds.VBasic
         internal class TypeWalker : VisualBasicSyntaxWalker
         {
             private DeepEnds.Core.Parser parser;
-            private DeepEnds.Core.Dependent.Dependency leaf;
+            private DeepEnds.Core.Dependency leaf;
             private SemanticModel model;
 
-            public TypeWalker(DeepEnds.Core.Parser parser, DeepEnds.Core.Dependent.Dependency leaf, SemanticModel model)
+            public TypeWalker(DeepEnds.Core.Parser parser, DeepEnds.Core.Dependency leaf, SemanticModel model)
             {
                 this.parser = parser;
                 this.leaf = leaf;
@@ -236,7 +236,7 @@ namespace DeepEnds.VBasic
         internal class AddDependencies : BaseTypeWalker
         {
             private DeepEnds.Core.Parser parser;
-            private readonly DeepEnds.Core.Linked.Dependencies dependencies;
+            private readonly DeepEnds.Core.Dependencies dependencies;
             private SemanticModel model;
 
             public AddDependencies(DeepEnds.Core.Parser parser, SemanticModel model)

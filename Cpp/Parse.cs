@@ -31,13 +31,13 @@ namespace DeepEnds.Cpp.Include
 
         private System.IO.TextWriter logger;
 
-        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> nodes;
+        private Dictionary<string, DeepEnds.Core.Dependency> nodes;
 
         public Parse(DeepEnds.Core.Parser parser, System.IO.TextWriter logger)
         {
             this.parser = parser;
             this.logger = logger;
-            this.nodes = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
+            this.nodes = new Dictionary<string, DeepEnds.Core.Dependency>();
         }
 
         public void AddFile(string filePath, string filter)
@@ -98,7 +98,7 @@ namespace DeepEnds.Cpp.Include
                 return;
             }
 
-            DeepEnds.Core.Dependent.Dependency node = this.nodes[filePath];
+            var node = this.nodes[filePath];
             var direc = System.IO.Path.GetDirectoryName(filePath);
             int loc = 0;
             foreach (var line in DeepEnds.Core.Utilities.ReadFile(filePath).Split('\n'))

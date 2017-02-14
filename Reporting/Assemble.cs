@@ -21,9 +21,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace DeepEnds.Reporting.Linked
+namespace DeepEnds.Reporting
 {
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
     using System.Collections.Generic;
 
     public class Assemble : DependencyWalker

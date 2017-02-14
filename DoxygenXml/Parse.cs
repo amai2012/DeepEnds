@@ -29,9 +29,9 @@ namespace DeepEnds.DoxygenXml
     {
         private DeepEnds.Core.Parser parser;
 
-        private Dictionary<string, Core.Dependent.Dependency> lookup;
+        private Dictionary<string, Core.Dependency> lookup;
 
-        private Dictionary<Core.Dependent.Dependency, List<string>> links;
+        private Dictionary<Core.Dependency, List<string>> links;
 
         private List<string> compoundTypes;
 
@@ -52,7 +52,7 @@ namespace DeepEnds.DoxygenXml
 
         private void ReadCompoundDef(System.Xml.XmlElement root, System.IO.TextWriter logger)
         {
-            Core.Dependent.Dependency leaf = null;
+            Core.Dependency leaf = null;
             var nodes = root.SelectNodes("compoundname");
             foreach (var node in nodes)
             {
@@ -71,7 +71,7 @@ namespace DeepEnds.DoxygenXml
             this.ReadMembers(root, leaf);
         }
 
-        private void ReadMembers(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        private void ReadMembers(System.Xml.XmlElement root, Core.Dependency leaf)
         {
             var list = new List<System.Xml.XmlElement>();
             this.SelectNodes(root, "memberdef", list);
@@ -96,7 +96,7 @@ namespace DeepEnds.DoxygenXml
                             continue;
                         }
 
-                        var child = new Core.Dependent.Dependency(name.InnerText, leaf);
+                        var child = new Core.Dependency(name.InnerText, leaf);
                         leaf.AddChild(child);
                         this.lookup[id] = child;
                         this.ReadLoc(element, child);
@@ -109,7 +109,7 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        private void ReadLoc(System.Xml.XmlElement root, Core.Dependent.Dependency leaf)
+        private void ReadLoc(System.Xml.XmlElement root, Core.Dependency leaf)
         {
             int loc = 0;
             var fileName = string.Empty;
@@ -160,7 +160,7 @@ namespace DeepEnds.DoxygenXml
             }
         }
 
-        private void ReadReferences(System.Xml.XmlElement root, Core.Dependent.Dependency leaf, System.IO.TextWriter logger)
+        private void ReadReferences(System.Xml.XmlElement root, Core.Dependency leaf, System.IO.TextWriter logger)
         {
             var id = root.GetAttribute("id");
             this.lookup[id] = leaf;
@@ -236,8 +236,8 @@ namespace DeepEnds.DoxygenXml
             this.parser = parser;
             this.compoundTypes = Parse.SplitCSV(options["compoundtype"]);
             this.memberTypes = Parse.SplitCSV(options["membertype"]);
-            this.lookup = new Dictionary<string, Core.Dependent.Dependency>();
-            this.links = new Dictionary<Core.Dependent.Dependency, List<string>>();
+            this.lookup = new Dictionary<string, Core.Dependency>();
+            this.links = new Dictionary<Core.Dependency, List<string>>();
             this.memberHide = false;
             if (options["memberhide"] != "false")
             {

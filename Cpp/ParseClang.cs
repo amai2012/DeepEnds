@@ -27,7 +27,7 @@ namespace DeepEnds.Cpp.Clang
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using DeepEnds.Core.Dependent;
+    using DeepEnds.Core;
     using ClangSharp;
 
     public class ParseClang : IParse
@@ -38,17 +38,17 @@ namespace DeepEnds.Cpp.Clang
 
         private CXIndex createIndex;
 
-        private Dictionary<string, DeepEnds.Core.Dependent.Dependency> leaves;
+        private Dictionary<string, DeepEnds.Core.Dependency> leaves;
 
-        private Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>> links;
+        private Dictionary<DeepEnds.Core.Dependency, HashSet<string>> links;
 
         public ParseClang(DeepEnds.Core.Parser parser, TextWriter logger)
         {
             this.parser = parser;
             this.logger = logger;
             this.createIndex = clang.createIndex(0, 0);
-            this.leaves = new Dictionary<string, DeepEnds.Core.Dependent.Dependency>();
-            this.links = new Dictionary<DeepEnds.Core.Dependent.Dependency, HashSet<string>>();
+            this.leaves = new Dictionary<string, DeepEnds.Core.Dependency>();
+            this.links = new Dictionary<DeepEnds.Core.Dependency, HashSet<string>>();
         }
 
         public void AddFile(string filePath, string filter)
