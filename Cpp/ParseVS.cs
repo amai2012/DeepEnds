@@ -52,7 +52,7 @@ namespace DeepEnds.Cpp
             }
         }
 
-        private string PathToFilter(string filename, string sourceDirec)
+        private static string PathToFilter(string filename, string sourceDirec)
         {
             var filter = System.IO.Path.GetDirectoryName(filename);
             var common = System.IO.Path.Combine(filter, sourceDirec);
@@ -98,7 +98,7 @@ namespace DeepEnds.Cpp
 
                         if (filter == ".")
                         {
-                            filter = this.PathToFilter(filename, sourceDirec);
+                            filter = PathToFilter(filename, sourceDirec);
                         }
 
                         this.logger.Write("  Appended ");
@@ -137,7 +137,7 @@ namespace DeepEnds.Cpp
                             continue;
                         }
 
-                        var filter = this.PathToFilter(filename, sourceDirec);
+                        var filter = PathToFilter(filename, sourceDirec);
 
                         this.logger.Write("  Appended ");
                         this.logger.WriteLine(DeepEnds.Core.Utilities.Combine(direc, filename));
@@ -149,7 +149,7 @@ namespace DeepEnds.Cpp
             }
         }
 
-        private void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
+        private static void SelectNodes(System.Xml.XmlElement root, string name, List<System.Xml.XmlElement> list)
         {
             foreach (var node in root.ChildNodes)
             {
@@ -165,7 +165,7 @@ namespace DeepEnds.Cpp
                 }
                 else
                 {
-                    this.SelectNodes(element, name, list);
+                    SelectNodes(element, name, list);
                 }
             }
         }
@@ -180,9 +180,9 @@ namespace DeepEnds.Cpp
             var root = doc.DocumentElement;
 
             var nodes = new List<System.Xml.XmlElement>();
-            this.SelectNodes(root, "AdditionalIncludeDirectories", nodes);
-            this.SelectNodes(root, "NMakeIncludeSearchPath", nodes);
-            this.SelectNodes(root, "IncludePath", nodes);
+            SelectNodes(root, "AdditionalIncludeDirectories", nodes);
+            SelectNodes(root, "NMakeIncludeSearchPath", nodes);
+            SelectNodes(root, "IncludePath", nodes);
 
             foreach (var node in nodes)
             {
