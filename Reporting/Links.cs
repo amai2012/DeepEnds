@@ -28,15 +28,12 @@ namespace DeepEnds.Reporting
 
     public class Links
     {
-        private Dependency dependency;
-
         public List<Dependency> Dependencies { get; }
 
         public List<Dependency> Interlinks { get; }
 
-        public Links(Dependency dependency)
+        public Links()
         {
-            this.dependency = dependency;
             this.Dependencies = new List<Dependency>();
             this.Interlinks = new List<Dependency>();
         }
@@ -51,7 +48,7 @@ namespace DeepEnds.Reporting
 
         public static void Assemble(Dependency dependency, Dictionary<Dependency, Links> links)
         {
-            links[dependency] = new Links(dependency);
+            links[dependency] = new Links();
 
             foreach (var child in dependency.Children)
             {

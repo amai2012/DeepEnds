@@ -30,16 +30,12 @@ namespace DeepEnds.Console
     public class View
     {
         private Dependencies dependencies;
-        private Dictionary<DeepEnds.Core.Dependency, HashSet<string>> sets;
-        private Dictionary<string, DeepEnds.Core.Dependency> leaves;
         private Sources sources;
         private DeepEnds.Reporting.Assemble assembled;
 
         public View()
         {
             this.dependencies = new Dependencies();
-            this.sets = new Dictionary<DeepEnds.Core.Dependency, HashSet<string>>();
-            this.leaves = new Dictionary<string, DeepEnds.Core.Dependency>();
             this.sources = new Sources();
             this.assembled = null;
         }
